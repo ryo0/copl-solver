@@ -4,9 +4,24 @@ import tokenizer.token._
 import ast._
 
 object parser {
-//  def parseExp(tokens: List[Token]): (Exp, List[Token]) = {
-//
-//  }
+  def parseExp(tokens: List[Token]): (Exp, List[Token]) = {
+    val opMap = Map(PlusToken -> Plus, MinusToken -> Minus)
+    val (mul1, rest) = parseMul(tokens)
+    rest match {
+      case (PlusToken | MinusToken) :: rest2 =>
+        val (mul2, rest3) = parseMul(rest2)
+        val infix = InfixExp(mul1, opMap(rest.head), mul2)
+        rest3 match {
+          case (PlusToken | MinusToken)  :: rest4 =>
+            val (mul, rest5) = parseMul(rest4)
+            (InfixExp(infix, opMap(rest3.head), mul), rest5)
+          case _ =>
+            (infix, rest3)
+        }
+      case _ =>
+        (mul1, rest)
+    }
+  }
   def parseMul(tokens: List[Token]): (Exp, List[Token])= {
       val (pr1, rest) = parsePrimary(tokens)
       rest match {
@@ -28,7 +43,7 @@ object parser {
   def parsePrimary(tokens: List[Token]): (Exp, List[Token]) = {
     tokens match {
       case LParen :: rest =>
-        val (exp, _rest) = parseMul(rest)
+        val (exp, _rest) = parseExp(rest)
         _rest match {
           case RParen :: __rest =>
             (exp, __rest)
