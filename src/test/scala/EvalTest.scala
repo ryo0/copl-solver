@@ -15,5 +15,6 @@ class EvalTest extends FunSuite {
     assert(eval(parseExp(tokenize("-1 * 5 + -3* 5 + (-10 * 3 * -2 + (1 - 1* 1 - -1) * 5) + 6 -(1 + 4)"))._1) === 46)
     assert(eval(parseExp(tokenize("-10 / 5)"))._1) === -2)
     assert(eval(parseExp(tokenize("10 / -(2*3 -1))"))._1) === -2)
+    assert(eval(parseExp(tokenize("8 - 2 - 3"))._1) === 3)
   }
 }
