@@ -23,10 +23,10 @@ object parser {
     }
   }
   def parseMul(tokens: List[Token]): (Exp, List[Token])= {
-      val (pr1, rest) = parsePrimary(tokens)
+      val (pr1, rest) = parseUnary(tokens)
       rest match {
         case AsteriskToken :: rest2 =>
-          val (pr2, rest3) = parsePrimary(rest2)
+          val (pr2, rest3) = parseUnary(rest2)
           val infix = InfixExp(pr1, Asterisk, pr2)
         rest3 match {
           case AsteriskToken :: rest4 =>
@@ -38,7 +38,17 @@ object parser {
         case _ =>
           (pr1, rest)
       }
+  }
+
+  def parseUnary(tokens: List[Token]): (Exp, List[Token]) = {
+    tokens match {
+      case MinusToken :: rest =>
+        val (prim, _rest) = parsePrimary(rest)
+        (InfixExp(IntVal(0), Minus, prim), _rest)
+      case _ =>
+        parsePrimary(tokens)
     }
+  }
 
   def parsePrimary(tokens: List[Token]): (Exp, List[Token]) = {
     tokens match {
