@@ -17,6 +17,8 @@ object tokenizer {
           tokenizeSub(rest, acm :+ MinusToken)
         case '*' =>
           tokenizeSub(rest, acm :+ AsteriskToken)
+        case '/' =>
+          tokenizeSub(rest, acm :+ SlashToken)
         case ' ' =>
           tokenizeSub(rest, acm)
         case '(' =>

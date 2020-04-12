@@ -6,6 +6,7 @@ object ast {
   object Plus        extends Op
   object Minus       extends Op
   object Asterisk    extends Op
+  object Slash       extends Op
 
   sealed class Exp
   case class IntVal(value: Int) extends Exp

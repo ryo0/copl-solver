@@ -13,4 +13,6 @@ object token {
   object MinusToken extends Token
 
   object AsteriskToken extends Token
+
+  object SlashToken extends Token
 }

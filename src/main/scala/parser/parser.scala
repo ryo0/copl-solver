@@ -4,7 +4,7 @@ import tokenizer.token._
 import ast._
 
 object parser {
-  val opMap = Map(PlusToken -> Plus, MinusToken -> Minus)
+  val opMap = Map(PlusToken -> Plus, MinusToken -> Minus, AsteriskToken -> Asterisk, SlashToken -> Slash)
   def parseExp(tokens: List[Token]): (Exp, List[Token]) = {
     val (mul1, rest) = parseMul(tokens)
     rest match {
@@ -25,13 +25,13 @@ object parser {
   def parseMul(tokens: List[Token]): (Exp, List[Token])= {
       val (pr1, rest) = parseUnary(tokens)
       rest match {
-        case AsteriskToken :: rest2 =>
+        case (AsteriskToken | SlashToken) :: rest2 =>
           val (pr2, rest3) = parseUnary(rest2)
-          val infix = InfixExp(pr1, Asterisk, pr2)
+          val infix = InfixExp(pr1, opMap(rest.head), pr2)
         rest3 match {
-          case AsteriskToken :: rest4 =>
+          case (AsteriskToken | SlashToken) :: rest4 =>
           val (mul, rest5) = parseMul(rest4)
-          (InfixExp(infix, Asterisk, mul), rest5)
+          (InfixExp(infix, opMap(rest3.head), mul), rest5)
           case _ =>
             (infix, rest3)
         }

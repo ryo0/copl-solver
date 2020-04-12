@@ -13,6 +13,8 @@ object eval {
             eval(left) - eval(right)
           case Asterisk =>
             eval(left) * eval(right)
+          case Slash =>
+            eval(left) / eval(right)
         }
     }
   }
