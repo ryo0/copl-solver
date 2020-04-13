@@ -28,4 +28,11 @@ class ParserTest extends FunSuite {
             InfixExp(IntVal(3), Minus, IntVal(4)))),
         Minus, IntVal(5)), List()))
   }
+  test("parseIf") {
+    assert(parseExp(tokenize("if 1 > 0 then 1 else 0")) === (IfExp(InfixExp(IntVal(1), GreaterThan, IntVal(0)), IntVal(1), IntVal(0)), List()))
+    assert(parseExp(tokenize("(if (1 * 2) + 3 > -1 then 1 else 0) + 1")) ===
+      (InfixExp(IfExp(InfixExp(InfixExp(InfixExp(IntVal(1), Asterisk, IntVal(2)), Plus, IntVal(3)), GreaterThan, InfixExp(IntVal(0), Minus, IntVal(1))), IntVal(1), IntVal(0)), Plus, IntVal(1)), List()))
+    assert(parseExp(tokenize("if 1 > 0 then 1 else 0 + 1")) === (IfExp(InfixExp(IntVal(1), GreaterThan, IntVal(0)), IntVal(1), InfixExp(IntVal(0), Plus, IntVal(1))), List()))
+
+  }
 }

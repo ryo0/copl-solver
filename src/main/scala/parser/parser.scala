@@ -4,7 +4,60 @@ import tokenizer.token._
 import ast._
 
 object parser {
-  val opMap: Map[Token, Op] = Map(PlusToken -> Plus, MinusToken -> Minus, AsteriskToken -> Asterisk, SlashToken -> Slash)
+  val opMap: Map[Token, Op] = Map(PlusToken -> Plus, MinusToken -> Minus, AsteriskToken -> Asterisk, SlashToken -> Slash,
+    LessThanToken -> LessThan, GreaterThanToken -> GreaterThan)
+
+  def parseExp(tokens: List[Token]): (Exp, List[Token]) = {
+    tokens match {
+      case IfToken :: rest =>
+        parseIf(tokens)
+      case _ =>
+        parseRelational(tokens)
+    }
+  }
+
+  def parseIf(tokens: List[Token]): (IfExp, List[Token]) = {
+    tokens match {
+      case IfToken :: rest =>
+        val (condExp, rest2) = parseExp(rest)
+        rest2 match {
+          case ThenToken :: rest3 =>
+            val (thenExp, rest4) = parseExp(rest3)
+            rest4 match {
+            case ElseToken :: rest5 =>
+                val (elseExp, rest6) = parseExp(rest5)
+                (IfExp(condExp, thenExp, elseExp), rest6)
+            case _ =>
+                throw new Exception("ifにelse節がない")
+            }
+          case _ =>
+            throw new Exception("ifにthen節がない")
+        }
+
+      case _ => {
+        throw new Exception("parseIf if以外が渡された")
+      }
+    }
+  }
+
+  def parseRelational(tokens: List[Token]): (Exp, List[Token]) = {
+    val (sum1, rest) = parseSum(tokens)
+    rest match {
+      case (LessThanToken | GreaterThanToken) :: rest2 =>
+        val (sum2, rest3) = parseSum(rest2)
+        val infixExp = InfixExp(sum1, opMap(rest.head), sum2)
+        rest3 match {
+          case (LessThanToken | GreaterThanToken)  :: rest4 =>
+            val (sum, rest5) = parseRelational(rest4)
+            (InfixExp(infixExp, opMap(rest3.head), sum), rest5)
+          case _ =>
+            (infixExp, rest3)
+        }
+      case _ =>
+        (sum1, rest)
+    }
+  }
+
   def parseSum(tokens: List[Token]): (Exp, List[Token]) = {
     val (mul1, rest) = parseMul(tokens)
     rest match {
@@ -53,7 +106,7 @@ object parser {
   def parsePrimary(tokens: List[Token]): (Exp, List[Token]) = {
     tokens match {
       case LParen :: rest =>
-        val (exp, _rest) = parseSum(rest)
+        val (exp, _rest) = parseExp(rest)
         _rest match {
           case RParen :: __rest =>
             (exp, __rest)
