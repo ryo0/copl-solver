@@ -117,8 +117,7 @@ object parser {
       case IntToken(n) :: rest =>
         (IntVal(n), rest)
       case _ =>
-        println("other", tokens)
-        throw new Exception("other")
+        parseExp(tokens)
     }
   }
 }
