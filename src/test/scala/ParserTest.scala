@@ -17,11 +17,11 @@ class ParserTest extends FunSuite {
           Asterisk, IntVal(5)), List()))
   }
   test("parseExp") {
-    assert(parseExp(tokenize("1+2-3")) === (InfixExp
+    assert(parseSum(tokenize("1+2-3")) === (InfixExp
     (InfixExp(IntVal(1), Plus, IntVal(2)), Minus, IntVal(3)), List()))
-    assert(parseExp(tokenize("1 + 2 * 3")) === (InfixExp(IntVal(1),Plus,
+    assert(parseSum(tokenize("1 + 2 * 3")) === (InfixExp(IntVal(1),Plus,
       InfixExp(IntVal(2), Asterisk, IntVal(3))), List()))
-    assert(parseExp(tokenize("1 + (2 * (3 - 4)) - 5")) === (
+    assert(parseSum(tokenize("1 + (2 * (3 - 4)) - 5")) === (
       InfixExp(
         InfixExp(IntVal(1),Plus,
           InfixExp(IntVal(2), Asterisk,

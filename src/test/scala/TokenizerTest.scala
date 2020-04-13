@@ -9,6 +9,12 @@ class TokenizerTest extends FunSuite  {
     assert(tokenizeInt("1+1") === ( "+1", IntToken(1)))
   }
 
+  test("varOrReservedWord") {
+    assert(tokenize("if 1 > 3 then 1 else 3") === List(IfToken, IntToken(1),
+      GreaterThanToken, IntToken(3), ThenToken, IntToken(1), ElseToken, IntToken(3)
+    ))
+  }
+
   test("tokenize") {
     assert(tokenize("123)") === List(IntToken(123), RParen))
     assert(tokenize("1 + 1") === List(IntToken(1), PlusToken, IntToken(1)))

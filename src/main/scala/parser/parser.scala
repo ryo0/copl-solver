@@ -5,7 +5,7 @@ import ast._
 
 object parser {
   val opMap: Map[Token, Op] = Map(PlusToken -> Plus, MinusToken -> Minus, AsteriskToken -> Asterisk, SlashToken -> Slash)
-  def parseExp(tokens: List[Token]): (Exp, List[Token]) = {
+  def parseSum(tokens: List[Token]): (Exp, List[Token]) = {
     val (mul1, rest) = parseMul(tokens)
     rest match {
       case (PlusToken | MinusToken) :: rest2 =>
@@ -13,7 +13,7 @@ object parser {
         val infix = InfixExp(mul1, opMap(rest.head), mul2)
         rest3 match {
           case (PlusToken | MinusToken)  :: rest4 =>
-            val (mul, rest5) = parseExp(rest4)
+            val (mul, rest5) = parseSum(rest4)
             (InfixExp(infix, opMap(rest3.head), mul), rest5)
           case _ =>
             (infix, rest3)
@@ -53,7 +53,7 @@ object parser {
   def parsePrimary(tokens: List[Token]): (Exp, List[Token]) = {
     tokens match {
       case LParen :: rest =>
-        val (exp, _rest) = parseExp(rest)
+        val (exp, _rest) = parseSum(rest)
         _rest match {
           case RParen :: __rest =>
             (exp, __rest)

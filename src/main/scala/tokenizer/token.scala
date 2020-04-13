@@ -4,6 +4,8 @@ object token {
   sealed class Token
   case class IntToken(value: Int) extends Token
 
+  case class VarToken(value: String) extends Token
+
   object LParen extends Token
 
   object RParen extends Token
@@ -15,4 +17,14 @@ object token {
   object AsteriskToken extends Token
 
   object SlashToken extends Token
+
+  object LessThanToken extends Token
+
+  object GreaterThanToken extends Token
+
+  object IfToken extends Token
+
+  object ThenToken extends Token
+
+  object ElseToken extends Token
 }
