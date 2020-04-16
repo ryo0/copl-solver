@@ -22,9 +22,15 @@ object token {
 
   object GreaterThanToken extends Token
 
+  object EqualToken extends Token
+
   object IfToken extends Token
 
   object ThenToken extends Token
 
   object ElseToken extends Token
+
+  object LetToken extends Token
+
+  object InToken extends Token
 }

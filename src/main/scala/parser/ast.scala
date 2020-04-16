@@ -11,7 +11,9 @@ object ast {
 
   sealed class Exp
   case class IntVal(value: Int) extends Exp
+  case class Var(name: String) extends Exp
   case class BoolVal(value: Boolean) extends Exp
   case class InfixExp(leftExp: Exp, op: Op, rightExp: Exp) extends Exp
   case class IfExp(condExp: Exp, thenExp: Exp, elseExp: Exp) extends Exp
+  case class LetExp(variable: Var, valueExp: Exp, inExp: Exp) extends Exp
 }

@@ -5,8 +5,10 @@ import token._
 object tokenizer {
   val tokenMap : Map[Char, Token]=
     Map('+' -> PlusToken, '-' -> MinusToken, '*' -> AsteriskToken, '/' -> SlashToken,
-    '(' -> LParen, ')' -> RParen, '<' -> LessThanToken, '>' -> GreaterThanToken)
-  val reservedWordMap : Map[String, Token] = Map("if" -> IfToken, "then" -> ThenToken, "else" -> ElseToken)
+    '(' -> LParen, ')' -> RParen, '<' -> LessThanToken, '>' -> GreaterThanToken, '=' -> EqualToken)
+  val reservedWordMap : Map[String, Token] = Map(
+    "if" -> IfToken, "then" -> ThenToken, "else" -> ElseToken,
+    "in" -> InToken, "let" -> LetToken)
 
   def tokenize(str: String): List[Token]  = {
     def tokenizeSub(str: String, acm: List[Token]): List[Token] = {
@@ -46,7 +48,7 @@ object tokenizer {
   def tokenizeLetter(str: String):(String, Token) = {
     def tokenizeLetterSub(str: String, acm: String) :(String, Token) = {
       if (str.isBlank) {
-        (str, retVarOrToken(acm))
+       return (str, retVarOrToken(acm))
       }
       val c = str(0)
       val rest = str.slice(1, str.length)

@@ -2,6 +2,7 @@ import tokenizer.tokenizer.tokenize
 import tokenizer.tokenizer.tokenizeInt
 import tokenizer.token._
 import org.scalatest.FunSuite
+import parser.ast.IntVal
 
 class TokenizerTest extends FunSuite  {
   test("tokenizeInt") {
@@ -13,6 +14,10 @@ class TokenizerTest extends FunSuite  {
     assert(tokenize("if 1 > 3 then 1 else 3") === List(IfToken, IntToken(1),
       GreaterThanToken, IntToken(3), ThenToken, IntToken(1), ElseToken, IntToken(3)
     ))
+  }
+
+  test("let") {
+    assert(tokenize("let x = 2 in x") === List(LetToken, VarToken("x"), EqualToken, IntToken(2), InToken, VarToken("x")))
   }
 
   test("tokenize") {

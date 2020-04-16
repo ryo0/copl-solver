@@ -11,8 +11,26 @@ object parser {
     tokens match {
       case IfToken :: rest =>
         parseIf(tokens)
+      case LetToken :: rest =>
+        parseLet(tokens)
       case _ =>
         parseRelational(tokens)
+    }
+  }
+
+  def parseLet(tokens: List[Token]) : (LetExp, List[Token]) = {
+    tokens match {
+      case LetToken  :: VarToken(n) :: EqualToken :: rest =>
+        val (value, rest2) = parseExp(rest)
+        rest2 match {
+          case InToken :: rest3 =>
+            val (in, rest4) = parseExp(rest3)
+            (LetExp(Var(n), value, in), rest4)
+          case _ =>
+            throw new Exception("letにinがない")
+        }
+      case _ =>
+        throw new Exception("letが let x = 2...という形式でない")
     }
   }
 
@@ -33,7 +51,6 @@ object parser {
           case _ =>
             throw new Exception("ifにthen節がない")
         }
-
       case _ => {
         throw new Exception("parseIf if以外が渡された")
       }
@@ -116,6 +133,8 @@ object parser {
         }
       case IntToken(n) :: rest =>
         (IntVal(n), rest)
+      case VarToken(n) :: rest =>
+        (Var(n), rest)
       case _ =>
         parseExp(tokens)
     }
