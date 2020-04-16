@@ -6,18 +6,22 @@ object eval {
     eval(exp, List())
   }
 
-  def eval(exp: Exp, env: List[Map[String, Exp]]): Exp = {
+  def getValFromEnv(key: String, env: List[(String, Exp)]): Exp = {
+    for (e <- env) {
+      if(e._1 == key) {
+        return e._2
+      }
+    }
+    throw new Exception("keyがenvにありません")
+  }
+
+  def eval(exp: Exp, env: List[(String, Exp)]): Exp = {
     exp match {
       case IntVal(n) => IntVal(n)
-      case Var(n) => env.head(n)
-      case LetExp(variable, valueExp, inExp) => {
-        if (env.isEmpty) {
-          eval(inExp, List(Map(variable.name -> eval(valueExp, env))))
-        } else {
-          val newMap = env.head ++ Map(variable.name -> eval(valueExp, env))
-          eval(inExp, newMap :: env.tail)
-        }
-      }
+      case Var(n) => getValFromEnv(n, env)
+      case LetExp(variable, valueExp, inExp) =>
+        val newEnv =  (variable.name, eval(valueExp, env))
+        eval(inExp, newEnv :: env)
       case IfExp(condExp, thenExp, elseExp) => {
         if (eval(condExp, env).asInstanceOf[BoolVal].value) {
           eval(thenExp, env)
