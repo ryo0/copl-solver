@@ -21,10 +21,11 @@ object solver {
           solve(exp, env.tail) + s"};"
         }
       case LetExp(variable, valueExp, inExp) =>
-        val let = envToString(env) + " |- " +  s" let " + variable + " = "
+        val let = envToString(env) + " |- " +  s" let " + expToString(variable, env) + " = "
         val value = eval(valueExp, env)
-        val in = eval(inExp, (variable.name, value) :: env)
-        val E = let + expToString(valueExp, env) + expToString(in, env) + "by E-Let {"
+        val newEnv = (variable.name, value) :: env
+        val in = eval(inExp, newEnv)
+        val E = let + expToString(valueExp, env) + " in " + expToString(inExp, env) + " evalto " + expToString(in, newEnv) + " by E-Let {"
         val cond1 = solve(valueExp, env)
         val cond2 = solve(inExp, (variable.name, value)::env)
         s"$E \n $cond1 \n $cond2\n };"
@@ -95,9 +96,11 @@ object solver {
         s"-${expToString(right, env)}"
       case InfixExp(left, op, right) =>
         s"(${expToString(left, env)} ${opMap(op)} ${expToString(right, env)})"
-      case IfExp(condExp, thenExp, elseExp) => {
+      case IfExp(condExp, thenExp, elseExp) =>
         s"if ${expToString(condExp, env)} then ${expToString(thenExp, env)} else ${expToString(elseExp, env)}"
-      }
+      case LetExp(variable, valueExp, inExp) =>
+        s"let ${expToString(variable, env)} = ${expToString(valueExp, env)} in ${expToString(inExp, env)}"
+
     }
   }
   def envToString(env: List[(String, Exp)]): String = {
