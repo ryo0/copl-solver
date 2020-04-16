@@ -1,4 +1,6 @@
+import parser.ast._
 import solver.initSolve
+import solver.solve
 import tokenizer.tokenizer.tokenize
 import parser.parser.parseExp
 
@@ -13,5 +15,11 @@ object main extends App {
   println(initSolve(parseExp(tokenize("3 + if -23 < -2 * 8 then 8 else 2 + 4 "))._1))
   println("--------")
   println(initSolve(parseExp(tokenize("3 + (if -23 < -2 * 8 then 8 else 2) + 4 "))._1))
+  println("--------")
+  println(solve(parseExp(tokenize("x"))._1, List(("y", IntVal(2)), ("x", IntVal(3)))))
+  println("--------")
+  println(solve(parseExp(tokenize("if x then y + 1 else y - 1"))._1, List(("y", IntVal(4)), ("x", BoolVal(true)))))
+  println("--------")
+
 
 }

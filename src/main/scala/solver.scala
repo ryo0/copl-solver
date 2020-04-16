@@ -13,6 +13,21 @@ object solver {
         envToString(env) + " |- " + s"$n evalto $n by E-Int{};"
       case BoolVal(b) =>
         envToString(env) + " |- " + s"$b evalto $b by E-Bool{};"
+      case Var(n) =>
+        if (env.head._1 == n) {
+          envToString(env) + " |- " + s"$n evalto ${expToString(env.head._2, env)} by E-Var1{};"
+        } else {
+          s"${envToString(env)} |- $n evalto ${expToString(eval(exp, env.tail), env.tail)} by E-Var2 {" +
+          solve(exp, env.tail) + s"};"
+        }
+      case LetExp(variable, valueExp, inExp) =>
+        val let = envToString(env) + " |- " +  s" let " + variable + " = "
+        val value = eval(valueExp, env)
+        val in = eval(inExp, (variable.name, value) :: env)
+        val E = let + expToString(valueExp, env) + expToString(in, env) + "by E-Let {"
+        val cond1 = solve(valueExp, env)
+        val cond2 = solve(inExp, (variable.name, value)::env)
+        s"$E \n $cond1 \n $cond2\n };"
       case IfExp(condExp, thenExp, elseExp) =>
         val start = expToString(exp, env)
         val condVal = eval(condExp, env)
@@ -74,6 +89,8 @@ object solver {
   def expToString(exp: Exp, env: List[(String, Exp)]): String = {
     exp match {
       case IntVal(n) =>  s"$n"
+      case BoolVal(b) => s"$b"
+      case Var(n) => s"$n"
       case InfixExp(IntVal(0), Minus, right) =>
         s"-${expToString(right, env)}"
       case InfixExp(left, op, right) =>
@@ -85,8 +102,9 @@ object solver {
   }
   def envToString(env: List[(String, Exp)]): String = {
     val result = env.map(e =>
-      s"${e._1} = ${eval(e._2, env)},"
-    )
-    result.slice(0, result.length - 1).mkString
+      s"${e._1} = ${expToString(eval(e._2, env), env)},"
+    ).reverse
+    val resultStr = result.mkString
+    resultStr.slice(0, resultStr.length - 1)
   }
 }

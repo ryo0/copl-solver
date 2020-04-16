@@ -19,6 +19,7 @@ object eval {
     exp match {
       case IntVal(n) => IntVal(n)
       case Var(n) => getValFromEnv(n, env)
+      case BoolVal(b) => BoolVal(b)
       case LetExp(variable, valueExp, inExp) =>
         val newEnv =  (variable.name, eval(valueExp, env))
         eval(inExp, newEnv :: env)
