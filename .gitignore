@@ -1,5 +1,6 @@
 # Created by Jayesh J.
-
+project
+target
 *.class
 *.log
 *.iml
