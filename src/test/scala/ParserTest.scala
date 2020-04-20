@@ -148,5 +148,10 @@ class ParserTest extends FunSuite {
       Var("twice"),
       List(FunExp(List(Var("x")), InfixExp(Var("x"), Asterisk, Var("x"))))
     ), List())
+    parseExp(tokenize("let k = fun x -> fun y -> x in k 7")) === (LetExp(
+      Var("k"),
+      FunExp(List(Var("x")), FunExp(List(Var("y")), Var("x"))),
+      FunCall(Var("k"), List(IntVal(7)))
+    ), List())
   }
 }
