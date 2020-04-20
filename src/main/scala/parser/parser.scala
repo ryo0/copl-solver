@@ -196,12 +196,17 @@ object parser {
   def parsePrimary(tokens: List[Token]): (Exp, List[Token]) = {
     tokens match {
       case LParen :: rest =>
-        val (exp, _rest) = parseExp(rest)
-        _rest match {
-          case RParen :: __rest =>
-            (exp, __rest)
+        val (exp, rest2) = parseExp(rest)
+        rest2 match {
+          case RParen :: rest3 =>
+            val (args, rest4) = parseArgs(rest3)
+            if (args.nonEmpty) {
+              (FunCall(exp, args), rest4)
+            } else {
+              (exp, rest3)
+            }
           case _ =>
-            println(_rest)
+            println(rest2)
             throw new Exception("erorr, カッコが閉じてない")
         }
       case IntToken(n) :: rest =>
