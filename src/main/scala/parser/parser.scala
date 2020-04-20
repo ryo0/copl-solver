@@ -21,13 +21,8 @@ object parser {
         parseLet(tokens)
       case FunToken :: rest =>
         parseFun(tokens)
-      case VarToken(n) :: opOrNot :: _ =>
-        if (opMap.keySet.contains(opOrNot)) {
-          parseRelational(tokens)
-        } else {
-          parseFunCall(tokens)
-        }
       case _ =>
+        println(tokens)
         parseRelational(tokens)
     }
   }
@@ -45,11 +40,16 @@ object parser {
   def parseArgs(tokens: List[Token]): (List[Exp], List[Token]) = {
     def parseArgsSub(tokens: List[Token],
                      acm: List[Exp]): (List[Exp], List[Token]) = {
-      if (tokens.isEmpty || opMap.keySet.contains(tokens.head)) {
+      if (tokens.isEmpty) {
         return (acm, tokens)
       }
-      val (exp, rest) = parseExp(tokens)
-      parseArgsSub(rest, acm :+ exp)
+      tokens.head match {
+        case LParen | VarToken(_) | IntToken(_) =>
+          val (exp, rest) = parseExp(tokens)
+          parseArgsSub(rest, acm :+ exp)
+        case _ =>
+          (acm, tokens)
+      }
     }
     parseArgsSub(tokens, List())
   }
@@ -197,7 +197,12 @@ object parser {
       case IntToken(n) :: rest =>
         (IntVal(n), rest)
       case VarToken(n) :: rest =>
-        (Var(n), rest)
+        val (args, rest2) = parseArgs(rest)
+        if (args.isEmpty) {
+          (Var(n), rest)
+        } else {
+          (FunCall(Var(n), args), rest2)
+        }
       case _ =>
         parseExp(tokens)
     }
