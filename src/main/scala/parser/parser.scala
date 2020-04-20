@@ -22,7 +22,6 @@ object parser {
       case FunToken :: rest =>
         parseFun(tokens)
       case _ =>
-        println(tokens)
         parseRelational(tokens)
     }
   }
@@ -33,8 +32,15 @@ object parser {
         val f = Var(n)
         val (args, rest2) = parseArgs(rest)
         (FunCall(f, args), rest2)
-      case _ =>
-        throw new Exception("error")
+      case FunToken :: rest =>
+        val (f, rest2) = parseFun(FunToken :: rest)
+        rest2 match {
+          case RParen :: rest3 =>
+            val (args, rest4) = parseArgs(rest3)
+            (FunCall(f, args), rest4)
+          case _ =>
+            throw new Exception("error")
+        }
     }
   }
   def parseArgs(tokens: List[Token]): (List[Exp], List[Token]) = {
@@ -44,9 +50,14 @@ object parser {
         return (acm, tokens)
       }
       tokens.head match {
-        case LParen | VarToken(_) | IntToken(_) =>
+        case LParen =>
+          // OCamlの演算子の優先順位の仕様上、if式、let式は必ずカッコで囲まれるので、ここではこの3つをチェックするだけでよし
           val (exp, rest) = parseExp(tokens)
           parseArgsSub(rest, acm :+ exp)
+        case VarToken(n) =>
+          parseArgsSub(tokens.tail, acm :+ Var(n))
+        case IntToken(n) =>
+          parseArgsSub(tokens.tail, acm :+ IntVal(n))
         case _ =>
           (acm, tokens)
       }
@@ -74,7 +85,6 @@ object parser {
         case VarToken(n) :: rest =>
           parseParamsSub(rest, acm :+ Var(n))
         case _ =>
-          println(tokens)
           throw new Exception("error: parameterにvarでないものがある")
       }
     }
@@ -199,10 +209,12 @@ object parser {
       case VarToken(n) :: rest =>
         val (args, rest2) = parseArgs(rest)
         if (args.isEmpty) {
-          (Var(n), rest)
+          (Var(n), rest2)
         } else {
-          (FunCall(Var(n), args), rest2)
+          parseFunCall(tokens)
         }
+      case FunToken :: _ =>
+        parseFunCall(tokens)
       case _ =>
         parseExp(tokens)
     }
