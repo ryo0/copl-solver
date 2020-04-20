@@ -13,9 +13,37 @@ object parser {
         parseIf(tokens)
       case LetToken :: rest =>
         parseLet(tokens)
+      case FunToken :: rest =>
+        parseFun(tokens)
       case _ =>
         parseRelational(tokens)
     }
+  }
+
+  def parseFun(tokens: List[Token]): (FunExp, List[Token]) = {
+    tokens match {
+      case FunToken :: rest =>
+        val (params, rest2) = parseParams(rest)
+        val (body, rest3) = parseExp(rest2)
+        (FunExp(params, body), rest3)
+      case _ => 
+        throw new Exception("error: funがない")
+    }
+  }
+
+  def parseParams(tokens: List[Token]): (List[Var], List[Token]) = {
+    def parseParamsSub(tokens: List[Token], acm: List[Var]): (List[Var], List[Token]) = {
+      tokens match {
+        case ArrowToken :: rest =>
+          (acm, rest)
+        case VarToken(n) :: rest =>
+          parseParamsSub(rest, acm :+ Var(n))
+        case _ =>
+          println(tokens)
+          throw new Exception("error: parameterにvarでないものがある")
+      }
+    }
+    parseParamsSub(tokens, List())
   }
 
   def parseLet(tokens: List[Token]) : (LetExp, List[Token]) = {

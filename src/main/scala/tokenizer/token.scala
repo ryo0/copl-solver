@@ -33,4 +33,8 @@ object token {
   object LetToken extends Token
 
   object InToken extends Token
+
+  object ArrowToken extends Token
+
+  object FunToken extends Token
 }

@@ -39,4 +39,10 @@ class ParserTest extends FunSuite {
   test("parseLet") {
     assert(parseExp(tokenize("let x = 2 in x + y")) === (LetExp(Var("x"), IntVal(2), InfixExp(Var("x"), Plus, Var("y"))), List()))
   }
+
+  test("parseFun") {
+    assert(parseExp(tokenize("fun x -> 1")) === (FunExp(List(Var("x")), IntVal(1)), List()))
+    assert(parseExp(tokenize("let f = fun y -> y * a in f")) === (LetExp(Var("f"), FunExp(List(Var("y")),
+      InfixExp(Var("y"), Asterisk, Var("a"))) ,Var("f")), List()))
+  }
 }
