@@ -4,8 +4,14 @@ import tokenizer.token._
 import ast._
 
 object parser {
-  val opMap: Map[Token, Op] = Map(PlusToken -> Plus, MinusToken -> Minus, AsteriskToken -> Asterisk, SlashToken -> Slash,
-    LessThanToken -> LessThan, GreaterThanToken -> GreaterThan)
+  val opMap: Map[Token, Op] = Map(
+    PlusToken -> Plus,
+    MinusToken -> Minus,
+    AsteriskToken -> Asterisk,
+    SlashToken -> Slash,
+    LessThanToken -> LessThan,
+    GreaterThanToken -> GreaterThan
+  )
 
   def parseExp(tokens: List[Token]): (Exp, List[Token]) = {
     tokens match {
@@ -15,9 +21,37 @@ object parser {
         parseLet(tokens)
       case FunToken :: rest =>
         parseFun(tokens)
+      case VarToken(n) :: opOrNot :: _ =>
+        if (opMap.keySet.contains(opOrNot)) {
+          parseRelational(tokens)
+        } else {
+          parseFunCall(tokens)
+        }
       case _ =>
         parseRelational(tokens)
     }
+  }
+
+  def parseFunCall(tokens: List[Token]): (FunCall, List[Token]) = {
+    tokens match {
+      case VarToken(n) :: rest =>
+        val f = Var(n)
+        val (args, rest2) = parseArgs(rest)
+        (FunCall(f, args), rest2)
+      case _ =>
+        throw new Exception("error")
+    }
+  }
+  def parseArgs(tokens: List[Token]): (List[Exp], List[Token]) = {
+    def parseArgsSub(tokens: List[Token],
+                     acm: List[Exp]): (List[Exp], List[Token]) = {
+      if (tokens.isEmpty || opMap.keySet.contains(tokens.head)) {
+        return (acm, tokens)
+      }
+      val (exp, rest) = parseExp(tokens)
+      parseArgsSub(rest, acm :+ exp)
+    }
+    parseArgsSub(tokens, List())
   }
 
   def parseFun(tokens: List[Token]): (FunExp, List[Token]) = {
@@ -26,13 +60,14 @@ object parser {
         val (params, rest2) = parseParams(rest)
         val (body, rest3) = parseExp(rest2)
         (FunExp(params, body), rest3)
-      case _ => 
+      case _ =>
         throw new Exception("error: funがない")
     }
   }
 
   def parseParams(tokens: List[Token]): (List[Var], List[Token]) = {
-    def parseParamsSub(tokens: List[Token], acm: List[Var]): (List[Var], List[Token]) = {
+    def parseParamsSub(tokens: List[Token],
+                       acm: List[Var]): (List[Var], List[Token]) = {
       tokens match {
         case ArrowToken :: rest =>
           (acm, rest)
@@ -46,9 +81,9 @@ object parser {
     parseParamsSub(tokens, List())
   }
 
-  def parseLet(tokens: List[Token]) : (LetExp, List[Token]) = {
+  def parseLet(tokens: List[Token]): (LetExp, List[Token]) = {
     tokens match {
-      case LetToken  :: VarToken(n) :: EqualToken :: rest =>
+      case LetToken :: VarToken(n) :: EqualToken :: rest =>
         val (value, rest2) = parseExp(rest)
         rest2 match {
           case InToken :: rest3 =>
@@ -70,10 +105,10 @@ object parser {
           case ThenToken :: rest3 =>
             val (thenExp, rest4) = parseExp(rest3)
             rest4 match {
-            case ElseToken :: rest5 =>
+              case ElseToken :: rest5 =>
                 val (elseExp, rest6) = parseExp(rest5)
                 (IfExp(condExp, thenExp, elseExp), rest6)
-            case _ =>
+              case _ =>
                 throw new Exception("ifにelse節がない")
             }
           case _ =>
@@ -92,7 +127,7 @@ object parser {
         val (sum2, rest3) = parseSum(rest2)
         val infixExp = InfixExp(sum1, opMap(rest.head), sum2)
         rest3 match {
-          case (LessThanToken | GreaterThanToken)  :: rest4 =>
+          case (LessThanToken | GreaterThanToken) :: rest4 =>
             val (sum, rest5) = parseRelational(rest4)
             (InfixExp(infixExp, opMap(rest3.head), sum), rest5)
           case _ =>
@@ -110,7 +145,7 @@ object parser {
         val (mul2, rest3) = parseMul(rest2)
         val infix = InfixExp(mul1, opMap(rest.head), mul2)
         rest3 match {
-          case (PlusToken | MinusToken)  :: rest4 =>
+          case (PlusToken | MinusToken) :: rest4 =>
             val (mul, rest5) = parseSum(rest4)
             (InfixExp(infix, opMap(rest3.head), mul), rest5)
           case _ =>
@@ -120,22 +155,22 @@ object parser {
         (mul1, rest)
     }
   }
-  def parseMul(tokens: List[Token]): (Exp, List[Token])= {
-      val (pr1, rest) = parseUnary(tokens)
-      rest match {
-        case (AsteriskToken | SlashToken) :: rest2 =>
-          val (pr2, rest3) = parseUnary(rest2)
-          val infix = InfixExp(pr1, opMap(rest.head), pr2)
+  def parseMul(tokens: List[Token]): (Exp, List[Token]) = {
+    val (pr1, rest) = parseUnary(tokens)
+    rest match {
+      case (AsteriskToken | SlashToken) :: rest2 =>
+        val (pr2, rest3) = parseUnary(rest2)
+        val infix = InfixExp(pr1, opMap(rest.head), pr2)
         rest3 match {
           case (AsteriskToken | SlashToken) :: rest4 =>
-          val (mul, rest5) = parseMul(rest4)
-          (InfixExp(infix, opMap(rest3.head), mul), rest5)
+            val (mul, rest5) = parseMul(rest4)
+            (InfixExp(infix, opMap(rest3.head), mul), rest5)
           case _ =>
             (infix, rest3)
         }
-        case _ =>
-          (pr1, rest)
-      }
+      case _ =>
+        (pr1, rest)
+    }
   }
 
   def parseUnary(tokens: List[Token]): (Exp, List[Token]) = {
