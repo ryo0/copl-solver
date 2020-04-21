@@ -7,6 +7,19 @@ object solver {
     solve(exp, List())
   }
 
+  def removeEnv(x: String, env: List[(String, Exp)]): List[(String, Exp)] = {
+    var removed = false
+    var result: List[(String, Exp)] = List()
+    for (e <- env) {
+      if (removed || e._1 != x) {
+        result = result :+ e
+      } else {
+        removed = true
+      }
+    }
+    result
+  }
+
   def solve(exp: Exp, env: List[(String, Exp)]): String = {
     exp match {
       case IntVal(n) =>
@@ -20,6 +33,10 @@ object solver {
           s"${envToString(env)} |- $n evalto ${expToString(eval(exp, env.tail), env.tail)} by E-Var2 {" +
             solve(exp, env.tail) + s"};"
         }
+//      case FunCall(params, body) =>
+//        val funCallE =
+//          s"${envToString(env)} |- ${expToString(FunCall(params, body), env)} by E-App {"
+
       case LetExp(variable, valueExp, inExp) =>
         val let = envToString(env) + " |- " + s" let " + expToString(
           variable,
