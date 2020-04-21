@@ -55,9 +55,27 @@ object main extends App {
     )
   )
   println("--------")
+  println(solve(parseExp(tokenize("fun x -> x + 1"))._1, List()))
+  println("--------")
+  println(solve(parseExp(tokenize("let y = 2 in fun x -> x + y"))._1, List()))
+  println("--------")
   println(
     solve(
-      parseExp(tokenize("let sq = fun x -> x * x in sq 3 + sq 4"))._1,
+      parseExp(tokenize("let sq = fun x -> x * x in sq 3 + sq 4 "))._1,
+      List()
+    )
+  )
+  println("--------")
+  println(
+    solve(
+      parseExp(tokenize("let sq = fun x -> x * x in sq 3 + sq 4 "))._1,
+      List()
+    )
+  )
+  println("--------")
+  println(
+    solve(
+      parseExp(tokenize(" let sm = fun f -> f 3 + f 4 in sm (fun x -> x * x)"))._1,
       List()
     )
   )
