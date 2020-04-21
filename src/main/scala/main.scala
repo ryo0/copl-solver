@@ -56,12 +56,8 @@ object main extends App {
   )
   println("--------")
   println(
-    expToString(
-      parseExp(
-        tokenize(
-          "let s = fun f -> fun g -> fun x -> f x (g x) in   let k = fun x -> fun y -> x in   s k k 7"
-        )
-      )._1,
+    solve(
+      parseExp(tokenize("let sq = fun x -> x * x in sq 3 + sq 4"))._1,
       List()
     )
   )

@@ -12,6 +12,7 @@ object eval {
         return e._2
       }
     }
+    println(key, env)
     throw new Exception("keyがenvにありません")
   }
 
