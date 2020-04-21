@@ -18,16 +18,22 @@ object solver {
           envToString(env) + " |- " + s"$n evalto ${expToString(env.head._2, env)} by E-Var1{};"
         } else {
           s"${envToString(env)} |- $n evalto ${expToString(eval(exp, env.tail), env.tail)} by E-Var2 {" +
-          solve(exp, env.tail) + s"};"
+            solve(exp, env.tail) + s"};"
         }
       case LetExp(variable, valueExp, inExp) =>
-        val let = envToString(env) + " |- " +  s" let " + expToString(variable, env) + " = "
+        val let = envToString(env) + " |- " + s" let " + expToString(
+          variable,
+          env
+        ) + " = "
         val value = eval(valueExp, env)
         val newEnv = (variable.name, value) :: env
         val in = eval(inExp, newEnv)
-        val E = let + expToString(valueExp, env) + " in " + expToString(inExp, env) + " evalto " + expToString(in, newEnv) + " by E-Let {"
+        val E = let + expToString(valueExp, env) + " in " + expToString(
+          inExp,
+          env
+        ) + " evalto " + expToString(in, newEnv) + " by E-Let {"
         val cond1 = solve(valueExp, env)
-        val cond2 = solve(inExp, (variable.name, value)::env)
+        val cond2 = solve(inExp, (variable.name, value) :: env)
         s"$E \n $cond1 \n $cond2\n };"
       case IfExp(condExp, thenExp, elseExp) =>
         val start = expToString(exp, env)
@@ -35,7 +41,7 @@ object solver {
         if (condVal.asInstanceOf[BoolVal].value) {
           val thenVal = eval(thenExp, env)
           val E = envToString(env) + " |- " + s"$start evalto ${expToString(thenVal, env)} by E-IfT {\n"
-          val cond1 =  solve(condExp, env)
+          val cond1 = solve(condExp, env)
           val cond2 = solve(thenExp, env)
           E + cond1 + cond2 + "};"
         } else {
@@ -55,21 +61,21 @@ object solver {
             op match {
               case Plus =>
                 val result = leftValue + rightValue
-                val E =  envToString(env) + " |- " + s"${expToString(exp, env)} evalto $result by E-Plus{"
-                val inBrace = solve(left, env) + "\n" + solve(right, env)  + "\n" + s"$leftValue plus $rightValue is $result by B-Plus{};"
+                val E = envToString(env) + " |- " + s"${expToString(exp, env)} evalto $result by E-Plus{"
+                val inBrace = solve(left, env) + "\n" + solve(right, env) + "\n" + s"$leftValue plus $rightValue is $result by B-Plus{};"
                 E + "\n" + inBrace + "\n};\n"
               case Minus =>
                 if (leftValue == 0) {
-                  return  envToString(env) + " |- " + s" -$rightValue evalto  -$rightValue by E-Int{};"
+                  return envToString(env) + " |- " + s" -$rightValue evalto  -$rightValue by E-Int{};"
                 }
                 val result = leftValue - rightValue
-                val E =   envToString(env) + " |- " + s"${expToString(exp, env)} evalto $result by E-Minus{"
+                val E = envToString(env) + " |- " + s"${expToString(exp, env)} evalto $result by E-Minus{"
                 val inBrace = solve(left, env) + "\n" + solve(right, env) + "\n" + s"$leftValue minus $rightValue is $result by B-Minus{};"
                 E + "\n" + inBrace + "\n};"
               case Asterisk =>
                 val result = leftValue * rightValue
-                val E =  envToString(env) + " |- " + s"${expToString(exp, env)} evalto $result by E-Times{"
-                val inBrace = solve(left, env) + "\n" + solve(right, env)+ "\n" + s"$leftValue times $rightValue is $result by B-Times{};"
+                val E = envToString(env) + " |- " + s"${expToString(exp, env)} evalto $result by E-Times{"
+                val inBrace = solve(left, env) + "\n" + solve(right, env) + "\n" + s"$leftValue times $rightValue is $result by B-Times{};"
                 E + "\n" + inBrace + "\n};\n"
               case LessThan =>
                 val result = leftValue < rightValue
@@ -78,7 +84,7 @@ object solver {
                 E + "\n" + inBrace + "\n};\n"
               case GreaterThan =>
                 val result = leftValue > rightValue
-                val E = envToString(env) + " |- " +  s"${expToString(exp, env)} evalto $result by E-Gt{"
+                val E = envToString(env) + " |- " + s"${expToString(exp, env)} evalto $result by E-Gt{"
                 val inBrace = solve(left, env) + "\n" + solve(right, env) + "\n" + s"$leftValue greater than $rightValue is $result by E-Gt{};"
                 E + "\n" + inBrace + "\n};\n"
             }
@@ -86,12 +92,18 @@ object solver {
     }
   }
 
-  val opMap: Map[Op, String] = Map(Plus -> "+", Minus -> "-", Asterisk -> "*", LessThan -> "<", GreaterThan -> ">")
+  val opMap: Map[Op, String] = Map(
+    Plus -> "+",
+    Minus -> "-",
+    Asterisk -> "*",
+    LessThan -> "<",
+    GreaterThan -> ">"
+  )
   def expToString(exp: Exp, env: List[(String, Exp)]): String = {
     exp match {
-      case IntVal(n) =>  s"$n"
+      case IntVal(n)  => s"$n"
       case BoolVal(b) => s"$b"
-      case Var(n) => s"$n"
+      case Var(n)     => s"$n"
       case InfixExp(IntVal(0), Minus, right) =>
         s"-${expToString(right, env)}"
       case InfixExp(left, op, right) =>
@@ -100,13 +112,21 @@ object solver {
         s"if ${expToString(condExp, env)} then ${expToString(thenExp, env)} else ${expToString(elseExp, env)}"
       case LetExp(variable, valueExp, inExp) =>
         s"let ${expToString(variable, env)} = ${expToString(valueExp, env)} in ${expToString(inExp, env)}"
-
+      case FunExp(params, body) =>
+        val paramsStr = params.map(p => p.name + " ").mkString
+        s"fun $paramsStr -> ${expToString(body, env)}"
+      case FunCall(funName, params) =>
+        s"(${expToString(funName, env)} ${expsToString(params, env)})"
     }
   }
+
+  def expsToString(params: List[Exp], env: List[(String, Exp)]): String = {
+    params.map(p => expToString(p, env) + " ").mkString
+  }
+
   def envToString(env: List[(String, Exp)]): String = {
-    val result = env.map(e =>
-      s"${e._1} = ${expToString(eval(e._2, env), env)},"
-    ).reverse
+    val result =
+      env.map(e => s"${e._1} = ${expToString(eval(e._2, env), env)},").reverse
     val resultStr = result.mkString
     resultStr.slice(0, resultStr.length - 1)
   }
