@@ -33,16 +33,15 @@ object solver {
             solve(exp, env.tail) + s"};"
         }
       case FunExp(params, body) =>
+        val removedEnv = removeEnv(params.head.name, env)
         s"${envToString(env)} |- ${expToString(FunExp(params, body), env)} evalto " +
-          s"${funExpToStringWithEnv(FunExp(params, body), env)}  by E-Fun{};"
+          s"${funExpToStringWithEnv(FunExp(params, body), removedEnv)}  by E-Fun{};"
       case FunCall(funName, params) =>
         val funCallE =
           s"${envToString(env)} |- ${expToString(FunCall(funName, params), env)} evalto ${funExpToStringWithEnv(eval(exp, env), env)} by E-App {"
         val cond1 = funName match {
           case FunExp(params, body) =>
-            val removedEnv = removeEnv(params.head.name, env)
-            s"${envToString(env)} |- ${expToString(funName, env)} evalto " +
-              s"${funExpToStringWithEnv(FunExp(params, body), removedEnv)} by E-Fun{};"
+            solve(FunExp(params, body), env)
           case Var(n) =>
             val removedEnv = removeEnv(n, env)
             s"${envToString(env)} |-  ${expToString(funName, env)} evalto " +
@@ -56,15 +55,12 @@ object solver {
             solve(body, env :+ (params2.head.name, eval(params.head, env)))
           case Var(n) =>
             val fun = getValFromEnv(n, env)
-            val removedEnv = removeEnv(n, env)
             fun match {
               case FunExp(params2, body) =>
+                val removedEnv = removeEnv(n, env)
                 solve(
                   body,
-                  removedEnv :+ (params2.head.name, eval(
-                    params.head,
-                    removedEnv
-                  ))
+                  removedEnv :+ (params2.head.name, eval(params.head, env))
                 )
               case _ =>
                 throw new Exception("error")
