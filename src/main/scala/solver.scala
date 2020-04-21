@@ -34,7 +34,7 @@ object solver {
         }
       case FunExp(params, body) =>
         s"${envToString(env)} |- ${expToString(FunExp(params, body), env)} evalto " +
-          s"${funExpToStringWithEnv(FunExp(params, body), env)} by E-Fun{};"
+          s"${funExpToStringWithEnv(FunExp(params, body), env)}  by E-Fun{};"
       case FunCall(funName, params) =>
         val funCallE =
           s"${envToString(env)} |- ${expToString(FunCall(funName, params), env)} evalto ${funExpToStringWithEnv(eval(exp, env), env)} by E-App {"
@@ -61,7 +61,10 @@ object solver {
               case FunExp(params2, body) =>
                 solve(
                   body,
-                  removedEnv :+ (params2.head.name, eval(params.head, env))
+                  removedEnv :+ (params2.head.name, eval(
+                    params.head,
+                    removedEnv
+                  ))
                 )
               case _ =>
                 throw new Exception("error")
