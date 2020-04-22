@@ -176,9 +176,9 @@ object solver {
       case FunExp(params, body) =>
         val funStr = s"${expToString(FunExp(params, body), env)}"
         if (funStr.head == '(') {
-          s"() [${funStr.slice(1, funStr.length - 1)}]"
+          s"(${envToString(env)}) [${funStr.slice(1, funStr.length - 1)}]"
         } else {
-          s"() [${expToString(FunExp(params, body), env)}]"
+          s"(${envToString(env)}) [${expToString(FunExp(params, body), env)}]"
         }
       case Closure(e, FunExp(params, body)) =>
         val funStr = s"${expToString(FunExp(params, body), env)}"
@@ -225,10 +225,9 @@ object solver {
     }
     val result =
       env
-        .map(
-          e =>
-            s"${e._1} = ${funExpToStringWithEnv(eval(e._2, env), removeEnv(e._1, env))},"
-        )
+        .map(e => {
+          s"${e._1} = ${funExpToStringWithEnv(eval(e._2, env), List())},"
+        })
         .reverse
     val resultStr = result.mkString
     resultStr.slice(0, resultStr.length - 1)
