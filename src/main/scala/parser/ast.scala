@@ -18,4 +18,5 @@ object ast {
   case class LetExp(variable: Var, valueExp: Exp, inExp: Exp) extends Exp
   case class FunExp(params: List[Var], body: Exp) extends Exp
   case class FunCall(funName: Exp, params: List[Exp]) extends Exp
+  case class Closure(env: List[(String, Exp)], funExp: FunExp) extends Exp
 }

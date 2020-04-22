@@ -31,13 +31,17 @@ object eval {
           eval(elseExp, env)
         }
       }
-      case FunExp(funName, params) =>
-        FunExp(funName, params)
+      case FunExp(params, body) =>
+        FunExp(params, body)
+      case Closure(e, FunExp(p, b)) =>
+        Closure(e, FunExp(p, b))
       case FunCall(Var(n), args) =>
         val fun = getValFromEnv(n, env)
         fun match {
           case FunExp(params, body) =>
             eval(body, makeNewEnv(params, args, env))
+          case Closure(e, FunExp(p, b)) =>
+            eval(b, makeNewEnv(p, args, e ::: env))
           case _ =>
             throw new Exception("error")
         }
