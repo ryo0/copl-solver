@@ -19,6 +19,28 @@ object solver {
     result
   }
 
+  def solveFunExp(funExp: FunExp,
+                  env: List[(String, Exp)],
+                  n: String,
+                  argsHead: Exp): String = {
+    val (params, body) = (funExp.params, funExp.body)
+    val removedEnv = removeEnv(n, env)
+    argsHead match {
+      case FunExp(p, b) =>
+        solve(
+          body,
+          (params.head.name, Closure(env, FunExp(p, b))) :: removedEnv
+        )
+      case Closure(e, FunExp(p, b)) =>
+        solve(
+          body,
+          (params.head.name, Closure(e ::: env, FunExp(p, b))) :: (e ::: removedEnv)
+        )
+      case _ =>
+        solve(body, (params.head.name, eval(argsHead, env)) :: removedEnv)
+    }
+  }
+
   def solve(exp: Exp, env: List[(String, Exp)]): String = {
     exp match {
       case IntVal(n) =>
@@ -57,57 +79,11 @@ object solver {
             val fun = getValFromEnv(n, env)
             fun match {
               case FunExp(params, body) =>
-                val removedEnv = removeEnv(n, env)
                 val argsHead = eval(args.head, env)
-                argsHead match {
-                  case FunExp(p, b) =>
-                    solve(
-                      body,
-                      removedEnv :+ (params.head.name, Closure(
-                        env,
-                        FunExp(p, b)
-                      ))
-                    )
-                  case Closure(e, FunExp(p, b)) =>
-                    solve(
-                      body,
-                      removedEnv :+ (params.head.name, Closure(
-                        e ::: env,
-                        FunExp(p, b)
-                      ))
-                    )
-                  case _ =>
-                    solve(
-                      body,
-                      removedEnv :+ (params.head.name, eval(args.head, env))
-                    )
-                }
+                solveFunExp(FunExp(params, body), env, n, argsHead)
               case Closure(e, FunExp(params, body)) =>
-                val removedEnv = removeEnv(n, env)
                 val argsHead = eval(args.head, env)
-                argsHead match {
-                  case FunExp(p, b) =>
-                    solve(
-                      body,
-                      removedEnv :+ (params.head.name, Closure(
-                        e ::: env,
-                        FunExp(p, b)
-                      ))
-                    )
-                  case Closure(e2, FunExp(p, b)) =>
-                    solve(
-                      body,
-                      removedEnv :+ (params.head.name, Closure(
-                        e ::: e2 ::: env,
-                        FunExp(p, b)
-                      ))
-                    )
-                  case _ =>
-                    solve(
-                      body,
-                      removedEnv :+ (params.head.name, eval(args.head, env))
-                    )
-                }
+                solveFunExp(FunExp(params, body), e ::: env, n, argsHead)
               case _ =>
                 throw new Exception("error")
             }
@@ -233,8 +209,7 @@ object solver {
         val paramsStr = params.map(p => p.name + " ").mkString
         s"(fun $paramsStr -> ${expToString(body, env)})"
       case Closure(e, FunExp(params, body)) =>
-        val paramsStr = params.map(p => p.name + " ").mkString
-        s"(fun $paramsStr -> ${expToString(body, env)})"
+        funExpToStringWithEnv(FunExp(params, body), e ::: env)
       case FunCall(funName, params) =>
         s"(${expToString(funName, env)} ${expsToString(params, env)})"
     }
