@@ -37,7 +37,7 @@ object solver {
           (params.head.name, Closure(e ::: env, FunExp(p, b))) :: (e ::: removedEnv)
         )
       case _ =>
-        solve(body, (params.head.name, eval(argsHead, env)) :: removedEnv)
+        solve(body, (params.head.name, argsHead) :: removedEnv)
     }
   }
 
@@ -57,7 +57,7 @@ object solver {
       case FunExp(params, body) =>
         val removedEnv = removeEnv(params.head.name, env)
         s"${envToString(env)} |- ${expToString(FunExp(params, body), env)} evalto " +
-          s"${funExpToStringWithEnv(FunExp(params, body), removedEnv)}  by E-Fun{};"
+          s"${funExpToStringWithEnv(Closure(removedEnv, FunExp(params, body)), List())} by E-Fun{};"
       case FunCall(funName, args) =>
         val funCallE =
           s"${envToString(env)} |- ${expToString(FunCall(funName, args), env)} evalto ${funExpToStringWithEnv(eval(exp, env), env)} by E-App {"
@@ -176,9 +176,9 @@ object solver {
       case FunExp(params, body) =>
         val funStr = s"${expToString(FunExp(params, body), env)}"
         if (funStr.head == '(') {
-          s"(${envToString(env)}) [${funStr.slice(1, funStr.length - 1)}]"
+          s"() [${funStr.slice(1, funStr.length - 1)}]"
         } else {
-          s"(${envToString(env)}) [${expToString(FunExp(params, body), env)}]"
+          s"() [${expToString(FunExp(params, body), env)}]"
         }
       case Closure(e, FunExp(params, body)) =>
         val funStr = s"${expToString(FunExp(params, body), env)}"
@@ -209,7 +209,7 @@ object solver {
         val paramsStr = params.map(p => p.name + " ").mkString
         s"(fun $paramsStr -> ${expToString(body, env)})"
       case Closure(e, FunExp(params, body)) =>
-        funExpToStringWithEnv(FunExp(params, body), e ::: env)
+        funExpToStringWithEnv(FunExp(params, body), env)
       case FunCall(funName, params) =>
         s"(${expToString(funName, env)} ${expsToString(params, env)})"
     }
