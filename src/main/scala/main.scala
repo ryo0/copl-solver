@@ -79,4 +79,13 @@ object main extends App {
       List()
     )
   )
+  println("--------")
+  println(
+    solve(
+      parseExp(
+        tokenize("let a = 3 in let f = fun y -> y * a in let a = 5 in f 4")
+      )._1,
+      List()
+    )
+  )
 }

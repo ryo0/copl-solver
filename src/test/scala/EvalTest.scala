@@ -80,5 +80,13 @@ class EvalTest extends FunSuite {
         )._1
       ) === IntVal(6)
     )
+
+    assert(
+      initEval(
+        parseExp(
+          tokenize("let a = 3 in let f = fun y -> y * a in let a = 5 in f 4")
+        )._1
+      ) === IntVal(12)
+    )
   }
 }
