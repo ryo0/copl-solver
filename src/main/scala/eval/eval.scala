@@ -32,7 +32,7 @@ object eval {
         }
       }
       case FunExp(params, body) =>
-        FunExp(params, body)
+        Closure(env, FunExp(params, body))
       case Closure(e, FunExp(p, b)) =>
         Closure(e, FunExp(p, b))
       case FunCall(Var(n), args) =>
