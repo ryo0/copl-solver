@@ -34,7 +34,7 @@ object solver {
       case Closure(e, FunExp(p, b)) =>
         solve(
           body,
-          (params.head.name, Closure(e ::: env, FunExp(p, b))) :: (e ::: removedEnv)
+          (params.head.name, Closure(e, FunExp(p, b))) :: (e ::: removedEnv)
         )
       case _ =>
         solve(body, (params.head.name, argsHead) :: removedEnv)
@@ -49,9 +49,9 @@ object solver {
         envToString(env) + " |- " + s"$b evalto $b by E-Bool{};"
       case Var(n) =>
         if (env.head._1 == n) {
-          envToString(env) + " |- " + s"$n evalto ${funExpToStringWithEnv(env.head._2, removeEnv(n, env))} by E-Var1{};"
+          envToString(env) + " |- " + s"$n evalto ${funExpToStringWithEnv(env.head._2, List())} by E-Var1{};"
         } else {
-          s"${envToString(env)} |- $n evalto ${funExpToStringWithEnv(eval(exp, env.tail), removeEnv(n, env))} by E-Var2 {" +
+          s"${envToString(env)} |- $n evalto ${funExpToStringWithEnv(eval(exp, env.tail), List())} by E-Var2 {\n" +
             solve(exp, env.tail) + s"};"
         }
       case FunExp(params, body) =>
@@ -65,14 +65,7 @@ object solver {
           case FunExp(params, body) =>
             solve(FunExp(params, body), env)
           case Var(n) =>
-            val removedEnv = removeEnv(n, env)
-            if (env.head._1 == n) {
-              envToString(env) + " |- " + s"$n evalto ${funExpToStringWithEnv(getValFromEnv(n, env), List())} by E-Var1{};"
-            } else {
-              println("else")
-              s"${envToString(env)} |- $n evalto ${funExpToStringWithEnv(eval(Var(n), env.tail), List())} by E-Var2{\n" +
-                solve(Var(n), env.tail) + "\n};"
-            }
+            solve(Var(n), env)
           case _ =>
             throw new Exception("error: funNameがVarでもFunExpでもない")
         }
@@ -88,7 +81,7 @@ object solver {
                 solveFunExp(FunExp(params, body), env, n, argsHead)
               case Closure(e, FunExp(params, body)) =>
                 val argsHead = eval(args.head, env)
-                solveFunExp(FunExp(params, body), e ::: env, n, argsHead)
+                solveFunExp(FunExp(params, body), env, n, argsHead)
               case _ =>
                 throw new Exception("error")
             }
@@ -214,7 +207,7 @@ object solver {
         val paramsStr = params.map(p => p.name + " ").mkString
         s"(fun $paramsStr -> ${expToString(body, env)})"
       case Closure(e, FunExp(params, body)) =>
-        funExpToStringWithEnv(FunExp(params, body), e ::: env)
+        funExpToStringWithEnv(FunExp(params, body), env)
       case FunCall(funName, params) =>
         s"(${expToString(funName, env)} ${expsToString(params, env)})"
     }
@@ -232,7 +225,7 @@ object solver {
       env
         .map(e => {
           // これfunExpToStringWithEnvに渡すべき環境は左側にあるやつだけ
-          s"${e._1} = ${funExpToStringWithEnv(eval(e._2, env), removeEnv(e._1, env))},"
+          s"${e._1} = ${funExpToStringWithEnv(eval(e._2, env), List())},"
         })
         .reverse
     val resultStr = result.mkString
