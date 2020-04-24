@@ -97,7 +97,7 @@ object solver {
         val E = let + expToString(valueExp, env) + " in " + expToString(
           inExp,
           env
-        ) + " evalto " + funExpToStringWithEnv(in, env) + " by E-Let {"
+        ) + " evalto " + funExpToStringWithEnv(in, List()) + " by E-Let {"
         val cond1 = solve(valueExp, env)
         val cond2 = solve(inExp, newEnv)
         s"$E \n $cond1 \n $cond2\n };"
@@ -221,7 +221,6 @@ object solver {
     val result =
       env
         .map(e => {
-          // これfunExpToStringWithEnvに渡すべき環境は左側にあるやつだけ
           s"${e._1} = ${funExpToStringWithEnv(eval(e._2, env), List())},"
         })
         .reverse
