@@ -88,4 +88,16 @@ object main extends App {
       List()
     )
   )
+
+  println("--------")
+  println(
+    solve(
+      parseExp(
+        tokenize(
+          "let twice = fun f -> fun x -> f (f x) in twice (fun x -> x * x) 2"
+        )
+      )._1,
+      List()
+    )
+  )
 }

@@ -32,10 +32,7 @@ object solver {
           (params.head.name, Closure(env, FunExp(p, b))) :: removedEnv
         )
       case Closure(e, FunExp(p, b)) =>
-        solve(
-          body,
-          (params.head.name, Closure(e, FunExp(p, b))) :: (e ::: removedEnv)
-        )
+        solve(body, (params.head.name, Closure(e, FunExp(p, b))) :: removedEnv)
       case _ =>
         solve(body, (params.head.name, argsHead) :: removedEnv)
     }
@@ -100,7 +97,7 @@ object solver {
         val E = let + expToString(valueExp, env) + " in " + expToString(
           inExp,
           env
-        ) + " evalto " + funExpToStringWithEnv(in, newEnv) + " by E-Let {"
+        ) + " evalto " + funExpToStringWithEnv(in, env) + " by E-Let {"
         val cond1 = solve(valueExp, env)
         val cond2 = solve(inExp, newEnv)
         s"$E \n $cond1 \n $cond2\n };"
