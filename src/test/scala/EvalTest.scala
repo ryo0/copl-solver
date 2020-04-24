@@ -93,7 +93,7 @@ class EvalTest extends FunSuite {
       eval(
         parseExp(tokenize("y * a"))._1,
         List(("y", IntVal(4)), ("a", IntVal(5)), ("a", IntVal(3)))
-      ) === IntVal(12)
+      ) === IntVal(20)
     )
   }
 }

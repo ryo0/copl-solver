@@ -81,7 +81,7 @@ object solver {
                 solveFunExp(FunExp(params, body), env, n, argsHead)
               case Closure(e, FunExp(params, body)) =>
                 val argsHead = eval(args.head, env)
-                solveFunExp(FunExp(params, body), env, n, argsHead)
+                solveFunExp(FunExp(params, body), e, n, argsHead)
               case _ =>
                 throw new Exception("error")
             }
