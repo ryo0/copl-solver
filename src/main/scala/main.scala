@@ -3,7 +3,6 @@ import solver.initSolve
 import solver.solve
 import tokenizer.tokenizer.tokenize
 import parser.parser.parseExp
-import eval.eval.eval
 
 object main extends App {
   println(parseExp(tokenize("3 + 5"))._1)

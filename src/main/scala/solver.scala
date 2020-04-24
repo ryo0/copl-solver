@@ -19,6 +19,20 @@ object solver {
     result
   }
 
+  def solveFunExp(param: Var,
+                  body: Exp,
+                  args: List[Exp],
+                  env: List[(String, Exp)]) = {
+    val rmLastArgs = rmLast(args)
+    if (rmLastArgs.isEmpty) {
+      solve(body, env :+ (param.name, eval(args.last, env)))
+    } else {
+      solve(
+        FunCall(body, rmLastArgs),
+        env :+ (param.name, eval(args.last, env))
+      )
+    }
+  }
   def solve(exp: Exp, env: List[(String, Exp)]): String = {
     exp match {
       case IntVal(n) =>
@@ -40,48 +54,27 @@ object solver {
         val funCallE =
           s"${envToString(env)} |- ${expToString(FunCall(funName, args), env)} evalto ${funExpToStringWithEnv(eval(exp, env), env)} by E-App {"
         val cond1 = funName match {
-          case FunExp(params, body) =>
-            solve(FunExp(params, body), env)
+          case FunExp(param, body) =>
+            solveFunExp(param, body, args, env)
           case Var(n) =>
-            solve(Var(n), env)
-          case _ =>
-            throw new Exception("error: funNameがVarでもFunExpでもない")
+            val rmLastArgs = rmLast(args)
+            if (rmLastArgs.isEmpty) {
+              solve(Var(n), env)
+            } else {
+              solve(FunCall(Var(n), rmLast(args)), env)
+            }
         }
         val cond2 = solve(args.last, env)
         val cond3 = funName match {
           case FunExp(param, body) =>
-            val rmLastArgs = rmLast(args)
-            if (rmLastArgs.isEmpty) {
-              solve(body, env :+ (param.name, eval(args.last, env)))
-            } else {
-              solve(
-                FunCall(body, rmLast(args)),
-                env :+ (param.name, eval(args.last, env))
-              )
-            }
+            solveFunExp(param, body, args, env)
           case Var(n) =>
             val fun = getValFromEnv(n, env)
             fun match {
               case FunExp(param, body) =>
-                val rmLastArgs = rmLast(args)
-                if (rmLastArgs.isEmpty) {
-                  solve(body, env :+ (param.name, eval(args.last, env)))
-                } else {
-                  solve(
-                    FunCall(body, rmLast(args)),
-                    env :+ (param.name, eval(args.last, env))
-                  )
-                }
+                solveFunExp(param, body, args, env)
               case Closure(e, FunExp(param, body)) =>
-                val rmLastArgs = rmLast(args)
-                if (rmLastArgs.isEmpty) {
-                  solve(body, e :+ (param.name, eval(args.last, e)))
-                } else {
-                  solve(
-                    FunCall(body, rmLast(args)),
-                    e :+ (param.name, eval(args.last, e))
-                  )
-                }
+                solveFunExp(param, body, args, e ::: env)
               case _ =>
                 throw new Exception("error")
             }
