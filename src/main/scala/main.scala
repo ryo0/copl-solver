@@ -6,6 +6,7 @@ import parser.parser.parseExp
 import eval.eval.eval
 
 object main extends App {
+  println(parseExp(tokenize("3 + 5"))._1)
   println(initSolve(parseExp(tokenize("3 + 5"))._1))
   println(initSolve(parseExp(tokenize("8 - 2 - 3"))._1))
   println(initSolve(parseExp(tokenize("(4 + 5) * (1 - 10) "))._1))
@@ -57,8 +58,6 @@ object main extends App {
   println("--------")
   println(solve(parseExp(tokenize("fun x -> x + 1"))._1, List()))
   println("--------")
-  println(solve(parseExp(tokenize("let y = 2 in fun x -> x + y"))._1, List()))
-  println("--------")
   println(
     solve(
       parseExp(tokenize("let sq = fun x -> x * x in sq 3 + sq 4 "))._1,
@@ -93,4 +92,11 @@ object main extends App {
   println(
     solve(parseExp(tokenize("let a = 1 in let b = 2 in fun x -> 1"))._1, List())
   )
+//  println("--------")
+//  println(
+//    solve(
+//      parseExp(tokenize("let f = fun y -> x + y in f 1"))._1,
+//      List(("x", IntVal(2)))
+//    )
+//  )
 }
