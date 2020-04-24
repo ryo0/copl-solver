@@ -106,6 +106,7 @@ class EvalTest extends FunSuite {
         List()
       ) === IntVal(3)
     )
+
     assert(
       eval(
         parseExp(
@@ -115,6 +116,15 @@ class EvalTest extends FunSuite {
         )._1,
         List()
       ) === IntVal(5)
+    )
+
+    assert(
+      eval(
+        parseExp(
+          tokenize("let f = fun x -> fun y -> fun z -> x + y + z in f 1 2 3")
+        )._1,
+        List()
+      ) === IntVal(6)
     )
   }
 }
