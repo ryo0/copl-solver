@@ -50,10 +50,15 @@ object solver {
         val cond2 = solve(args.last, env)
         val cond3 = funName match {
           case FunExp(param, body) =>
-            solve(
-              FunCall(body, rmLast(args)),
-              env :+ (param.name, eval(args.last, env))
-            )
+            val rmLastArgs = rmLast(args)
+            if (rmLastArgs.isEmpty) {
+              solve(body, env :+ (param.name, eval(args.last, env)))
+            } else {
+              solve(
+                FunCall(body, rmLast(args)),
+                env :+ (param.name, eval(args.last, env))
+              )
+            }
           case Var(n) =>
             val fun = getValFromEnv(n, env)
             fun match {

@@ -92,11 +92,11 @@ object main extends App {
   println(
     solve(parseExp(tokenize("let a = 1 in let b = 2 in fun x -> 1"))._1, List())
   )
-//  println("--------")
-//  println(
-//    solve(
-//      parseExp(tokenize("let f = fun y -> x + y in f 1"))._1,
-//      List(("x", IntVal(2)))
-//    )
-//  )
+  println("--------")
+  println(
+    solve(
+      parseExp(tokenize("let f = fun x -> fun y -> x + y in f 1 2"))._1,
+      List()
+    )
+  )
 }
