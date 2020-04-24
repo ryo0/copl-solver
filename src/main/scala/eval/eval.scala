@@ -30,22 +30,22 @@ object eval {
           eval(elseExp, env)
         }
       }
-      case FunExp(params, body) =>
-        Closure(env, FunExp(params, body))
-      case Closure(e, FunExp(p, b)) =>
-        Closure(e, FunExp(p, b))
+      case FunExp(param, body) =>
+        Closure(env, FunExp(param, body))
+      case Closure(e, FunExp(param, body)) =>
+        Closure(e ::: env, FunExp(param, body))
       case FunCall(Var(n), args) =>
         val fun = getValFromEnv(n, env)
         fun match {
-          case FunExp(params, body) =>
-            eval(body, makeNewEnv(params, args, env))
-          case Closure(e, FunExp(p, b)) =>
-            eval(b, makeNewEnv(p, args, e ::: env))
-          case _ =>
-            throw new Exception("error")
+          case FunExp(p, b) =>
+            applyFunCall(FunExp(p, b), args, env)
+          case Closure(e, (FunExp(p, b))) =>
+            applyFunCall(FunExp(p, b), args, e ::: env)
         }
-      case FunCall(FunExp(params, body), args) =>
-        eval(body, makeNewEnv(params, args, env))
+      case FunCall(FunExp(p, b), args) =>
+        applyFunCall(FunExp(p, b), args, env)
+      case FunCall(Closure(e, FunExp(p, b)), args) =>
+        applyFunCall(FunExp(p, b), args, e ::: env)
       case InfixExp(left, op, right) =>
         val leftVal = eval(left, env)
         val rightVal = eval(right, env)
@@ -74,14 +74,26 @@ object eval {
     }
   }
 
-  def makeNewEnv(params: List[Var],
-                 args: List[Exp],
+  def applyFunCall(fun: FunExp, args: List[Exp], env: List[(String, Exp)]) = {
+    args
+      .slice(1, args.length)
+      .foldLeft(eval(fun.body, makeNewEnv(fun.param, args.head, env))) {
+        (acc, arg) =>
+          acc match {
+            case FunExp(p, b) =>
+              eval(b, makeNewEnv(p, arg, env))
+            case Closure(e, FunExp(p, b)) =>
+              eval(b, makeNewEnv(p, arg, e ::: env))
+            case _ =>
+              throw new Exception("関数以外に対して関数呼び出しをしている")
+          }
+      }
+  }
+
+  def makeNewEnv(param: Var,
+                 arg: Exp,
                  env: List[(String, Exp)]): List[(String, Exp)] = {
-    var newEnv: List[(String, Exp)] = List()
-    for (i <- params.indices) {
-      newEnv = (params(i).name, eval(args(i), env)) :: newEnv
-    }
-    newEnv ::: env
+    (param.name, eval(arg, env)) :: env
   }
 
   def plus(exp1: Exp, exp2: Exp): IntVal = {

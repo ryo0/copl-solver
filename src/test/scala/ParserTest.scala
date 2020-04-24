@@ -112,12 +112,12 @@ class ParserTest extends FunSuite {
 
   test("parseFun") {
     assert(
-      parseExp(tokenize("fun x -> 1")) === (FunExp(List(Var("x")), IntVal(1)), List())
+      parseExp(tokenize("fun x -> 1")) === (FunExp(Var("x"), IntVal(1)), List())
     )
     assert(
       parseExp(tokenize("let f = fun y -> y * a in f")) === (LetExp(
         Var("f"),
-        FunExp(List(Var("y")), InfixExp(Var("y"), Asterisk, Var("a"))),
+        FunExp(Var("y"), InfixExp(Var("y"), Asterisk, Var("a"))),
         Var("f")
       ), List())
     )
@@ -155,20 +155,26 @@ class ParserTest extends FunSuite {
     assert(
       parseExp(tokenize("twice (fun x -> x * x )")) === (FunCall(
         Var("twice"),
-        List(FunExp(List(Var("x")), InfixExp(Var("x"), Asterisk, Var("x"))))
+        List(FunExp(Var("x"), InfixExp(Var("x"), Asterisk, Var("x"))))
       ), List())
     )
     assert(
       parseExp(tokenize("let k = fun x -> fun y -> x in k 7")) === (LetExp(
         Var("k"),
-        FunExp(List(Var("x")), FunExp(List(Var("y")), Var("x"))),
+        FunExp(Var("x"), FunExp(Var("y"), Var("x"))),
         FunCall(Var("k"), List(IntVal(7)))
       ), List())
     )
     assert(
       parseExp(tokenize("(fun x -> x * 2) 2")) === (FunCall(
-        FunExp(List(Var("x")), InfixExp(Var("x"), Asterisk, IntVal(2))),
+        FunExp(Var("x"), InfixExp(Var("x"), Asterisk, IntVal(2))),
         List(IntVal(2))
+      ), List())
+    )
+    assert(
+      parseExp(tokenize("f 1 2")) === (FunCall(
+        Var("f"),
+        List(IntVal(1), IntVal(2))
       ), List())
     )
   }

@@ -16,7 +16,7 @@ object ast {
   case class InfixExp(leftExp: Exp, op: Op, rightExp: Exp) extends Exp
   case class IfExp(condExp: Exp, thenExp: Exp, elseExp: Exp) extends Exp
   case class LetExp(variable: Var, valueExp: Exp, inExp: Exp) extends Exp
-  case class FunExp(params: List[Var], body: Exp) extends Exp
+  case class FunExp(param: Var, body: Exp) extends Exp
   case class FunCall(funName: Exp, params: List[Exp]) extends Exp
   case class Closure(env: List[(String, Exp)], funExp: FunExp) extends Exp
 }

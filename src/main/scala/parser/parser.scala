@@ -70,7 +70,7 @@ object parser {
       case FunToken :: rest =>
         val (params, rest2) = parseParams(rest)
         val (body, rest3) = parseExp(rest2)
-        (FunExp(params, body), rest3)
+        (FunExp(params.head, body), rest3)
       case _ =>
         throw new Exception("error: funがない")
     }
