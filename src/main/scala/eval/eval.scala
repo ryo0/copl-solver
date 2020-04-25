@@ -40,7 +40,7 @@ object eval {
           case FunExp(p, b) =>
             applyFunCall(FunExp(p, b), args, env)
           case Closure(e, (FunExp(p, b))) =>
-            applyFunCall(FunExp(p, b), args, e ::: env)
+            applyFunCall(FunExp(p, b), args, e)
         }
       case FunCall(FunExp(p, b), args) =>
         applyFunCall(FunExp(p, b), args, env)
