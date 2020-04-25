@@ -39,7 +39,7 @@ object eval {
         fun match {
           case FunExp(p, b) =>
             applyFunCall(FunExp(p, b), args, env)
-          case Closure(e, (FunExp(p, b))) =>
+          case Closure(e, FunExp(p, b)) =>
             applyFunCall(FunExp(p, b), args, e)
         }
       case FunCall(FunExp(p, b), args) =>
@@ -74,7 +74,9 @@ object eval {
     }
   }
 
-  def applyFunCall(fun: FunExp, args: List[Exp], env: List[(String, Exp)]) = {
+  def applyFunCall(fun: FunExp,
+                   args: List[Exp],
+                   env: List[(String, Exp)]): Exp = {
     args
       .slice(1, args.length)
       .foldLeft(eval(fun.body, makeNewEnv(fun.param, args.head, env))) {
