@@ -185,10 +185,6 @@ object solver {
         }
       case Closure(e, FunExp(param, body)) =>
         val funStr = s"${expToString(FunExp(param, body), env)}"
-        println("e = ", envToString(e))
-        println("env = ", envToString(env))
-        println("param.name = ", param.name)
-
         if (funStr.head == '(') {
           s"(${envToString(e)}) [${funStr.slice(1, funStr.length - 1)}]"
         } else {
