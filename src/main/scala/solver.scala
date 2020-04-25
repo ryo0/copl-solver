@@ -57,11 +57,14 @@ object solver {
           case FunExp(param, body) =>
             solveFunExp(param, body, args, env)
           case Var(n) =>
-            val rmLastArgs = rmLast(args)
-            if (rmLastArgs.isEmpty) {
-              solve(Var(n), env)
-            } else {
-              solve(FunCall(Var(n), rmLast(args)), env)
+            val fun = getValFromEnv(n, env)
+            fun match {
+              case FunExp(param, body) =>
+                solveFunExp(param, body, args, env)
+              case Closure(ce, FunExp(param, body)) =>
+                solveFunExp(param, body, args, ce ::: env)
+              case _ =>
+                throw new Exception("error 関数以外でFunCall")
             }
         }
         val cond2 = solve(args.last, env)
