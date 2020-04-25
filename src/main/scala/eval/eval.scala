@@ -45,7 +45,7 @@ object eval {
       case FunCall(FunExp(p, b), args) =>
         applyFunCall(FunExp(p, b), args, env)
       case FunCall(Closure(e, FunExp(p, b)), args) =>
-        applyFunCall(FunExp(p, b), args, e ::: env)
+        applyFunCall(FunExp(p, b), args, e)
       case InfixExp(left, op, right) =>
         val leftVal = eval(left, env)
         val rightVal = eval(right, env)
