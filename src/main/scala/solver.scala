@@ -19,17 +19,15 @@ object solver {
     result
   }
 
-  def solveFunExp(param: Var,
-                  body: Exp,
+  def solveFunExp(fun: FunExp,
                   args: List[Exp],
-                  env: List[(String, Exp)]) = {
-    val rmLastArgs = rmLast(args)
-    if (rmLastArgs.isEmpty) {
-      solve(body, (param.name, eval(args.last, env)) :: env)
+                  env: List[(String, Exp)]): String = {
+    if (rmLast(args).isEmpty) {
+      solve(fun.body, (fun.param.name, eval(args.head, env)) :: env)
     } else {
       solve(
-        FunCall(body, rmLastArgs),
-        (param.name, eval(args.last, env)) :: env
+        FunCall(fun.body, args.tail),
+        (fun.param.name, eval(args.head, env)) :: env
       )
     }
   }
@@ -74,14 +72,14 @@ object solver {
         val cond2 = solve(args.last, env)
         val cond3 = funName match {
           case FunExp(param, body) =>
-            solveFunExp(param, body, args, env)
+            solveFunExp(FunExp(param, body), args, env)
           case Var(n) =>
             val fun = getValFromEnv(n, env)
             fun match {
               case FunExp(param, body) =>
-                solveFunExp(param, body, args, List())
+                solveFunExp(FunExp(param, body), args, List())
               case Closure(e, FunExp(param, body)) =>
-                solveFunExp(param, body, args, e)
+                solveFunExp(FunExp(param, body), args, e)
               case _ =>
                 throw new Exception("error")
             }
