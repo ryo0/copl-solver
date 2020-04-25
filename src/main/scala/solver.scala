@@ -236,7 +236,7 @@ object solver {
           val result = eval(e._2, env)
           result match {
             case Closure(ce, FunExp(p, b)) =>
-              s"${e._1} = ${funExpToStringWithEnv(FunExp(p, b), List())},"
+              s"${e._1} = ${funExpToStringWithEnv(FunExp(p, b), ce)},"
             case _ =>
               s"${e._1} = ${funExpToStringWithEnv(result, List())},"
           }
