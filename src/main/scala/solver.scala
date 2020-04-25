@@ -25,11 +25,11 @@ object solver {
                   env: List[(String, Exp)]) = {
     val rmLastArgs = rmLast(args)
     if (rmLastArgs.isEmpty) {
-      solve(body, env :+ (param.name, eval(args.last, env)))
+      solve(body, (param.name, eval(args.last, env)) :: env)
     } else {
       solve(
         FunCall(body, rmLastArgs),
-        env :+ (param.name, eval(args.last, env))
+        (param.name, eval(args.last, env)) :: env
       )
     }
   }
@@ -55,17 +55,21 @@ object solver {
           s"${envToString(env)} |- ${expToString(FunCall(funName, args), env)} evalto ${funExpToStringWithEnv(eval(exp, env), env)} by E-App {"
         val cond1 = funName match {
           case FunExp(param, body) =>
-            solveFunExp(param, body, args, env)
-          case Var(n) =>
-            val fun = getValFromEnv(n, env)
-            fun match {
-              case FunExp(param, body) =>
-                solveFunExp(param, body, args, env)
-              case Closure(ce, FunExp(param, body)) =>
-                solveFunExp(param, body, args, ce ::: env)
-              case _ =>
-                throw new Exception("error 関数以外でFunCall")
+            val rmLastArgs = rmLast(args)
+            if (rmLastArgs.isEmpty) {
+              solve(FunExp(param, body), env)
+            } else {
+              solve(FunCall(FunExp(param, body), rmLast(args)), env)
             }
+          case Var(n) =>
+            val rmLastArgs = rmLast(args)
+            if (rmLastArgs.isEmpty) {
+              solve(Var(n), env)
+            } else {
+              solve(FunCall(Var(n), rmLastArgs), env)
+            }
+          case _ =>
+            throw new Exception("error: funNameがVarでもFunExpでもない")
         }
         val cond2 = solve(args.last, env)
         val cond3 = funName match {
@@ -75,9 +79,9 @@ object solver {
             val fun = getValFromEnv(n, env)
             fun match {
               case FunExp(param, body) =>
-                solveFunExp(param, body, args, env)
+                solveFunExp(param, body, args, List())
               case Closure(e, FunExp(param, body)) =>
-                solveFunExp(param, body, args, e ::: env)
+                solveFunExp(param, body, args, e)
               case _ =>
                 throw new Exception("error")
             }
