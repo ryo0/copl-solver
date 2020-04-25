@@ -22,15 +22,22 @@ object solver {
   def solveFunExp(fun: FunExp,
                   args: List[Exp],
                   env: List[(String, Exp)]): String = {
-    if (rmLast(args).isEmpty) {
+    if (args.tail.isEmpty) {
       solve(fun.body, (fun.param.name, eval(args.head, env)) :: env)
     } else {
-      solve(
-        FunCall(fun.body, args.tail),
-        (fun.param.name, eval(args.head, env)) :: env
-      )
+      val newEnv = (fun.param.name, eval(args.head, env)) :: env
+      val exp = eval(fun.body, newEnv)
+      exp match {
+        case FunExp(param, body) =>
+          solveFunExp(FunExp(param, body), args.tail, newEnv)
+        case Closure(ce, FunExp(param, body)) =>
+          solveFunExp(FunExp(param, body), args.tail, newEnv)
+        case _ =>
+          throw new Exception("OTHER")
+      }
     }
   }
+
   def solve(exp: Exp, env: List[(String, Exp)]): String = {
     exp match {
       case IntVal(n) =>
