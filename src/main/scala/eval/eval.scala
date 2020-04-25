@@ -33,7 +33,7 @@ object eval {
       case FunExp(param, body) =>
         Closure(env, FunExp(param, body))
       case Closure(e, FunExp(param, body)) =>
-        Closure(e ::: env, FunExp(param, body))
+        Closure(e, FunExp(param, body))
       case FunCall(Var(n), args) =>
         val fun = getValFromEnv(n, env)
         fun match {
@@ -83,7 +83,7 @@ object eval {
             case FunExp(p, b) =>
               eval(b, makeNewEnv(p, arg, env))
             case Closure(e, FunExp(p, b)) =>
-              eval(b, makeNewEnv(p, arg, e ::: env))
+              eval(b, makeNewEnv(p, arg, e))
             case _ =>
               throw new Exception("関数以外に対して関数呼び出しをしている")
           }
