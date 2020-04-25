@@ -1,0 +1,7 @@
+ |-  let a = 1 in let b = 2 in (fun x -> 1) evalto (a = 1,b = 2) [fun x -> 1] by E-Let { 
+  |- 1 evalto 1 by E-Int{}; 
+ a = 1 |-  let b = 2 in (fun x -> 1) evalto (a = 1,b = 2) [fun x -> 1] by E-Let { 
+ a = 1 |- 2 evalto 2 by E-Int{}; 
+ a = 1,b = 2 |- (fun x -> 1) evalto (a = 1,b = 2) [fun x -> 1] by E-Fun{};
+ };
+ };
