@@ -1,7 +1,8 @@
 import org.scalatest.FunSuite
-import parser.ast.{Closure, FunExp, IntVal, Var}
+import parser.ast.{Closure, FunCall, FunExp, IntVal, Var}
 import solver.solver.removeEnv
 import solver.solver.envToString
+import solver.solver.funExpToStringWithEnv
 
 class SolverTest extends FunSuite {
   test("removeEnv") {
@@ -40,6 +41,19 @@ class SolverTest extends FunSuite {
           ("x", IntVal(2))
         )
       ) === "x = 2,y = 1,f = (x = 2,y = 1,z = 10) [fun x -> x]"
+    )
+  }
+
+  test("funExpToStringWithEnv") {
+    assert(
+      funExpToStringWithEnv(
+        FunExp(Var("a"), FunCall(Var("f"), List(IntVal(1)))),
+        List(
+          ("f", Closure(List(("z", IntVal(10))), FunExp(Var("x"), Var("x")))),
+          ("y", IntVal(1)),
+          ("x", IntVal(2))
+        )
+      ) === "(x = 2,y = 1,f = (x = 2,y = 1,z = 10) [fun x -> x]) [fun a -> (f 1 )]"
     )
   }
 }
