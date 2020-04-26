@@ -24,6 +24,7 @@ object solver {
                   args: List[Exp],
                   env: List[(String, Exp)]): String = {
     if (args.tail.isEmpty) {
+      // args.headが変数の場合、envの中にすでにfun.param.nameと値のペアが含まれているので、環境に加える必要はない
       solve(fun.body, (fun.param.name, eval(args.head, env)) :: env)
     } else {
       val newEnv = (fun.param.name, eval(args.head, env)) :: env
