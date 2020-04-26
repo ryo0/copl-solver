@@ -1,3 +1,4 @@
+package solver
 import parser.ast._
 import eval.eval._
 object solver {
@@ -31,6 +32,8 @@ object solver {
         case FunExp(param, body) =>
           solveFunExp(FunExp(param, body), args.tail, newEnv)
         case Closure(ce, FunExp(param, body)) =>
+          // ここは呼ばれてないらしい
+          throw new Exception("呼ばれない")
           solveFunExp(FunExp(param, body), args.tail, newEnv)
         case _ =>
           throw new Exception("OTHER")
@@ -84,7 +87,7 @@ object solver {
             val fun = getValFromEnv(n, env)
             fun match {
               case FunExp(param, body) =>
-                solveFunExp(FunExp(param, body), args, List())
+                solveFunExp(FunExp(param, body), args, env)
               case Closure(e, FunExp(param, body)) =>
                 solveFunExp(FunExp(param, body), args, e)
               case _ =>
@@ -227,21 +230,25 @@ object solver {
   }
 
   def envToString(env: List[(String, Exp)]): String = {
+    println(env)
     if (env.isEmpty) {
       return ""
     }
-    val result =
-      env
-        .map(e => {
-          val result = eval(e._2, env)
-          result match {
-            case Closure(ce, FunExp(p, b)) =>
-              s"${e._1} = ${funExpToStringWithEnv(FunExp(p, b), ce)},"
-            case _ =>
-              s"${e._1} = ${funExpToStringWithEnv(result, List())},"
-          }
-        })
-        .reverse
+    var currentEnv: List[(String, Exp)] = List()
+    var result = ""
+    for (e <- env.reverse) {
+      e._2 match {
+        case Closure(ce, FunExp(p, b)) =>
+          // ここでce ::: currentEnvを渡すと無限ループ
+          println("ce", ce)
+          result += s"${e._1} = ${funExpToStringWithEnv(FunExp(p, b), ce ::: currentEnv)},"
+        case _ =>
+          result += s"${e._1} = ${funExpToStringWithEnv(e._2, currentEnv)},"
+      }
+      val envValue = eval(e._2, env)
+      currentEnv = (e._1, envValue) :: currentEnv
+    }
+
     val resultStr = result.mkString
     resultStr.slice(0, resultStr.length - 1)
   }
