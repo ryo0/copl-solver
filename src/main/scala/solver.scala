@@ -219,7 +219,7 @@ object solver {
         val paramsStr = param.name.mkString
         s"(fun $paramsStr -> ${expToString(body, env)})"
       case Closure(e, FunExp(param, body)) =>
-        funExpToStringWithEnv(FunExp(param, body), e)
+        throw new Exception("error")
       case FunCall(funName, params) =>
         s"(${expToString(funName, env)} ${expsToString(params, env)})"
     }
