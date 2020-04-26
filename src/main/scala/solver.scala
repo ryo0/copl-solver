@@ -33,7 +33,6 @@ object solver {
           solveFunExp(FunExp(param, body), args.tail, newEnv)
         case Closure(ce, FunExp(param, body)) =>
           // ここは呼ばれてないらしい
-          throw new Exception("呼ばれない")
           solveFunExp(FunExp(param, body), args.tail, newEnv)
         case _ =>
           throw new Exception("OTHER")
@@ -55,9 +54,8 @@ object solver {
             solve(exp, env.tail) + s"};"
         }
       case FunExp(params, body) =>
-        val removedEnv = removeEnv(params.name, env)
         s"${envToString(env)} |- ${expToString(FunExp(params, body), env)} evalto " +
-          s"${funExpToStringWithEnv(Closure(removedEnv, FunExp(params, body)), List())} by E-Fun{};"
+          s"${funExpToStringWithEnv(Closure(env, FunExp(params, body)), List())} by E-Fun{};"
       case FunCall(funName, args) =>
         val funCallE =
           s"${envToString(env)} |- ${expToString(FunCall(funName, args), env)} evalto ${funExpToStringWithEnv(eval(exp, env), env)} by E-App {"
