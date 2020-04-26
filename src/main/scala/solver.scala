@@ -234,19 +234,14 @@ object solver {
     if (env.isEmpty) {
       return ""
     }
-    var currentEnv: List[(String, Exp)] = List()
     var result = ""
     for (e <- env.reverse) {
       e._2 match {
         case Closure(ce, FunExp(p, b)) =>
-          // ここでce ::: currentEnvを渡すと無限ループ
-          println("ce", ce)
-          result += s"${e._1} = ${funExpToStringWithEnv(FunExp(p, b), ce ::: currentEnv)},"
+          result += s"${e._1} = ${funExpToStringWithEnv(FunExp(p, b), ce)},"
         case _ =>
-          result += s"${e._1} = ${funExpToStringWithEnv(e._2, currentEnv)},"
+          result += s"${e._1} = ${funExpToStringWithEnv(e._2, List())},"
       }
-      val envValue = eval(e._2, env)
-      currentEnv = (e._1, envValue) :: currentEnv
     }
 
     val resultStr = result.mkString

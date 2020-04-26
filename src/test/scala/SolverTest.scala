@@ -31,7 +31,7 @@ class SolverTest extends FunSuite {
           ("y", IntVal(1)),
           ("x", IntVal(2))
         )
-      ) === "x = 2,y = 1,f = (x = 2,y = 1) [fun x -> x]"
+      ) === "x = 2,y = 1,f = () [fun x -> x]"
     )
     assert(
       envToString(
@@ -40,7 +40,7 @@ class SolverTest extends FunSuite {
           ("y", IntVal(1)),
           ("x", IntVal(2))
         )
-      ) === "x = 2,y = 1,f = (x = 2,y = 1,z = 10) [fun x -> x]"
+      ) === "x = 2,y = 1,f = (z = 10) [fun x -> x]"
     )
   }
 
@@ -53,7 +53,7 @@ class SolverTest extends FunSuite {
           ("y", IntVal(1)),
           ("x", IntVal(2))
         )
-      ) === "(x = 2,y = 1,f = (x = 2,y = 1,z = 10) [fun x -> x]) [fun a -> (f 1 )]"
+      ) === "(x = 2,y = 1,f = (z = 10) [fun x -> x]) [fun a -> (f 1 )]"
     )
   }
 }

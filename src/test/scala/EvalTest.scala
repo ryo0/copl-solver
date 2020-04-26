@@ -2,7 +2,19 @@ import org.scalatest.FunSuite
 import tokenizer.tokenizer.tokenize
 import parser.parser.{parseExp, parseSum}
 import eval.eval.{applyFunCall, eval, initEval}
-import parser.ast.{Asterisk, GreaterThan, IfExp, InfixExp, IntVal, Minus, Plus}
+import parser.ast.{
+  Asterisk,
+  Closure,
+  FunCall,
+  FunExp,
+  GreaterThan,
+  IfExp,
+  InfixExp,
+  IntVal,
+  Minus,
+  Plus,
+  Var
+}
 
 class EvalTest extends FunSuite {
   test("eval") {
@@ -125,6 +137,23 @@ class EvalTest extends FunSuite {
         )._1,
         List()
       ) === IntVal(6)
+    )
+
+    assert(
+      eval(
+        parseExp(tokenize("f 1"))._1,
+        List(
+          (
+            "f",
+            Closure(
+              List(("z", IntVal(10))),
+              FunExp(Var("x"), InfixExp(Var("z"), Plus, Var("y")))
+            )
+          ),
+          ("y", IntVal(6)),
+          ("x", IntVal(2))
+        )
+      ) === IntVal(16)
     )
   }
 }
