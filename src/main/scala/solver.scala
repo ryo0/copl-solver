@@ -230,19 +230,19 @@ object solver {
   }
 
   def envToString(env: List[(String, Exp)]): String = {
-    println(env)
     if (env.isEmpty) {
       return ""
     }
-    var result = ""
-    for (e <- env.reverse) {
-      e._2 match {
-        case Closure(ce, FunExp(p, b)) =>
-          result += s"${e._1} = ${funExpToStringWithEnv(FunExp(p, b), ce)},"
-        case _ =>
-          result += s"${e._1} = ${funExpToStringWithEnv(e._2, List())},"
-      }
-    }
+    var result =
+      env.reverse.map(
+        e =>
+          e._2 match {
+            case Closure(ce, FunExp(p, b)) =>
+              s"${e._1} = ${funExpToStringWithEnv(FunExp(p, b), ce)},"
+            case _ =>
+              s"${e._1} = ${funExpToStringWithEnv(e._2, List())},"
+        }
+      )
 
     val resultStr = result.mkString
     resultStr.slice(0, resultStr.length - 1)
