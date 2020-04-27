@@ -125,8 +125,8 @@ object main extends App {
       FunExp(Var("f"), FunCall(Var("f"), List(Var("x"), Var("y")))),
       List(
         FunExp(
-          Var("x"),
-          FunExp(Var("y"), InfixExp(Var("x"), Asterisk, Var("y")))
+          Var("p"),
+          FunExp(Var("q"), InfixExp(Var("p"), Asterisk, Var("q")))
         )
       ),
       List(("x", IntVal(3)), ("y", IntVal(7)))
@@ -143,8 +143,8 @@ object main extends App {
         (
           "f",
           FunExp(
-            Var("x"),
-            FunExp(Var("y"), InfixExp(Var("x"), Asterisk, Var("y")))
+            Var("p"),
+            FunExp(Var("q"), InfixExp(Var("p"), Asterisk, Var("q")))
           )
         ),
         ("x", IntVal(3)),

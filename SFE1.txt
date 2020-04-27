@@ -1,16 +1,16 @@
-y = 7,x = 3,f = (y = 7,x = 3) [fun x -> (fun y -> (x * y))] |- (f x y ) evalto 21 by E-App { 
- y = 7,x = 3,f = (y = 7,x = 3) [fun x -> (fun y -> (x * y))] |- (f x ) evalto (y = 7,x = 3,x = 3) [fun y -> (x * y)] by E-App { 
- y = 7,x = 3,f = (y = 7,x = 3) [fun x -> (fun y -> (x * y))] |- f evalto (y = 7,x = 3) [fun x -> (fun y -> (x * y))] by E-Var1{}; 
- y = 7,x = 3,f = (y = 7,x = 3) [fun x -> (fun y -> (x * y))] |- x evalto 3 by E-Var2 {
+y = 7,x = 3,f = (y = 7,x = 3) [fun p -> (fun q -> (p * q))] |- (f x y ) evalto 21 by E-App { 
+ y = 7,x = 3,f = (y = 7,x = 3) [fun p -> (fun q -> (p * q))] |- (f x ) evalto (y = 7,x = 3,p = 3) [fun q -> (p * q)] by E-App { 
+ y = 7,x = 3,f = (y = 7,x = 3) [fun p -> (fun q -> (p * q))] |- f evalto (y = 7,x = 3) [fun p -> (fun q -> (p * q))] by E-Var1{}; 
+ y = 7,x = 3,f = (y = 7,x = 3) [fun p -> (fun q -> (p * q))] |- x evalto 3 by E-Var2 {
 y = 7,x = 3 |- x evalto 3 by E-Var1{};}; 
- y = 7,x = 3,x = 3 |- (fun y -> (x * y)) evalto (y = 7,x = 3,x = 3) [fun y -> (x * y)] by E-Fun{}; }; 
- y = 7,x = 3,f = (y = 7,x = 3) [fun x -> (fun y -> (x * y))] |- y evalto 7 by E-Var2 {
+ y = 7,x = 3,p = 3 |- (fun q -> (p * q)) evalto (y = 7,x = 3,p = 3) [fun q -> (p * q)] by E-Fun{}; }; 
+ y = 7,x = 3,f = (y = 7,x = 3) [fun p -> (fun q -> (p * q))] |- y evalto 7 by E-Var2 {
 y = 7,x = 3 |- y evalto 7 by E-Var2 {
 y = 7 |- y evalto 7 by E-Var1{};};}; 
- y = 7,x = 3,x = 3,y = 7 |- (x * y) evalto 21 by E-Times{
-y = 7,x = 3,x = 3,y = 7 |- x evalto 3 by E-Var2 {
-y = 7,x = 3,x = 3 |- x evalto 3 by E-Var1{};};
-y = 7,x = 3,x = 3,y = 7 |- y evalto 7 by E-Var1{};
+ y = 7,x = 3,p = 3,q = 7 |- (p * q) evalto 21 by E-Times{
+y = 7,x = 3,p = 3,q = 7 |- p evalto 3 by E-Var2 {
+y = 7,x = 3,p = 3 |- p evalto 3 by E-Var1{};};
+y = 7,x = 3,p = 3,q = 7 |- q evalto 7 by E-Var1{};
 3 times 7 is 21 by B-Times{};
 };
  };
