@@ -1,7 +1,7 @@
 import org.scalatest.FunSuite
 import tokenizer.tokenizer.tokenize
 import parser.parser.{parseExp, parseSum}
-import eval.eval.{applyFunCall, eval, initEval}
+import eval.eval.{eval, initEval}
 import parser.ast.{
   Asterisk,
   Closure,

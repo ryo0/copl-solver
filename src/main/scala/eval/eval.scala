@@ -34,18 +34,16 @@ object eval {
         Closure(env, FunExp(param, body))
       case Closure(e, FunExp(param, body)) =>
         Closure(e, FunExp(param, body))
-//      case FunCall(Var(n), args) =>
-//        val fun = getValFromEnv(n, env)
-//        fun match {
-//          case FunExp(p, b) =>
-//            applyFunCall(FunExp(p, b), args, env)
-//          case Closure(e, FunExp(p, b)) =>
-//            applyFunCall(FunExp(p, b), args, e ::: env)
-//        }
-//      case FunCall(FunExp(p, b), args) =>
-//        applyFunCall(FunExp(p, b), args, env)
-//      case FunCall(Closure(e, FunExp(p, b)), args) =>
-//        applyFunCall(FunExp(p, b), args, e ::: env)
+      case FunCall(exp, arg) =>
+        val evaledExp = eval(exp, env)
+        evaledExp match {
+          case FunExp(p, b) =>
+            eval(b, (p.name, eval(arg, env)) :: env)
+          case Closure(e, FunExp(p, b)) =>
+            eval(b, (p.name, eval(arg, env)) :: e ::: env)
+          case _ =>
+            throw new Exception("error")
+        }
       case InfixExp(left, op, right) =>
         val leftVal = eval(left, env)
         val rightVal = eval(right, env)
