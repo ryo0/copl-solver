@@ -63,28 +63,6 @@ object parser {
     }
   }
 
-  def parseArgs(tokens: List[Token]): (List[Exp], List[Token]) = {
-    def parseArgsSub(tokens: List[Token],
-                     acm: List[Exp]): (List[Exp], List[Token]) = {
-      if (tokens.isEmpty) {
-        return (acm, tokens)
-      }
-      tokens.head match {
-        case LParen =>
-          // OCamlの演算子の優先順位の仕様上、if式、let式は必ずカッコで囲まれるので、ここではこの3つをチェックするだけでよし
-          val (exp, rest) = parseExp(tokens)
-          parseArgsSub(rest, acm :+ exp)
-        case VarToken(n) =>
-          parseArgsSub(tokens.tail, acm :+ Var(n))
-        case IntToken(n) =>
-          parseArgsSub(tokens.tail, acm :+ IntVal(n))
-        case _ =>
-          (acm, tokens)
-      }
-    }
-    parseArgsSub(tokens, List())
-  }
-
   def parseFun(tokens: List[Token]): (FunExp, List[Token]) = {
     tokens match {
       case FunToken :: rest =>
