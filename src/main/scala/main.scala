@@ -55,11 +55,11 @@ object main extends App {
 //      List()
 //    )
 //  )
-  val file0 = new PrintWriter("0.txt")
+  val file0 = new PrintWriter("0-correct.txt")
   file0.write(solve(parseExp(tokenize("fun x -> x + 1"))._1, List()))
   file0.close()
 
-  val file1 = new PrintWriter("1.txt")
+  val file1 = new PrintWriter("1-correct.txt")
   file1.write(
     solve(
       parseExp(tokenize("let sq = fun x -> x * x in sq 3 + sq 4 "))._1,
@@ -68,7 +68,7 @@ object main extends App {
   )
   file1.close()
 
-  val file2 = new PrintWriter("2.txt")
+  val file2 = new PrintWriter("2-correct.txt")
 
   file2.write(
     solve(
@@ -79,7 +79,7 @@ object main extends App {
 
   file2.close()
 
-  val file3 = new PrintWriter("3.txt")
+  val file3 = new PrintWriter("3-wrong.txt")
 
   file3.write(
     solve(
@@ -89,7 +89,7 @@ object main extends App {
   )
   file3.close()
 
-  val file4 = new PrintWriter("4.txt")
+  val file4 = new PrintWriter("4-correct.txt")
 
   file4.write(
     solve(
@@ -119,7 +119,7 @@ object main extends App {
   )
   println("---")
   //正しい
-  val fileSFE1 = new PrintWriter("SFE1.txt")
+  val fileSFE1 = new PrintWriter("SFE1-correct.txt")
   fileSFE1.write(
     solveFunExp(
       FunExp(Var("f"), FunCall(Var("f"), List(Var("x"), Var("y")))),
@@ -135,7 +135,7 @@ object main extends App {
   fileSFE1.close()
   println("----")
 // だめ
-  val fileSFE2 = new PrintWriter("SFE2.txt")
+  val fileSFE2 = new PrintWriter("SFE2-wrong.txt")
   fileSFE2.write(
     solve(
       parseExp(tokenize("f x y"))._1,
@@ -161,14 +161,14 @@ object main extends App {
 //      List(("x", IntVal(3)), ("y", IntVal(7)))
 //    )
 //  )
-  val file5 = new PrintWriter("5.txt")
+  val file5 = new PrintWriter("5-correct.txt")
 
   file5.write(
     solve(parseExp(tokenize("let a = 1 in let b = 2 in fun x -> 1"))._1, List())
   )
   file5.close()
 
-  val file6 = new PrintWriter("6.txt")
+  val file6 = new PrintWriter("6-correct.txt")
 
   file6.write(
     solve(

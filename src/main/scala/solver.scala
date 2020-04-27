@@ -190,7 +190,7 @@ object solver {
         if (funStr.head == '(') {
           s"(${envToString(e)}) [${funStr.slice(1, funStr.length - 1)}]"
         } else {
-          s"(${envToString(e)}) [${expToString(FunExp(param, body), env)}]"
+          s"(${envToString(e)}) [${expToString(FunExp(param, body), List())}]"
         }
       case _ =>
         expToString(exp, env)
@@ -232,7 +232,7 @@ object solver {
     if (env.isEmpty) {
       return ""
     }
-    var result =
+    val result =
       env.reverse.map(
         e =>
           e._2 match {

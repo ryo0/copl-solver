@@ -138,22 +138,5 @@ class EvalTest extends FunSuite {
         List()
       ) === IntVal(6)
     )
-
-    assert(
-      eval(
-        parseExp(tokenize("f 1"))._1,
-        List(
-          (
-            "f",
-            Closure(
-              List(("z", IntVal(10))),
-              FunExp(Var("x"), InfixExp(Var("z"), Plus, Var("y")))
-            )
-          ),
-          ("y", IntVal(6)),
-          ("x", IntVal(2))
-        )
-      ) === IntVal(16)
-    )
   }
 }
