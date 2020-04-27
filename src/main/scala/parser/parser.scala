@@ -26,23 +26,43 @@ object parser {
     }
   }
 
-  def parseFunCall(tokens: List[Token]): (FunCall, List[Token]) = {
-    tokens match {
-      case VarToken(n) :: rest =>
-        val f = Var(n)
-        val (args, rest2) = parseArgs(rest)
-        (FunCall(f, args), rest2)
-      case FunToken :: rest =>
-        val (f, rest2) = parseFun(FunToken :: rest)
-        rest2 match {
-          case RParen :: rest3 =>
-            val (args, rest4) = parseArgs(rest3)
-            (FunCall(f, args), rest4)
+  def parseFunCall(fun: Exp, tokens: List[Token]): (FunCall, List[Token]) = {
+    if (tokens.isEmpty) {
+      return (fun.asInstanceOf[FunCall], tokens)
+    }
+    tokens.head match {
+      case LParen | IntToken(_) | VarToken(_) | FunToken =>
+        val (arg, rest) = parseArg(tokens)
+        arg match {
+          case Some(argExp) =>
+            parseFunCall(FunCall(fun, argExp), rest)
           case _ =>
-            throw new Exception("error")
+            (fun.asInstanceOf[FunCall], tokens)
         }
+      case _ =>
+        println(fun, tokens)
+        (fun.asInstanceOf[FunCall], tokens)
     }
   }
+
+  def parseArg(tokens: List[Token]): (Option[Exp], List[Token]) = {
+    if (tokens.isEmpty) {
+      return (None, tokens)
+    }
+
+    tokens.head match {
+      case LParen =>
+        val (exp, rest) = parseExp(tokens)
+        (Some(exp), rest)
+      case VarToken(n) =>
+        (Some(Var(n)), tokens.tail)
+      case IntToken(n) =>
+        (Some(IntVal(n)), tokens.tail)
+      case _ =>
+        (None, tokens)
+    }
+  }
+
   def parseArgs(tokens: List[Token]): (List[Exp], List[Token]) = {
     def parseArgsSub(tokens: List[Token],
                      acm: List[Exp]): (List[Exp], List[Token]) = {
@@ -199,27 +219,29 @@ object parser {
         val (exp, rest2) = parseExp(rest)
         rest2 match {
           case RParen :: rest3 =>
-            val (args, rest4) = parseArgs(rest3)
-            if (args.nonEmpty) {
-              (FunCall(exp, args), rest4)
-            } else {
-              (exp, rest3)
+            val (arg, _) = parseArg(rest3)
+            arg match {
+              case Some(_) =>
+                parseFunCall(exp, rest3)
+              case _ =>
+                (exp, rest3)
             }
           case _ =>
-            println(rest2)
             throw new Exception("erorr, カッコが閉じてない")
         }
       case IntToken(n) :: rest =>
         (IntVal(n), rest)
       case VarToken(n) :: rest =>
-        val (args, rest2) = parseArgs(rest)
-        if (args.isEmpty) {
-          (Var(n), rest2)
-        } else {
-          parseFunCall(tokens)
+        val (arg, _) = parseArg(rest)
+        arg match {
+          case Some(_) =>
+            parseFunCall(Var(n), rest)
+          case _ =>
+            (Var(n), rest)
         }
       case FunToken :: _ =>
-        parseFunCall(tokens)
+        val (fun, rest2) = parseFun(tokens)
+        parseFunCall(fun, rest2)
       case _ =>
         parseExp(tokens)
     }

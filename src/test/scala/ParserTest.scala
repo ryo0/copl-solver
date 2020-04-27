@@ -124,57 +124,55 @@ class ParserTest extends FunSuite {
   }
 
   test("parseFunCall") {
-    assert(
-      parseExp(tokenize("x 1")) === (FunCall(Var("x"), List(IntVal(1))), List())
-    )
+    assert(parseExp(tokenize("x 1")) === (FunCall(Var("x"), IntVal(1)), List()))
     assert(
       parseExp(tokenize("x 1 + 2")) === (InfixExp(
-        FunCall(Var("x"), List(IntVal(1))),
+        FunCall(Var("x"), IntVal(1)),
         Plus,
         IntVal(2)
       ), List())
     )
     assert(
       parseExp(tokenize("x a b")) === (FunCall(
-        Var("x"),
-        List(Var("a"), (Var("b")))
+        FunCall(Var("x"), Var("a")),
+        Var("b")
       ), List())
     )
     assert(
       parseExp(tokenize("x (1 + 2)")) === (FunCall(
         Var("x"),
-        List(InfixExp(IntVal(1), Plus, IntVal(2)))
+        InfixExp(IntVal(1), Plus, IntVal(2))
       ), List())
     )
     assert(
       parseExp(tokenize("x a (b + c)")) === (FunCall(
-        Var("x"),
-        List(Var("a"), (InfixExp(Var("b"), Plus, Var("c"))))
+        FunCall(Var("x"), Var("a")),
+        InfixExp(Var("b"), Plus, Var("c"))
       ), List())
     )
     assert(
       parseExp(tokenize("twice (fun x -> x * x )")) === (FunCall(
         Var("twice"),
-        List(FunExp(Var("x"), InfixExp(Var("x"), Asterisk, Var("x"))))
+        FunExp(Var("x"), InfixExp(Var("x"), Asterisk, Var("x")))
       ), List())
     )
     assert(
       parseExp(tokenize("let k = fun x -> fun y -> x in k 7")) === (LetExp(
         Var("k"),
         FunExp(Var("x"), FunExp(Var("y"), Var("x"))),
-        FunCall(Var("k"), List(IntVal(7)))
+        FunCall(Var("k"), IntVal(7))
       ), List())
     )
     assert(
       parseExp(tokenize("(fun x -> x * 2) 2")) === (FunCall(
         FunExp(Var("x"), InfixExp(Var("x"), Asterisk, IntVal(2))),
-        List(IntVal(2))
+        IntVal(2)
       ), List())
     )
     assert(
       parseExp(tokenize("f 1 2")) === (FunCall(
-        Var("f"),
-        List(IntVal(1), IntVal(2))
+        FunCall(Var("f"), IntVal(1)),
+        IntVal(2)
       ), List())
     )
   }
