@@ -3,6 +3,24 @@ package solver
 import parser.ast._
 
 object rule {
+  val opMap: Map[Op, String] = Map(
+    Plus -> "+",
+    Minus -> "-",
+    Asterisk -> "*",
+    LessThan -> "<",
+    GreaterThan -> ">"
+  )
+  def expToString(exp: Exp): String = {
+    exp match {
+      case IntVal(n)  => s"$n"
+      case BoolVal(b) => s"$b"
+      case Var(n)     => s"$n"
+      case InfixExp(IntVal(0), Minus, right) =>
+        s"-${expToString(right)}"
+      case InfixExp(left, op, right) =>
+        s"(${expToString(left)} ${opMap(op)} ${expToString(right)})"
+    }
+  }
   sealed class Rule
   case class EInt(value: IntVal) extends Rule
   case class EBool(value: BoolVal) extends Rule
@@ -29,6 +47,30 @@ object rule {
         case EBool(value)              => value
         case EPlus(_, _, i3, _, _, _)  => i3
         case EMinus(_, _, i3, _, _, _) => i3
+      }
+    }
+    def string(): String = {
+      rule match {
+        case EInt(value) =>
+          s"${expToString(value)} evalto ${expToString(value)} by E-Int{};"
+        case EBool(value) =>
+          s"${expToString(value)} evalto ${expToString(value)} by E-Bool{};"
+        case EPlus(e1, e2, i3, e1Rule, e2Rule, bPlus) =>
+          s"${expToString(e1)} + ${expToString(e2)} evalto ${expToString(i3)} by E-Plus{\n" +
+            s"    ${e1Rule.string()}\n" +
+            s"    ${e2Rule.string()}\n" +
+            s"    ${bPlus.string()}\n" +
+            "};\n"
+        case BPlus(i1, i2, i3) =>
+          s"${expToString(i1)} plus ${expToString(i2)} is ${expToString(i3)} by B-Plus{};"
+        case EMinus(e1, e2, i3, e1Rule, e2Rule, bMinus) =>
+          s"${expToString(e1)} - ${expToString(e2)} evalto ${expToString(i3)} by E-Minus{\n" +
+            s"    ${e1Rule.string()}\n" +
+            s"    ${e2Rule.string()}\n" +
+            s"    ${bMinus.string()}\n" +
+            "};\n"
+        case BMinus(i1, i2, i3) =>
+          s"${expToString(i1)} minus ${expToString(i2)} is ${expToString(i3)} by B-Minus{};"
       }
     }
   }
