@@ -40,6 +40,15 @@ object rule {
                     BMinus: BMinus)
       extends Rule
   case class BMinus(i1: Exp, i2: Exp, i3: Exp) extends Rule
+  implicit class NestString(str: String) {
+    def mul(nest: Int): String = {
+      if (nest == 0) { "" } else if (nest == 1) {
+        str
+      } else {
+        str + str.mul(nest - 1)
+      }
+    }
+  }
   implicit class RuleValue(rule: Rule) {
     def value(): Exp = {
       rule match {
@@ -49,7 +58,9 @@ object rule {
         case EMinus(_, _, i3, _, _, _) => i3
       }
     }
-    def string(): String = {
+    def string(nest: Int = 0): String = {
+      val indent = "     ".mul(nest)
+      val indentP1 = "     ".mul(nest + 1)
       rule match {
         case EInt(value) =>
           s"${expToString(value)} evalto ${expToString(value)} by E-Int{};"
@@ -57,18 +68,18 @@ object rule {
           s"${expToString(value)} evalto ${expToString(value)} by E-Bool{};"
         case EPlus(e1, e2, i3, e1Rule, e2Rule, bPlus) =>
           s"${expToString(e1)} + ${expToString(e2)} evalto ${expToString(i3)} by E-Plus{\n" +
-            s"    ${e1Rule.string()}\n" +
-            s"    ${e2Rule.string()}\n" +
-            s"    ${bPlus.string()}\n" +
-            "};\n"
+            s"$indentP1${e1Rule.string(nest + 1)}\n" +
+            s"$indentP1${e2Rule.string(nest + 1)}\n" +
+            s"$indentP1${bPlus.string(nest + 1)}\n" +
+            s"$indent};"
         case BPlus(i1, i2, i3) =>
           s"${expToString(i1)} plus ${expToString(i2)} is ${expToString(i3)} by B-Plus{};"
         case EMinus(e1, e2, i3, e1Rule, e2Rule, bMinus) =>
           s"${expToString(e1)} - ${expToString(e2)} evalto ${expToString(i3)} by E-Minus{\n" +
-            s"    ${e1Rule.string()}\n" +
-            s"    ${e2Rule.string()}\n" +
-            s"    ${bMinus.string()}\n" +
-            "};\n"
+            s"$indentP1${e1Rule.string(nest + 1)}\n" +
+            s"$indentP1${e2Rule.string(nest + 1)}\n" +
+            s"$indentP1${bMinus.string(nest + 1)}\n" +
+            s"$indent};"
         case BMinus(i1, i2, i3) =>
           s"${expToString(i1)} minus ${expToString(i2)} is ${expToString(i3)} by B-Minus{};"
       }
