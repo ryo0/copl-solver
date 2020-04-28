@@ -31,6 +31,13 @@ object solver {
           .value()
           .asInstanceOf[IntVal]
         ETimes(e1, e2, i3, r1, r2, BTimes(r1.value(), r2.value(), i3))
+      case InfixExp(e1, LessThan, e2) =>
+        val r1 = solve(e1)
+        val r2 = solve(e2)
+        val i3 = r1.value().asInstanceOf[IntVal] < r2
+          .value()
+          .asInstanceOf[IntVal]
+        ELt(e1, e2, i3, r1, r2, BLt(r1.value(), r2.value(), i3))
       case _ =>
         throw new Exception("未対応")
     }

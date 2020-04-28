@@ -20,6 +20,9 @@ object ast {
     def *(other: IntVal): IntVal = {
       IntVal(value * other.value)
     }
+    def <(other: IntVal): BoolVal = {
+      BoolVal(value < other.value)
+    }
   }
   case class Var(name: String) extends Exp
   case class BoolVal(value: Boolean) extends Exp
