@@ -10,7 +10,17 @@ object ast {
   object LessThan extends Op
 
   sealed class Exp
-  case class IntVal(value: Int) extends Exp
+  case class IntVal(value: Int) extends Exp {
+    def +(other: IntVal): IntVal = {
+      IntVal(value + other.value)
+    }
+    def -(other: IntVal): IntVal = {
+      IntVal(value - other.value)
+    }
+    def *(other: IntVal): IntVal = {
+      IntVal(value * other.value)
+    }
+  }
   case class Var(name: String) extends Exp
   case class BoolVal(value: Boolean) extends Exp
   case class InfixExp(leftExp: Exp, op: Op, rightExp: Exp) extends Exp
