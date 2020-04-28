@@ -40,6 +40,15 @@ object rule {
                     BMinus: BMinus)
       extends Rule
   case class BMinus(i1: Exp, i2: Exp, i3: Exp) extends Rule
+  case class ETimes(e1: Exp,
+                    e2: Exp,
+                    i3: Exp,
+                    e1Rule: Rule,
+                    e2Rule: Rule,
+                    bMull: BTimes)
+      extends Rule
+  case class BTimes(i1: Exp, i2: Exp, i3: Exp) extends Rule
+
   implicit class NestString(str: String) {
     def mul(nest: Int): String = {
       if (nest == 0) { "" } else if (nest == 1) {
@@ -56,6 +65,8 @@ object rule {
         case EBool(value)              => value
         case EPlus(_, _, i3, _, _, _)  => i3
         case EMinus(_, _, i3, _, _, _) => i3
+        case ETimes(_, _, i3, _, _, _) => i3
+
       }
     }
     def string(nest: Int = 0): String = {
@@ -82,6 +93,14 @@ object rule {
             s"$indent};"
         case BMinus(i1, i2, i3) =>
           s"${expToString(i1)} minus ${expToString(i2)} is ${expToString(i3)} by B-Minus{};"
+        case ETimes(e1, e2, i3, e1Rule, e2Rule, bMinus) =>
+          s"${expToString(e1)} * ${expToString(e2)} evalto ${expToString(i3)} by E-Times{\n" +
+            s"$indentP1${e1Rule.string(nest + 1)}\n" +
+            s"$indentP1${e2Rule.string(nest + 1)}\n" +
+            s"$indentP1${bMinus.string(nest + 1)}\n" +
+            s"$indent};"
+        case BTimes(i1, i2, i3) =>
+          s"${expToString(i1)} times ${expToString(i2)} is ${expToString(i3)} by B-Times{};"
       }
     }
   }
