@@ -38,6 +38,15 @@ object solver {
           .value()
           .asInstanceOf[IntVal]
         ELt(e1, e2, i3, r1, r2, BLt(r1.value(), r2.value(), i3))
+      case IfExp(condExp, thenExp, elseExp) =>
+        val r1 = solve(condExp)
+        if (r1.value().asInstanceOf[BoolVal].value) {
+          val r2 = solve(thenExp)
+          EIfT(condExp, thenExp, elseExp, r1, r2)
+        } else {
+          val r3 = solve(elseExp)
+          EIfF(condExp, thenExp, elseExp, r1, r3)
+        }
       case _ =>
         throw new Exception("未対応")
     }

@@ -19,6 +19,8 @@ object rule {
         s"-${expToString(right)}"
       case InfixExp(left, op, right) =>
         s"(${expToString(left)} ${opMap(op)} ${expToString(right)})"
+      case IfExp(condExp, thenExp, elseExp) =>
+        s"if ${expToString(condExp)} then ${expToString(thenExp)} else ${expToString(elseExp)}"
     }
   }
   sealed class Rule
@@ -57,6 +59,10 @@ object rule {
                  bLt: BLt)
       extends Rule
   case class BLt(i1: Exp, i2: Exp, i3: Exp) extends Rule
+  case class EIfT(e1: Exp, e2: Exp, e3: Exp, e1Rule: Rule, e2Rule: Rule)
+      extends Rule
+  case class EIfF(e1: Exp, e2: Exp, e3: Exp, e1Rule: Rule, e3Rule: Rule)
+      extends Rule
 
   implicit class NestString(str: String) {
     def mul(nest: Int): String = {
@@ -75,6 +81,9 @@ object rule {
         case EPlus(_, _, i3, _, _, _)  => i3
         case EMinus(_, _, i3, _, _, _) => i3
         case ETimes(_, _, i3, _, _, _) => i3
+        case ELt(_, _, i3, _, _, _)    => i3
+        case EIfT(_, _, _, _, e2Rule)  => e2Rule.value()
+        case EIfF(_, _, _, _, e3Rule)  => e3Rule.value()
 
       }
     }
@@ -118,6 +127,16 @@ object rule {
             s"$indent};"
         case BLt(i1, i2, i3) =>
           s"${expToString(i1)} less than ${expToString(i2)} is ${expToString(i3)} by B-Lt{};"
+        case EIfT(e1, e2, e3, e1Rule, e2Rule) =>
+          s"if ${expToString(e1)} then ${expToString(e2)} else ${expToString(e3)} evalto ${expToString(e2Rule.value())} by E-IfT{\n" +
+            s"$indentP1${e1Rule.string(nest + 1)}\n" +
+            s"$indentP1${e2Rule.string(nest + 1)}\n" +
+            s"$indent};"
+        case EIfF(e1, e2, e3, e1Rule, e3Rule) =>
+          s"if ${expToString(e1)} then ${expToString(e2)} else ${expToString(e3)} evalto ${expToString(e3Rule.value())} by E-IfF{\n" +
+            s"$indentP1${e1Rule.string(nest + 1)}\n" +
+            s"$indentP1${e3Rule.string(nest + 1)}\n" +
+            s"$indent};"
       }
     }
   }
