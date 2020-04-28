@@ -209,6 +209,10 @@ object parser {
         }
       case IntToken(n) :: rest =>
         (IntVal(n), rest)
+      case TrueToken :: rest =>
+        (BoolVal(true), rest)
+      case FalseToken :: rest =>
+        (BoolVal(false), rest)
       case VarToken(n) :: rest =>
         val (arg, _) = parseArg(rest)
         arg match {

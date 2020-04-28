@@ -37,4 +37,8 @@ object token {
   object ArrowToken extends Token
 
   object FunToken extends Token
+
+  object TrueToken extends Token
+
+  object FalseToken extends Token
 }

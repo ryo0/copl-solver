@@ -21,7 +21,9 @@ object tokenizer {
     "else" -> ElseToken,
     "in" -> InToken,
     "let" -> LetToken,
-    "fun" -> FunToken
+    "fun" -> FunToken,
+    "true" -> TrueToken,
+    "false" -> FalseToken
   )
 
   def tokenize(str: String): List[Token] = {

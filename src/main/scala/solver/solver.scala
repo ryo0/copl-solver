@@ -63,6 +63,10 @@ object solver {
           val r3 = solveBody(elseExp, env)
           EIfF(env, condExp, thenExp, elseExp, r1, r3)
         }
+      case LetExp(variable, valueExp, inExp) =>
+        val r1 = solveBody(valueExp, env)
+        val r2 = solveBody(inExp, (variable.name, r1.value) :: env)
+        ELet(env, variable, valueExp, inExp, r1, r2)
       case _ =>
         throw new Exception("未対応")
     }
