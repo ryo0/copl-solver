@@ -3,6 +3,12 @@ package solver
 import parser.ast._
 
 object rule {
+  type Env = List[(String, Exp)]
+  implicit class environment(env: Env) {
+    def string: String = {
+      env.map(e => s"${e._1} = ${e._2.string},").mkString.dropRight(1)
+    }
+  }
   val opMap: Map[Op, String] = Map(
     Plus -> "+",
     Minus -> "-",
@@ -10,23 +16,27 @@ object rule {
     LessThan -> "<",
     GreaterThan -> ">"
   )
-  def expToString(exp: Exp): String = {
-    exp match {
-      case IntVal(n)  => s"$n"
-      case BoolVal(b) => s"$b"
-      case Var(n)     => s"$n"
-      case InfixExp(IntVal(0), Minus, right) =>
-        s"-${expToString(right)}"
-      case InfixExp(left, op, right) =>
-        s"(${expToString(left)} ${opMap(op)} ${expToString(right)})"
-      case IfExp(condExp, thenExp, elseExp) =>
-        s"if ${expToString(condExp)} then ${expToString(thenExp)} else ${expToString(elseExp)}"
+  implicit class ExpString(exp: Exp) {
+    def string: String = {
+      exp match {
+        case IntVal(n)  => s"$n"
+        case BoolVal(b) => s"$b"
+        case Var(n)     => s"$n"
+        case InfixExp(IntVal(0), Minus, right) =>
+          s"-${right.string}"
+        case InfixExp(left, op, right) =>
+          s"(${left.string} ${opMap(op)} ${right.string})"
+        case IfExp(condExp, thenExp, elseExp) =>
+          s"if ${condExp.string} then ${thenExp.string} else ${elseExp.string}"
+      }
     }
   }
+
   sealed class Rule
-  case class EInt(value: IntVal) extends Rule
-  case class EBool(value: BoolVal) extends Rule
-  case class EPlus(e1: Exp,
+  case class EInt(env: Env, value: IntVal) extends Rule
+  case class EBool(env: Env, value: BoolVal) extends Rule
+  case class EPlus(env: Env,
+                   e1: Exp,
                    e2: Exp,
                    i3: Exp,
                    e1Rule: Rule,
@@ -34,7 +44,8 @@ object rule {
                    bPlus: BPlus)
       extends Rule
   case class BPlus(i1: Exp, i2: Exp, i3: Exp) extends Rule
-  case class EMinus(e1: Exp,
+  case class EMinus(env: Env,
+                    e1: Exp,
                     e2: Exp,
                     i3: Exp,
                     e1Rule: Rule,
@@ -42,7 +53,8 @@ object rule {
                     BMinus: BMinus)
       extends Rule
   case class BMinus(i1: Exp, i2: Exp, i3: Exp) extends Rule
-  case class ETimes(e1: Exp,
+  case class ETimes(env: Env,
+                    e1: Exp,
                     e2: Exp,
                     i3: Exp,
                     e1Rule: Rule,
@@ -51,7 +63,8 @@ object rule {
       extends Rule
   case class BTimes(i1: Exp, i2: Exp, i3: Exp) extends Rule
 
-  case class ELt(e1: Exp,
+  case class ELt(env: Env,
+                 e1: Exp,
                  e2: Exp,
                  i3: Exp,
                  e1Rule: Rule,
@@ -59,10 +72,22 @@ object rule {
                  bLt: BLt)
       extends Rule
   case class BLt(i1: Exp, i2: Exp, i3: Exp) extends Rule
-  case class EIfT(e1: Exp, e2: Exp, e3: Exp, e1Rule: Rule, e2Rule: Rule)
+  case class EIfT(env: Env,
+                  e1: Exp,
+                  e2: Exp,
+                  e3: Exp,
+                  e1Rule: Rule,
+                  e2Rule: Rule)
       extends Rule
-  case class EIfF(e1: Exp, e2: Exp, e3: Exp, e1Rule: Rule, e3Rule: Rule)
+  case class EIfF(env: Env,
+                  e1: Exp,
+                  e2: Exp,
+                  e3: Exp,
+                  e1Rule: Rule,
+                  e3Rule: Rule)
       extends Rule
+  case class EVar1(env: Env, variable: Var) extends Rule
+  case class EVar2(env: Env, variable: Var, r: Rule) extends Rule
 
   implicit class NestString(str: String) {
     def mul(nest: Int): String = {
@@ -74,72 +99,80 @@ object rule {
     }
   }
   implicit class RuleValue(rule: Rule) {
-    def value(): Exp = {
+    def value: Exp = {
       rule match {
-        case EInt(value)               => value
-        case EBool(value)              => value
-        case EPlus(_, _, i3, _, _, _)  => i3
-        case EMinus(_, _, i3, _, _, _) => i3
-        case ETimes(_, _, i3, _, _, _) => i3
-        case ELt(_, _, i3, _, _, _)    => i3
-        case EIfT(_, _, _, _, e2Rule)  => e2Rule.value()
-        case EIfF(_, _, _, _, e3Rule)  => e3Rule.value()
-
+        case EInt(_, value)               => value
+        case EBool(_, value)              => value
+        case EPlus(_, _, _, i3, _, _, _)  => i3
+        case EMinus(_, _, _, i3, _, _, _) => i3
+        case ETimes(_, _, _, i3, _, _, _) => i3
+        case ELt(_, _, _, i3, _, _, _)    => i3
+        case EIfT(_, _, _, _, _, e2Rule)  => e2Rule.value
+        case EIfF(_, _, _, _, _, e3Rule)  => e3Rule.value
+        case EVar1(env, _)                => env.head._2
+        case EVar2(_, _, rule)            => rule.value
       }
     }
+
     def string(nest: Int = 0): String = {
       val indent = "     ".mul(nest)
       val indentP1 = "     ".mul(nest + 1)
       rule match {
-        case EInt(value) =>
-          s"${expToString(value)} evalto ${expToString(value)} by E-Int{};"
-        case EBool(value) =>
-          s"${expToString(value)} evalto ${expToString(value)} by E-Bool{};"
-        case EPlus(e1, e2, i3, e1Rule, e2Rule, bPlus) =>
-          s"${expToString(e1)} + ${expToString(e2)} evalto ${expToString(i3)} by E-Plus{\n" +
+        case EInt(env, value) =>
+          s"${env.string} |- ${value.string} evalto ${value.string} by E-Int{};"
+        case EBool(env, value) =>
+          s"${env.toString()} |- ${value.string} evalto ${value.string} by E-Bool{};"
+        case EVar1(env, variable) =>
+          s"${env.string} |- ${variable.name} evalto ${env.head._2.string} by E-Var1{};"
+        case EVar2(env, variable, rule) =>
+          s"${env.string} |- ${variable.name} evalto ${rule.value.string} by E-Var2{\n" +
+            s"$indentP1${rule.string(nest + 1)}\n" +
+            s"$indent};"
+        case EPlus(env, e1, e2, i3, e1Rule, e2Rule, bPlus) =>
+          s"${env.string} |- ${e1.string} + ${e2.string} evalto ${i3.string} by E-Plus{\n" +
             s"$indentP1${e1Rule.string(nest + 1)}\n" +
             s"$indentP1${e2Rule.string(nest + 1)}\n" +
             s"$indentP1${bPlus.string(nest + 1)}\n" +
             s"$indent};"
         case BPlus(i1, i2, i3) =>
-          s"${expToString(i1)} plus ${expToString(i2)} is ${expToString(i3)} by B-Plus{};"
-        case EMinus(e1, e2, i3, e1Rule, e2Rule, bMinus) =>
-          s"${expToString(e1)} - ${expToString(e2)} evalto ${expToString(i3)} by E-Minus{\n" +
+          s"${i1.string} plus ${i2.string} is ${i3.string} by B-Plus{};"
+        case EMinus(env, e1, e2, i3, e1Rule, e2Rule, bMinus) =>
+          s"${env.string} |- ${e1.string} - ${e2.string} evalto ${i3.string} by E-Minus{\n" +
             s"$indentP1${e1Rule.string(nest + 1)}\n" +
             s"$indentP1${e2Rule.string(nest + 1)}\n" +
             s"$indentP1${bMinus.string(nest + 1)}\n" +
             s"$indent};"
-        case EMinus(e1, e2, i3, e1Rule, e2Rule, bMinus) =>
-          s"${expToString(e1)} - ${expToString(e2)} evalto ${expToString(i3)} by E-Minus{\n" +
+        case EMinus(env, e1, e2, i3, e1Rule, e2Rule, bMinus) =>
+          s"${e1.string} - ${e2.string} evalto ${i3.string} by E-Minus{\n" +
             s"$indentP1${e1Rule.string(nest + 1)}\n" +
             s"$indentP1${e2Rule.string(nest + 1)}\n" +
             s"$indentP1${bMinus.string(nest + 1)}\n" +
             s"$indent};"
         case BMinus(i1, i2, i3) =>
-          s"${expToString(i1)} minus ${expToString(i2)} is ${expToString(i3)} by B-Minus{};"
-        case ETimes(e1, e2, i3, e1Rule, e2Rule, bMinus) =>
-          s"${expToString(e1)} * ${expToString(e2)} evalto ${expToString(i3)} by E-Times{\n" +
+          s"${i1.string} minus ${i2.string} is ${i3.string} by B-Minus{};"
+        case ETimes(env, e1, e2, i3, e1Rule, e2Rule, bMinus) =>
+          s"${env.string} |- ${e1.string} * ${e2.string} evalto ${i3.string} by E-Times{\n" +
             s"$indentP1${e1Rule.string(nest + 1)}\n" +
             s"$indentP1${e2Rule.string(nest + 1)}\n" +
             s"$indentP1${bMinus.string(nest + 1)}\n" +
             s"$indent};"
         case BTimes(i1, i2, i3) =>
-          s"${expToString(i1)} times ${expToString(i2)} is ${expToString(i3)} by B-Times{};"
-        case ELt(e1, e2, i3, e1Rule, e2Rule, bLt) =>
-          s"${expToString(e1)} < ${expToString(e2)} evalto ${expToString(i3)} by E-Lt{\n" +
+          s"${i1.string} times ${i2.string} is ${i3.string} by B-Times{};"
+        case ELt(env, e1, e2, i3, e1Rule, e2Rule, bLt) =>
+          s"${env.string} |- ${e1.string} < ${e2.string} evalto ${i3.string} by E-Lt{\n" +
             s"$indentP1${e1Rule.string(nest + 1)}\n" +
             s"$indentP1${e2Rule.string(nest + 1)}\n" +
             s"$indentP1${bLt.string(nest + 1)}\n" +
             s"$indent};"
         case BLt(i1, i2, i3) =>
-          s"${expToString(i1)} less than ${expToString(i2)} is ${expToString(i3)} by B-Lt{};"
-        case EIfT(e1, e2, e3, e1Rule, e2Rule) =>
-          s"if ${expToString(e1)} then ${expToString(e2)} else ${expToString(e3)} evalto ${expToString(e2Rule.value())} by E-IfT{\n" +
+          s"${i1.string} less than ${i2.string} is ${i3.string} by B-Lt{};"
+        case EIfT(env, e1, e2, e3, e1Rule, e2Rule) =>
+          s"${env.string} |- if ${e1.string} then ${e2.string} else ${e3.string} evalto ${e2Rule.value.string} by E-IfT{\n" +
             s"$indentP1${e1Rule.string(nest + 1)}\n" +
             s"$indentP1${e2Rule.string(nest + 1)}\n" +
             s"$indent};"
-        case EIfF(e1, e2, e3, e1Rule, e3Rule) =>
-          s"if ${expToString(e1)} then ${expToString(e2)} else ${expToString(e3)} evalto ${expToString(e3Rule.value())} by E-IfF{\n" +
+        case EIfF(env, e1, e2, e3, e1Rule, e3Rule) =>
+          s"${env.string} |- if ${e1.string} then ${e2.string} else ${e3.string} evalto ${e3Rule.value.string} by E-IfF{\n" +
             s"$indentP1${e1Rule.string(nest + 1)}\n" +
             s"$indentP1${e3Rule.string(nest + 1)}\n" +
             s"$indent};"
