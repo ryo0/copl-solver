@@ -109,6 +109,12 @@ object rule {
             s"$indentP1${e2Rule.string(nest + 1)}\n" +
             s"$indentP1${bMinus.string(nest + 1)}\n" +
             s"$indent};"
+        case EMinus(e1, e2, i3, e1Rule, e2Rule, bMinus) =>
+          s"${expToString(e1)} - ${expToString(e2)} evalto ${expToString(i3)} by E-Minus{\n" +
+            s"$indentP1${e1Rule.string(nest + 1)}\n" +
+            s"$indentP1${e2Rule.string(nest + 1)}\n" +
+            s"$indentP1${bMinus.string(nest + 1)}\n" +
+            s"$indent};"
         case BMinus(i1, i2, i3) =>
           s"${expToString(i1)} minus ${expToString(i2)} is ${expToString(i3)} by B-Minus{};"
         case ETimes(e1, e2, i3, e1Rule, e2Rule, bMinus) =>

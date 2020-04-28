@@ -17,6 +17,15 @@ object solver {
           .value()
           .asInstanceOf[IntVal]
         EPlus(e1, e2, i3, r1, r2, BPlus(r1.value(), r2.value(), i3))
+      case InfixExp(IntVal(0), Minus, e2) =>
+        val r2 = solve(e2)
+        val i3 = IntVal(
+          -1 * r2
+            .value()
+            .asInstanceOf[IntVal]
+            .value
+        )
+        solve(i3)
       case InfixExp(e1, Minus, e2) =>
         val r1 = solve(e1)
         val r2 = solve(e2)
