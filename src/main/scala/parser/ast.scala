@@ -75,7 +75,7 @@ object ast {
           val r1 = funName.solve(env)
           val r1ResultClosure = r1.value.asInstanceOf[Closure]
           val r2 = arg.solve(env)
-          val r3 = r1ResultClosure.funExp.solve(
+          val r3 = r1ResultClosure.funExp.body.solve(
             (r1ResultClosure.funExp.param.name, r2.value) :: r1ResultClosure.env
           )
           EApp(env, funName, arg, r1, r2, r3)

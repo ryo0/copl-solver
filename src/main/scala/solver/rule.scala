@@ -32,11 +32,11 @@ object rule {
           s"let ${variable.string} = ${valueExp.string} in ${inExp.string}"
         case FunExp(param, body) =>
           val paramsStr = param.name.mkString
-          s"(fun $paramsStr -> ${body.string})"
+          s"fun $paramsStr -> ${body.string}"
         case Closure(e, FunExp(param, body)) =>
           s"(${e.string}) [${FunExp(param, body).string}]"
         case FunCall(funName, arg) =>
-          s"(${funName.string} ${arg.string})"
+          s"${funName.string} ${arg.string}"
       }
     }
   }
@@ -208,7 +208,7 @@ object rule {
         case EClosure(env, variable, e) =>
           s"(${env.string}) [fun ${variable.string} -> ${e.string}]"
         case EApp(env, e1, e2, r1, r2, r3) =>
-          s"${env.string} |- ${e1.string} ${e2.string} evalto ${r3.value.string} by E-Let{\n" +
+          s"${env.string} |- ${e1.string} ${e2.string} evalto ${r3.value.string} by E-App{\n" +
             s"$indentPlus1${r1.string(nest + 1)}\n" +
             s"$indentPlus1${r2.string(nest + 1)}\n" +
             s"$indentPlus1${r3.string(nest + 1)}\n" +
