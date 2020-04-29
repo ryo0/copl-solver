@@ -14,4 +14,8 @@ object main extends App {
   println(solve("let x = 3 * 3 in let y = 4 * x in x + y"))
   println(solve("let x = 3 in let x = x * 2 in x + x"))
   println(solve("let x = let y = 3 - 2 in y * y in let y = 4 in x + y"))
+  println(solve("fun x -> x + 1"))
+  println(solve("let y = 2 in fun x -> x + y"))
+  println(solve("let sq = fun x -> x * x in sq 3 + sq 4"))
+
 }

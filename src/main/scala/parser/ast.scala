@@ -1,24 +1,6 @@
 package parser
 
-import solver.rule.{
-  BLt,
-  BMinus,
-  BPlus,
-  BTimes,
-  EBool,
-  EIfF,
-  EIfT,
-  EInt,
-  ELet,
-  ELt,
-  EMinus,
-  EPlus,
-  ETimes,
-  EVar1,
-  EVar2,
-  Env,
-  Rule
-}
+import solver.rule._
 
 object ast {
   sealed class Op
@@ -87,6 +69,17 @@ object ast {
           val r1 = valueExp.solve(env)
           val r2 = inExp.solve((variable.name, r1.value) :: env)
           ELet(env, variable, valueExp, inExp, r1, r2)
+        case FunExp(variable: Var, body: Exp) =>
+          EFun(env, variable, body, EClosure(env, variable, body))
+        case FunCall(funName: Exp, arg: Exp) =>
+          val r1 = funName.solve(env)
+          val r1ResultClosure = r1.value.asInstanceOf[Closure]
+          val r2 = arg.solve(env)
+          val r3 = r1ResultClosure.funExp.solve(
+            (r1ResultClosure.funExp.param.name, r2.value) :: r1ResultClosure.env
+          )
+          EApp(env, funName, arg, r1, r2, r3)
+
         case _ =>
           throw new Exception("未対応")
       }

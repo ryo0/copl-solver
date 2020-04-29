@@ -30,6 +30,13 @@ object rule {
           s"if ${condExp.string} then ${thenExp.string} else ${elseExp.string}"
         case LetExp(variable, valueExp, inExp) =>
           s"let ${variable.string} = ${valueExp.string} in ${inExp.string}"
+        case FunExp(param, body) =>
+          val paramsStr = param.name.mkString
+          s"(fun $paramsStr -> ${body.string})"
+        case Closure(e, FunExp(param, body)) =>
+          s"(${e.string}) [${FunExp(param, body).string}]"
+        case FunCall(funName, arg) =>
+          s"(${funName.string} ${arg.string})"
       }
     }
   }
@@ -92,6 +99,11 @@ object rule {
   case class EVar2(env: Env, variable: Var, r: Rule) extends Rule
   case class ELet(env: Env, variable: Exp, e1: Exp, e2: Exp, r1: Rule, r2: Rule)
       extends Rule
+  case class EFun(env: Env, variable: Exp, e: Exp, closure: EClosure)
+      extends Rule
+  case class EClosure(env: Env, variable: Var, e: Exp) extends Rule
+  case class EApp(env: Env, e1: Exp, e2: Exp, r1: Rule, r2: Rule, r3: Rule)
+      extends Rule
 
   implicit class NestString(str: String) {
     def mul(nest: Int): String = {
@@ -116,6 +128,10 @@ object rule {
         case EVar1(env, _)                => env.head._2
         case EVar2(_, _, rule)            => rule.value
         case ELet(_, _, _, _, _, r2)      => r2.value
+        case EFun(_, _, _, eClosure)      => eClosure.value
+        case EClosure(env, variable, body) =>
+          Closure(env, FunExp(variable, body))
+        case EApp(_, _, _, _, _, r3) => r3.value
       }
     }
 
@@ -185,6 +201,17 @@ object rule {
           s"${env.string} |- let ${x.string} = ${e1.string} in ${e2.string} evalto ${r2.value.string} by E-Let{\n" +
             s"$indentPlus1${r1.string(nest + 1)}\n" +
             s"$indentPlus1${r2.string(nest + 1)}\n" +
+            s"$indent};"
+        case EFun(env, variable, e, closure) =>
+          s"${env.string} |- fun ${variable.string} -> ${e.string} evalto ${closure
+            .string(nest)} by E-Fun{};"
+        case EClosure(env, variable, e) =>
+          s"(${env.string}) [fun ${variable.string} -> ${e.string}]"
+        case EApp(env, e1, e2, r1, r2, r3) =>
+          s"${env.string} |- ${e1.string} ${e2.string} evalto ${r3.value.string} by E-Let{\n" +
+            s"$indentPlus1${r1.string(nest + 1)}\n" +
+            s"$indentPlus1${r2.string(nest + 1)}\n" +
+            s"$indentPlus1${r3.string(nest + 1)}\n" +
             s"$indent};"
       }
     }
