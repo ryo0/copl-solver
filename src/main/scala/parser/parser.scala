@@ -33,7 +33,11 @@ object parser {
     tokens.head match {
       case LParen | IntToken(_) | VarToken(_) | FunToken =>
         val (arg, rest) = parseArg(tokens)
+        println(fun)
+        println(arg, rest)
         arg match {
+          case Some(FunCall(f, a)) =>
+            parseFunCall(FunCall(FunCall(fun, f), a), rest)
           case Some(argExp) =>
             parseFunCall(FunCall(fun, argExp), rest)
           case _ =>

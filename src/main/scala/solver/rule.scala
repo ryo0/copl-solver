@@ -32,11 +32,12 @@ object rule {
           s"let ${variable.string} = ${valueExp.string} in ${inExp.string}"
         case FunExp(param, body) =>
           val paramsStr = param.name.mkString
-          s"fun $paramsStr -> ${body.string}"
+          s"(fun $paramsStr -> ${body.string})"
         case Closure(e, FunExp(param, body)) =>
-          s"(${e.string}) [${FunExp(param, body).string}]"
+          val funString = FunExp(param, body).string
+          s"(${e.string}) [${funString.dropRight(1).drop(1)}]"
         case FunCall(funName, arg) =>
-          s"${funName.string} ${arg.string}"
+          s"${funName.string} (${arg.string})"
       }
     }
   }
