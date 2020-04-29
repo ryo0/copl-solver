@@ -179,6 +179,14 @@ class ParserTest extends FunSuite {
       ), List())
     )
     assert(
+      parseExp(tokenize("f (f x)")) === (FunCall(
+        Var("f"),
+        FunCall(Var("f"), Var("x"))
+      ),
+      List())
+    )
+
+    assert(
       parseExp(tokenize("f 1 2")) === (FunCall(
         FunCall(Var("f"), IntVal(1)),
         IntVal(2)

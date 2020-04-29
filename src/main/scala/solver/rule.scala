@@ -37,7 +37,7 @@ object rule {
           val funString = FunExp(param, body).string
           s"(${e.string}) [${funString.dropRight(1).drop(1)}]"
         case FunCall(funName, arg) =>
-          s"${funName.string} (${arg.string})"
+          s"(${funName.string} ${arg.string})"
       }
     }
   }

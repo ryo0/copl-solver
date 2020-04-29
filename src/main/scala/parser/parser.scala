@@ -30,11 +30,27 @@ object parser {
     if (tokens.isEmpty) {
       return (fun.asInstanceOf[FunCall], tokens)
     }
-    tokens.head match {
-      case LParen | IntToken(_) | VarToken(_) | FunToken =>
+    tokens match {
+      case LParen :: FunToken :: _ =>
         val (arg, rest) = parseArg(tokens)
-        println(fun)
-        println(arg, rest)
+        arg match {
+          case Some(FunCall(f, a)) =>
+            parseFunCall(FunCall(FunCall(fun, f), a), rest)
+          case Some(argExp) =>
+            parseFunCall(FunCall(fun, argExp), rest)
+          case _ =>
+            (fun.asInstanceOf[FunCall], tokens)
+        }
+      case LParen :: _ =>
+        val (arg, rest) = parseArg(tokens)
+        arg match {
+          case Some(argExp) =>
+            parseFunCall(FunCall(fun, argExp), rest)
+          case _ =>
+            (fun.asInstanceOf[FunCall], tokens)
+        }
+      case IntToken(_) :: _ | VarToken(_) :: _ | FunToken :: _ =>
+        val (arg, rest) = parseArg(tokens)
         arg match {
           case Some(FunCall(f, a)) =>
             parseFunCall(FunCall(FunCall(fun, f), a), rest)

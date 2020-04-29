@@ -31,11 +31,14 @@ object main extends App {
 //  println(solve("let a = 3 in let f = fun y -> y * a in let a = 5 in f 4"))
   println("//46-------------------------------------------")
   println(
-    parseExp(
-      tokenize(
-        "let twice = fun f -> fun x -> f (f x) in twice (fun x -> x * x) 2"
-      )
-    )._1
+    eval(
+      parseExp(
+        tokenize(
+          "let twice = fun f -> fun x -> f (f x) in twice (fun x -> x * x) 2"
+        )
+      )._1,
+      List()
+    )
   )
   println(
     solve("let twice = fun f -> fun x -> f (f x) in twice (fun x -> x * x) 2")
