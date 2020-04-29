@@ -1,0 +1,4 @@
+ |- let y = 2 in (fun x -> (x + y)) evalto (y = 2) [fun x -> (x + y)] by E-Let{
+      |- 2 evalto 2 by E-Int{};
+     y = 2 |- fun x -> (x + y) evalto (y = 2) [fun x -> (x + y)] by E-Fun{};
+};
