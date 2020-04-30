@@ -102,10 +102,16 @@ object rule {
       extends Rule
   case class ELetRec(env: Env, variable: Exp, e1: Exp, e2: Exp, r: Rule)
       extends Rule
-  case class EFun(env: Env, variable: Exp, e: Exp, closure: EClosure)
+  case class EFun(env: Env, param: Var, e: Exp, closure: EClosure) extends Rule
+  case class ERecFun(env: Env,
+                     variable: Var,
+                     param: Var,
+                     e: Exp,
+                     closure: ERecClosure)
       extends Rule
-  case class EClosure(env: Env, variable: Var, e: Exp) extends Rule
-  case class ERecClosure(env: Env, variable: Var, e: Exp) extends Rule
+  case class EClosure(env: Env, param: Var, e: Exp) extends Rule
+  case class ERecClosure(env: Env, variable: Var, param: Var, e: Exp)
+      extends Rule
   case class EApp(env: Env, e1: Exp, e2: Exp, r1: Rule, r2: Rule, r3: Rule)
       extends Rule
   case class EAppRec(env: Env, e1: Exp, e2: Exp, r1: Rule, r2: Rule, r3: Rule)
@@ -123,23 +129,24 @@ object rule {
   implicit class RuleValue(rule: Rule) {
     def value: Exp = {
       rule match {
-        case EInt(_, value)               => value
-        case EBool(_, value)              => value
-        case EPlus(_, _, _, i3, _, _, _)  => i3
-        case EMinus(_, _, _, i3, _, _, _) => i3
-        case ETimes(_, _, _, i3, _, _, _) => i3
-        case ELt(_, _, _, i3, _, _, _)    => i3
-        case EIfT(_, _, _, _, _, e2Rule)  => e2Rule.value
-        case EIfF(_, _, _, _, _, e3Rule)  => e3Rule.value
-        case EVar1(env, _)                => env.head._2
-        case EVar2(_, _, rule)            => rule.value
-        case ELet(_, _, _, _, _, r2)      => r2.value
-        case ELetRec(_, _, _, _, r)       => r.value
-        case EFun(_, _, _, eClosure)      => eClosure.value
+        case EInt(_, value)                   => value
+        case EBool(_, value)                  => value
+        case EPlus(_, _, _, i3, _, _, _)      => i3
+        case EMinus(_, _, _, i3, _, _, _)     => i3
+        case ETimes(_, _, _, i3, _, _, _)     => i3
+        case ELt(_, _, _, i3, _, _, _)        => i3
+        case EIfT(_, _, _, _, _, e2Rule)      => e2Rule.value
+        case EIfF(_, _, _, _, _, e3Rule)      => e3Rule.value
+        case EVar1(env, _)                    => env.head._2
+        case EVar2(_, _, rule)                => rule.value
+        case ELet(_, _, _, _, _, r2)          => r2.value
+        case ELetRec(_, _, _, _, r)           => r.value
+        case EFun(_, _, _, eClosure)          => eClosure.value
+        case ERecFun(_, _, _, _, eRecClosure) => eRecClosure.value
         case EClosure(env, variable, body) =>
           Closure(env, FunExp(variable, body))
-        case ERecClosure(env, variable, body) =>
-          Closure(env, FunExp(variable, body))
+        case ERecClosure(env, variable: Var, param: Var, body) =>
+          RecClosure(env, RecFunExp(variable, param, body))
         case EApp(_, _, _, _, _, r3)    => r3.value
         case EAppRec(_, _, _, _, _, r3) => r3.value
       }
@@ -173,7 +180,7 @@ object rule {
             s"$indentPlus1${e2Rule.string(nest + 1)}\n" +
             s"$indentPlus1${bMinus.string(nest + 1)}\n" +
             s"$indent};"
-        case EMinus(env, e1, e2, i3, e1Rule, e2Rule, bMinus) =>
+        case EMinus(env, IntVal(0), e2, i3, e1Rule, e2Rule, bMinus) =>
           s"${env.string} - ${e2.string} evalto ${i3.string} by E-Minus{\n" +
             s"$indentPlus1${e1Rule.string(nest + 1)}\n" +
             s"$indentPlus1${e2Rule.string(nest + 1)}\n" +
@@ -217,6 +224,7 @@ object rule {
             .string(nest)} by E-Fun{};"
         case EClosure(env, variable, e) =>
           s"(${env.string}) [fun ${variable.string} -> ${e.string}]"
+        case ELetRec(env, variable, e1, e2, r) =>
         case EApp(env, e1, e2, r1, r2, r3) =>
           s"${env.string} |- ${e1.string} ${e2.string} evalto ${r3.value.string} by E-App{\n" +
             s"$indentPlus1${r1.string(nest + 1)}\n" +

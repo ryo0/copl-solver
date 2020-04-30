@@ -36,22 +36,22 @@ object eval {
       }
       case FunExp(param, body) =>
         Closure(env, FunExp(param, body))
-      case RecFunExp(param, body) =>
-        RecClosure(env, RecFunExp(param, body))
+      case RecFunExp(variable, param, body) =>
+        RecClosure(env, RecFunExp(variable, param, body))
       case Closure(e, FunExp(param, body)) =>
         Closure(e, FunExp(param, body))
-      case RecClosure(e, RecFunExp(param, body)) =>
-        RecClosure(e, RecFunExp(param, body))
+      case RecClosure(e, RecFunExp(variable, param, body)) =>
+        RecClosure(e, RecFunExp(variable, param, body))
       case FunCall(exp, arg) =>
         val evaledExp = eval(exp, env)
         evaledExp match {
           case FunExp(p, b) =>
             eval(b, (p.name, eval(arg, env)) :: env)
-          case RecFunExp(p, b) =>
+          case RecFunExp(v, p, b) =>
             eval(b, (p.name, eval(arg, env)) :: env)
           case Closure(e, FunExp(p, b)) =>
             eval(b, (p.name, eval(arg, env)) :: e ::: env)
-          case RecClosure(e, RecFunExp(p, b)) =>
+          case RecClosure(e, RecFunExp(v, p, b)) =>
             eval(b, (p.name, eval(arg, env)) :: e ::: env)
           case _ =>
             throw new Exception("error")

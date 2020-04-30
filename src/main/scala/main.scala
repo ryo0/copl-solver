@@ -71,11 +71,11 @@ object main extends App {
   )
   file10.close()
 
-  val file11 = new PrintWriter("11.txt")
-  file11.write(
+  val file12 = new PrintWriter("12.txt")
+  file12.write(
     solve(
-      "let fact = fun self -> fun n -> if n < 2 then 1 else n * self self (n - 1) in fact fact 3"
+      "let rec fact = fun n -> if n < 2 then 1 else n * fact (n - 1) in fact 3"
     )
   )
-  file11.close()
+  file12.close()
 }

@@ -70,25 +70,35 @@ object ast {
           val r2 = inExp.solve((variable.name, r1.value) :: env)
           ELet(env, variable, valueExp, inExp, r1, r2)
         case LetRecExp(variable, fun, inExp) =>
-          val closure: EClosure =
+          val eRecFun: ERecFun =
             fun
               .solve((variable.name, fun.solve(env).value) :: env)
-              .asInstanceOf[EClosure]
+              .asInstanceOf[ERecFun]
           val eRecClosure =
-            ERecClosure(closure.env, closure.variable, closure.e)
+            ERecClosure(eRecFun.env, variable, eRecFun.param, eRecFun.e)
           ELetRec(env, variable, fun, inExp, eRecClosure)
         case FunExp(variable: Var, body: Exp) =>
           EFun(env, variable, body, EClosure(env, variable, body))
+        case RecFunExp(variable: Var, param: Var, body: Exp) =>
+          ERecFun(
+            env,
+            variable,
+            param,
+            body,
+            ERecClosure(env, variable, param, body)
+          )
         case FunCall(funName: Exp, arg: Exp) =>
           funName match {
-//            case RecFunExp(p, b) =>
-//              val r1 = funName.solve(env)
-//              val r1ResultClosure = r1.value.asInstanceOf[RecClosure]
-//              val r2 = arg.solve(env)
-//              val r3 = r1ResultClosure./funExp.body.solve(
-//                (r1ResultClosure.funExp.param.name, r2.value) :: r1ResultClosure.env
-//              )
-//              EAppRec(env, funName, arg, r1, r2, r3)
+            case RecFunExp(v, p, b) =>
+              val r1 = funName.solve(env)
+              val recClosure = r1.value.asInstanceOf[RecClosure]
+              val r2 = arg.solve(env)
+              val r3 = recClosure.recFunExp.body.solve(
+                (recClosure.recFunExp.param.name, r2.value) ::
+                  (recClosure.recFunExp.variable.name, recClosure)
+                  :: recClosure.env
+              )
+              EAppRec(env, funName, arg, r1, r2, r3)
             case _ =>
               val r1 = funName.solve(env)
               val r1ResultClosure = r1.value.asInstanceOf[Closure]
@@ -126,7 +136,7 @@ object ast {
   case class FunExp(param: Var, body: Exp) extends Exp
   case class FunCall(funName: Exp, arg: Exp) extends Exp
   case class Closure(env: List[(String, Exp)], funExp: FunExp) extends Exp
-  case class RecFunExp(param: Var, body: Exp) extends Exp
+  case class RecFunExp(variable: Var, param: Var, body: Exp) extends Exp
   case class RecClosure(env: List[(String, Exp)], recFunExp: RecFunExp)
       extends Exp
   case class LetRecExp(variable: Var, valueExp: RecFunExp, inExp: Exp)
