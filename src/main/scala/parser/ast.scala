@@ -71,13 +71,8 @@ object ast {
           ELet(env, variable, valueExp, inExp, r1, r2)
         case LetRecExp(variable, fun, inExp) =>
           val newEnv = (variable.name, fun.solve(env).value) :: env
-          val eRecFun: ERecFun =
-            inExp
-              .solve(newEnv)
-              .asInstanceOf[ERecFun]
-          val eRecClosure =
-            ERecClosure(eRecFun.env, variable, eRecFun.param, eRecFun.e)
-          ELetRec(env, variable, fun, inExp, eRecClosure)
+          val in = inExp.solve(newEnv)
+          ELetRec(env, variable, fun, inExp, in)
         case FunExp(variable: Var, body: Exp) =>
           EFun(env, variable, body, EClosure(env, variable, body))
         case RecFunExp(variable: Var, param: Var, body: Exp) =>
@@ -115,7 +110,8 @@ object ast {
               r1.value match {
                 case RecClosure(ce, RecFunExp(v, p, b)) =>
                   val r2 = arg.solve(env)
-                  val r3 = b.solve((p.name, r2.value) :: ce)
+                  val r3 =
+                    b.solve((p.name, r2.value) :: (v.name, r1.value) :: ce)
                   EAppRec(ce, funName, arg, r1, r2, r3)
                 case Closure(ce, FunExp(p, b)) =>
                   val r2 = arg.solve(env)

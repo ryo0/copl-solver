@@ -30,8 +30,10 @@ object rule {
           s"if ${condExp.string} then ${thenExp.string} else ${elseExp.string}"
         case LetExp(variable, valueExp, inExp) =>
           s"let ${variable.string} = ${valueExp.string} in ${inExp.string}"
-        case LetRecExp(variable, valueExp, inExp) =>
-          s"let rec ${variable.string} = ${valueExp.string} in ${inExp.string}"
+        case LetRecExp(variable, fun, inExp) =>
+          s"let rec ${variable.string} = ${FunExp(fun.param, fun.body).string
+            .dropRight(1)
+            .drop(1)} in ${inExp.string}"
         case FunExp(param, body) =>
           val paramsStr = param.name.mkString
           s"(fun $paramsStr -> ${body.string})"
@@ -43,7 +45,7 @@ object rule {
           s"(${e.string}) [${funString.dropRight(1).drop(1)}]"
         case RecClosure(e, RecFunExp(v, param, body)) =>
           val funString = FunExp(param, body).string
-          s"(${e.string}) [rec $v = ${funString.dropRight(1).drop(1)}]"
+          s"(${e.string}) [rec ${v.string} = ${funString.dropRight(1).drop(1)}]"
         case FunCall(funName, arg) =>
           s"(${funName.string} ${arg.string})"
       }
@@ -235,8 +237,9 @@ object rule {
         case ERecClosure(env, variable, param, e) =>
           s"(${env.string}) [rec $variable = fun ${param.string} -> ${e.string}]"
         case ELetRec(env, variable, e1, e2, r) =>
-          println(r)
-          s"${env.string} |- let rec ${variable.string} = ${e1.string} in ${e2.string} evalto ${r.value.string} by E-LetRec{\n" +
+          s"${env.string} |- let rec ${variable.string} = ${e1.string
+            .dropRight(1)
+            .drop(1)} in ${e2.string} evalto ${r.value.string} by E-LetRec{\n" +
             s"$indentPlus1${r.string(nest + 1)}\n" +
             s"$indent};"
         case EApp(env, e1, e2, r1, r2, r3) =>
