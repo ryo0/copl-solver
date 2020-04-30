@@ -87,10 +87,10 @@ object main extends App {
   )
   file13.close()
 
-  val file14 = new PrintWriter("12.txt")
+  val file14 = new PrintWriter("14.txt")
   file14.write(
     solve(
-      "let rec fact = fun n -> if n < 2 then 1 else n * fact (n - 1) in fact 3"
+      "let rec sum = fun f -> fun n -> if n < 1 then 0 else f n + sum f (n - 1) in sum (fun x -> x * x) 2"
     )
   )
   file14.close()
