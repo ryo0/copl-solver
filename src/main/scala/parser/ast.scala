@@ -70,9 +70,10 @@ object ast {
           val r2 = inExp.solve((variable.name, r1.value) :: env)
           ELet(env, variable, valueExp, inExp, r1, r2)
         case LetRecExp(variable, fun, inExp) =>
+          val newEnv = (variable.name, fun.solve(env).value) :: env
           val eRecFun: ERecFun =
-            fun
-              .solve((variable.name, fun.solve(env).value) :: env)
+            inExp
+              .solve(newEnv)
               .asInstanceOf[ERecFun]
           val eRecClosure =
             ERecClosure(eRecFun.env, variable, eRecFun.param, eRecFun.e)
@@ -99,14 +100,28 @@ object ast {
                   :: recClosure.env
               )
               EAppRec(env, funName, arg, r1, r2, r3)
+            case RecClosure(ce, RecFunExp(v, p, b)) =>
+              val r1 = funName.solve(ce)
+              val recClosure = r1.value.asInstanceOf[RecClosure]
+              val r2 = arg.solve(ce)
+              val r3 = recClosure.recFunExp.body.solve(
+                (recClosure.recFunExp.param.name, r2.value) ::
+                  (recClosure.recFunExp.variable.name, recClosure)
+                  :: recClosure.env
+              )
+              EAppRec(ce, funName, arg, r1, r2, r3)
             case _ =>
               val r1 = funName.solve(env)
-              val r1ResultClosure = r1.value.asInstanceOf[Closure]
-              val r2 = arg.solve(env)
-              val r3 = r1ResultClosure.funExp.body.solve(
-                (r1ResultClosure.funExp.param.name, r2.value) :: r1ResultClosure.env
-              )
-              EApp(env, funName, arg, r1, r2, r3)
+              r1.value match {
+                case RecClosure(ce, RecFunExp(v, p, b)) =>
+                  val r2 = arg.solve(env)
+                  val r3 = b.solve((p.name, r2.value) :: ce)
+                  EAppRec(ce, funName, arg, r1, r2, r3)
+                case Closure(ce, FunExp(p, b)) =>
+                  val r2 = arg.solve(env)
+                  val r3 = b.solve((p.name, r2.value) :: ce)
+                  EApp(env, funName, arg, r1, r2, r3)
+              }
           }
 
         case _ =>

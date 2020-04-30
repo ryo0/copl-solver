@@ -30,12 +30,20 @@ object rule {
           s"if ${condExp.string} then ${thenExp.string} else ${elseExp.string}"
         case LetExp(variable, valueExp, inExp) =>
           s"let ${variable.string} = ${valueExp.string} in ${inExp.string}"
+        case LetRecExp(variable, valueExp, inExp) =>
+          s"let rec ${variable.string} = ${valueExp.string} in ${inExp.string}"
         case FunExp(param, body) =>
+          val paramsStr = param.name.mkString
+          s"(fun $paramsStr -> ${body.string})"
+        case RecFunExp(v, param, body) =>
           val paramsStr = param.name.mkString
           s"(fun $paramsStr -> ${body.string})"
         case Closure(e, FunExp(param, body)) =>
           val funString = FunExp(param, body).string
           s"(${e.string}) [${funString.dropRight(1).drop(1)}]"
+        case RecClosure(e, RecFunExp(v, param, body)) =>
+          val funString = FunExp(param, body).string
+          s"(${e.string}) [rec $v = ${funString.dropRight(1).drop(1)}]"
         case FunCall(funName, arg) =>
           s"(${funName.string} ${arg.string})"
       }
@@ -222,11 +230,23 @@ object rule {
         case EFun(env, variable, e, closure) =>
           s"${env.string} |- fun ${variable.string} -> ${e.string} evalto ${closure
             .string(nest)} by E-Fun{};"
-        case EClosure(env, variable, e) =>
-          s"(${env.string}) [fun ${variable.string} -> ${e.string}]"
+        case EClosure(env, param, e) =>
+          s"(${env.string}) [fun ${param.string} -> ${e.string}]"
+        case ERecClosure(env, variable, param, e) =>
+          s"(${env.string}) [rec $variable = fun ${param.string} -> ${e.string}]"
         case ELetRec(env, variable, e1, e2, r) =>
+          println(r)
+          s"${env.string} |- let rec ${variable.string} = ${e1.string} in ${e2.string} evalto ${r.value.string} by E-LetRec{\n" +
+            s"$indentPlus1${r.string(nest + 1)}\n" +
+            s"$indent};"
         case EApp(env, e1, e2, r1, r2, r3) =>
           s"${env.string} |- ${e1.string} ${e2.string} evalto ${r3.value.string} by E-App{\n" +
+            s"$indentPlus1${r1.string(nest + 1)}\n" +
+            s"$indentPlus1${r2.string(nest + 1)}\n" +
+            s"$indentPlus1${r3.string(nest + 1)}\n" +
+            s"$indent};"
+        case EAppRec(env, e1, e2, r1, r2, r3) =>
+          s"${env.string} |- ${e1.string} ${e2.string} evalto ${r3.value.string} by E-AppRec{\n" +
             s"$indentPlus1${r1.string(nest + 1)}\n" +
             s"$indentPlus1${r2.string(nest + 1)}\n" +
             s"$indentPlus1${r3.string(nest + 1)}\n" +
