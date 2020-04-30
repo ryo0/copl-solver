@@ -104,7 +104,7 @@ object ast {
                   (recClosure.recFunExp.variable.name, recClosure)
                   :: recClosure.env
               )
-              EAppRec(ce, funName, arg, r1, r2, r3)
+              EAppRec(ce ::: env, funName, arg, r1, r2, r3)
             case _ =>
               val r1 = funName.solve(env)
               r1.value match {
@@ -112,7 +112,7 @@ object ast {
                   val r2 = arg.solve(env)
                   val r3 =
                     b.solve((p.name, r2.value) :: (v.name, r1.value) :: ce)
-                  EAppRec(ce, funName, arg, r1, r2, r3)
+                  EAppRec(ce ::: env, funName, arg, r1, r2, r3)
                 case Closure(ce, FunExp(p, b)) =>
                   val r2 = arg.solve(env)
                   val r3 = b.solve((p.name, r2.value) :: ce)
