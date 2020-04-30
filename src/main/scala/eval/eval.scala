@@ -23,6 +23,10 @@ object eval {
       case LetExp(variable, valueExp, inExp) =>
         val newEnv = (variable.name, eval(valueExp, env))
         eval(inExp, newEnv :: env)
+      case LetRecExp(variable, fun, inExp) =>
+        val evaledFun = eval(fun, (variable.name, eval(fun, env)) :: env)
+        val newEnv = (variable.name, evaledFun)
+        eval(inExp, newEnv :: env)
       case IfExp(condExp, thenExp, elseExp) => {
         if (eval(condExp, env).asInstanceOf[BoolVal].value) {
           eval(thenExp, env)

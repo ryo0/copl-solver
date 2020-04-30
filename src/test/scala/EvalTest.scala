@@ -136,11 +136,11 @@ class EvalTest extends FunSuite {
       eval(
         parseExp(
           tokenize(
-            "let twice = fun f -> fun x -> f (f x) in twice (fun x -> x * x) 2"
+            "let rec fact = fun x -> if x < 2 then x else x * fact (x  - 1) in fact 4"
           )
         )._1,
         List()
-      ) === IntVal(16)
+      ) === IntVal(24)
     )
   }
 }
