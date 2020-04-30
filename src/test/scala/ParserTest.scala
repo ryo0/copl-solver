@@ -209,5 +209,13 @@ class ParserTest extends FunSuite {
         IntVal(2)
       ), List())
     )
+    assert(
+      parseExp(tokenize("fib (n - 1) + fib (n - 2)")) === (InfixExp(
+        FunCall(Var("fib"), InfixExp(Var("n"), Minus, IntVal(1))),
+        Plus,
+        FunCall(Var("fib"), InfixExp(Var("n"), Minus, IntVal(2)))
+      ), List())
+    )
+
   }
 }
