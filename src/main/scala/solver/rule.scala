@@ -108,6 +108,8 @@ object rule {
   case class ERecClosure(env: Env, variable: Var, e: Exp) extends Rule
   case class EApp(env: Env, e1: Exp, e2: Exp, r1: Rule, r2: Rule, r3: Rule)
       extends Rule
+  case class EAppRec(env: Env, e1: Exp, e2: Exp, r1: Rule, r2: Rule, r3: Rule)
+      extends Rule
 
   implicit class NestString(str: String) {
     def mul(nest: Int): String = {
@@ -138,7 +140,8 @@ object rule {
           Closure(env, FunExp(variable, body))
         case ERecClosure(env, variable, body) =>
           Closure(env, FunExp(variable, body))
-        case EApp(_, _, _, _, _, r3) => r3.value
+        case EApp(_, _, _, _, _, r3)    => r3.value
+        case EAppRec(_, _, _, _, _, r3) => r3.value
       }
     }
 

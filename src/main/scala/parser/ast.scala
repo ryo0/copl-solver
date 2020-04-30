@@ -80,13 +80,24 @@ object ast {
         case FunExp(variable: Var, body: Exp) =>
           EFun(env, variable, body, EClosure(env, variable, body))
         case FunCall(funName: Exp, arg: Exp) =>
-          val r1 = funName.solve(env)
-          val r1ResultClosure = r1.value.asInstanceOf[Closure]
-          val r2 = arg.solve(env)
-          val r3 = r1ResultClosure.funExp.body.solve(
-            (r1ResultClosure.funExp.param.name, r2.value) :: r1ResultClosure.env
-          )
-          EApp(env, funName, arg, r1, r2, r3)
+          funName match {
+//            case RecFunExp(p, b) =>
+//              val r1 = funName.solve(env)
+//              val r1ResultClosure = r1.value.asInstanceOf[RecClosure]
+//              val r2 = arg.solve(env)
+//              val r3 = r1ResultClosure./funExp.body.solve(
+//                (r1ResultClosure.funExp.param.name, r2.value) :: r1ResultClosure.env
+//              )
+//              EAppRec(env, funName, arg, r1, r2, r3)
+            case _ =>
+              val r1 = funName.solve(env)
+              val r1ResultClosure = r1.value.asInstanceOf[Closure]
+              val r2 = arg.solve(env)
+              val r3 = r1ResultClosure.funExp.body.solve(
+                (r1ResultClosure.funExp.param.name, r2.value) :: r1ResultClosure.env
+              )
+              EApp(env, funName, arg, r1, r2, r3)
+          }
 
         case _ =>
           throw new Exception("未対応")
@@ -116,6 +127,8 @@ object ast {
   case class FunCall(funName: Exp, arg: Exp) extends Exp
   case class Closure(env: List[(String, Exp)], funExp: FunExp) extends Exp
   case class RecFunExp(param: Var, body: Exp) extends Exp
+  case class RecClosure(env: List[(String, Exp)], recFunExp: RecFunExp)
+      extends Exp
   case class LetRecExp(variable: Var, valueExp: RecFunExp, inExp: Exp)
       extends Exp
 }
