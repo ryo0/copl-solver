@@ -107,4 +107,5 @@ object ast {
   case class FunExp(param: Var, body: Exp) extends Exp
   case class FunCall(funName: Exp, arg: Exp) extends Exp
   case class Closure(env: List[(String, Exp)], funExp: FunExp) extends Exp
+  case class LetRecExp(variable: Var, valueExp: FunExp, inExp: Exp) extends Exp
 }

@@ -41,4 +41,6 @@ object token {
   object TrueToken extends Token
 
   object FalseToken extends Token
+
+  object RecToken extends Token
 }

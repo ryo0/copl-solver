@@ -110,6 +110,16 @@ class ParserTest extends FunSuite {
     )
   }
 
+  test("parseLetRect") {
+    assert(
+      parseExp(tokenize("let rec f = fun x -> x + 1 in f 1")) === (LetRecExp(
+        Var("f"),
+        FunExp(Var("x"), InfixExp(Var("x"), Plus, IntVal(1))),
+        FunCall(Var("f"), IntVal(1))
+      ), List())
+    )
+  }
+
   test("parseFun") {
     assert(
       parseExp(tokenize("fun x -> 1")) === (FunExp(Var("x"), IntVal(1)), List())

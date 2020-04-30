@@ -17,6 +17,8 @@ object parser {
     tokens match {
       case IfToken :: rest =>
         parseIf(tokens)
+      case LetToken :: RecToken :: rest =>
+        parseLetRec(tokens)
       case LetToken :: rest =>
         parseLet(tokens)
       case FunToken :: rest =>
@@ -121,6 +123,22 @@ object parser {
         }
       case _ =>
         throw new Exception("letが let x = 2...という形式でない")
+    }
+  }
+
+  def parseLetRec(tokens: List[Token]): (LetRecExp, List[Token]) = {
+    tokens match {
+      case LetToken :: RecToken :: VarToken(n) :: EqualToken :: rest =>
+        val (fun, rest2) = parseFun(rest)
+        rest2 match {
+          case InToken :: rest3 =>
+            val (in, rest4) = parseExp(rest3)
+            (LetRecExp(Var(n), fun, in), rest4)
+          case _ =>
+            throw new Exception("letにinがない")
+        }
+      case _ =>
+        throw new Exception("let recが let rec x = 2...という形式でない")
     }
   }
 
