@@ -62,7 +62,6 @@ object ast {
             val r2 = thenExp.solve(env)
             EIfT(env, condExp, thenExp, elseExp, r1, r2)
           } else {
-            println(elseExp.string)
             val r3 = elseExp.solve(env)
             EIfF(env, condExp, thenExp, elseExp, r1, r3)
           }
@@ -111,7 +110,6 @@ object ast {
               r1.value match {
                 case RecClosure(ce, RecFunExp(v, p, b)) =>
                   val r2 = arg.solve(env)
-                  println(b.string)
                   val r3 =
                     b.solve((p.name, r2.value) :: (v.name, r1.value) :: ce)
                   EAppRec(ce ::: env, funName, arg, r1, r2, r3)
