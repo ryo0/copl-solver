@@ -73,7 +73,7 @@ object parser {
 
     tokens.head match {
       case LParen =>
-        val (exp, rest) = parseExp(tokens)
+        val (exp, rest) = parsePrimary(tokens)
         (Some(exp), rest)
       case VarToken(n) =>
         (Some(Var(n)), tokens.tail)
