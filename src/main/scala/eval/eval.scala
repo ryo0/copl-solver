@@ -36,12 +36,16 @@ object eval {
       }
       case FunExp(param, body) =>
         Closure(env, FunExp(param, body))
+      case RecFunExp(param, body) =>
+        Closure(env, FunExp(param, body))
       case Closure(e, FunExp(param, body)) =>
         Closure(e, FunExp(param, body))
       case FunCall(exp, arg) =>
         val evaledExp = eval(exp, env)
         evaledExp match {
           case FunExp(p, b) =>
+            eval(b, (p.name, eval(arg, env)) :: env)
+          case RecFunExp(p, b) =>
             eval(b, (p.name, eval(arg, env)) :: env)
           case Closure(e, FunExp(p, b)) =>
             eval(b, (p.name, eval(arg, env)) :: e ::: env)

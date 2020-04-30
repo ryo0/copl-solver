@@ -69,6 +69,14 @@ object ast {
           val r1 = valueExp.solve(env)
           val r2 = inExp.solve((variable.name, r1.value) :: env)
           ELet(env, variable, valueExp, inExp, r1, r2)
+        case LetRecExp(variable, fun, inExp) =>
+          val closure: EClosure =
+            fun
+              .solve((variable.name, fun.solve(env).value) :: env)
+              .asInstanceOf[EClosure]
+          val eRecClosure =
+            ERecClosure(closure.env, closure.variable, closure.e)
+          ELetRec(env, variable, fun, inExp, eRecClosure)
         case FunExp(variable: Var, body: Exp) =>
           EFun(env, variable, body, EClosure(env, variable, body))
         case FunCall(funName: Exp, arg: Exp) =>
@@ -107,5 +115,7 @@ object ast {
   case class FunExp(param: Var, body: Exp) extends Exp
   case class FunCall(funName: Exp, arg: Exp) extends Exp
   case class Closure(env: List[(String, Exp)], funExp: FunExp) extends Exp
-  case class LetRecExp(variable: Var, valueExp: FunExp, inExp: Exp) extends Exp
+  case class RecFunExp(param: Var, body: Exp) extends Exp
+  case class LetRecExp(variable: Var, valueExp: RecFunExp, inExp: Exp)
+      extends Exp
 }

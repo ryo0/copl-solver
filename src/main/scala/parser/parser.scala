@@ -133,7 +133,7 @@ object parser {
         rest2 match {
           case InToken :: rest3 =>
             val (in, rest4) = parseExp(rest3)
-            (LetRecExp(Var(n), fun, in), rest4)
+            (LetRecExp(Var(n), RecFunExp(fun.param, fun.body), in), rest4)
           case _ =>
             throw new Exception("letにinがない")
         }

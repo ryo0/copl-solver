@@ -100,9 +100,12 @@ object rule {
   case class EVar2(env: Env, variable: Var, r: Rule) extends Rule
   case class ELet(env: Env, variable: Exp, e1: Exp, e2: Exp, r1: Rule, r2: Rule)
       extends Rule
+  case class ELetRec(env: Env, variable: Exp, e1: Exp, e2: Exp, r: Rule)
+      extends Rule
   case class EFun(env: Env, variable: Exp, e: Exp, closure: EClosure)
       extends Rule
   case class EClosure(env: Env, variable: Var, e: Exp) extends Rule
+  case class ERecClosure(env: Env, variable: Var, e: Exp) extends Rule
   case class EApp(env: Env, e1: Exp, e2: Exp, r1: Rule, r2: Rule, r3: Rule)
       extends Rule
 
@@ -129,8 +132,11 @@ object rule {
         case EVar1(env, _)                => env.head._2
         case EVar2(_, _, rule)            => rule.value
         case ELet(_, _, _, _, _, r2)      => r2.value
+        case ELetRec(_, _, _, _, r)       => r.value
         case EFun(_, _, _, eClosure)      => eClosure.value
         case EClosure(env, variable, body) =>
+          Closure(env, FunExp(variable, body))
+        case ERecClosure(env, variable, body) =>
           Closure(env, FunExp(variable, body))
         case EApp(_, _, _, _, _, r3) => r3.value
       }
