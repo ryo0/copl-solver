@@ -78,4 +78,20 @@ object main extends App {
     )
   )
   file12.close()
+
+  val file13 = new PrintWriter("13.txt")
+  file13.write(
+    solve(
+      "let rec fib = fun n -> if n < 3 then 1 else fib (n - 1) + fib (n - 2) in fib 5"
+    )
+  )
+  file13.close()
+
+  val file14 = new PrintWriter("12.txt")
+  file14.write(
+    solve(
+      "let rec fact = fun n -> if n < 2 then 1 else n * fact (n - 1) in fact 3"
+    )
+  )
+  file14.close()
 }
