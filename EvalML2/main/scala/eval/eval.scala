@@ -23,10 +23,6 @@ object eval {
       case LetExp(variable, valueExp, inExp) =>
         val newEnv = (variable.name, eval(valueExp, env))
         eval(inExp, newEnv :: env)
-      case LetRecExp(variable, fun, inExp) =>
-        val evaledFun = eval(fun, (variable.name, eval(fun, env)) :: env)
-        val newEnv = (variable.name, evaledFun)
-        eval(inExp, newEnv :: env)
       case IfExp(condExp, thenExp, elseExp) => {
         if (eval(condExp, env).asInstanceOf[BoolVal].value) {
           eval(thenExp, env)
@@ -36,22 +32,14 @@ object eval {
       }
       case FunExp(param, body) =>
         Closure(env, FunExp(param, body))
-      case RecFunExp(variable, param, body) =>
-        RecClosure(env, RecFunExp(variable, param, body))
       case Closure(e, FunExp(param, body)) =>
         Closure(e, FunExp(param, body))
-      case RecClosure(e, RecFunExp(variable, param, body)) =>
-        RecClosure(e, RecFunExp(variable, param, body))
       case FunCall(exp, arg) =>
         val evaledExp = eval(exp, env)
         evaledExp match {
           case FunExp(p, b) =>
             eval(b, (p.name, eval(arg, env)) :: env)
-          case RecFunExp(v, p, b) =>
-            eval(b, (p.name, eval(arg, env)) :: env)
           case Closure(e, FunExp(p, b)) =>
-            eval(b, (p.name, eval(arg, env)) :: e ::: env)
-          case RecClosure(e, RecFunExp(v, p, b)) =>
             eval(b, (p.name, eval(arg, env)) :: e ::: env)
           case _ =>
             throw new Exception("error")
