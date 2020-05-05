@@ -43,4 +43,12 @@ object token {
   object FalseToken extends Token
 
   object RecToken extends Token
+
+  object MatchToken extends Token
+
+  object EmptyListToken extends Token
+
+  object ConsToken extends Token
+
+  object OrToken extends Token
 }

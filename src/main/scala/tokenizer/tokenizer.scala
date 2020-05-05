@@ -13,8 +13,12 @@ object tokenizer {
       ')' -> RParen,
       '<' -> LessThanToken,
       '>' -> GreaterThanToken,
-      '=' -> EqualToken
+      '=' -> EqualToken,
+      '|' -> OrToken
     )
+  val tokenMap2Heads = List('-', ':', '[')
+  val tokenMap2: Map[String, Token] =
+    Map("->" -> ArrowToken, "::" -> ConsToken, "[]" -> EmptyListToken)
   val reservedWordMap: Map[String, Token] = Map(
     "if" -> IfToken,
     "then" -> ThenToken,
@@ -24,7 +28,8 @@ object tokenizer {
     "fun" -> FunToken,
     "true" -> TrueToken,
     "false" -> FalseToken,
-    "rec" -> RecToken
+    "rec" -> RecToken,
+    "match" -> MatchToken
   )
 
   def tokenize(str: String): List[Token] = {
@@ -34,8 +39,11 @@ object tokenizer {
       }
       val c = str(0)
       val rest = str.slice(1, str.length)
-      if (rest.length > 0 && c == '-' && rest.head == '>') {
-        return tokenizeSub(rest.tail, acm :+ ArrowToken)
+      if (tokenMap2Heads.contains(c) && rest.length > 0) {
+        val cc = c.toString + rest.head
+        if (tokenMap2.keySet.contains(cc)) {
+          return tokenizeSub(rest.tail, acm :+ tokenMap2(cc))
+        }
       }
       if (tokenMap.keySet.contains(c)) {
         return tokenizeSub(rest, acm :+ tokenMap(c))
