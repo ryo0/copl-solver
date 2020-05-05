@@ -217,5 +217,17 @@ class ParserTest extends FunSuite {
         EList(IntVal(2), EmptyList)
       ), List())
     )
+    assert(
+      parseExp(tokenize(" 1 :: []")) === (EList(IntVal(1), EmptyList), List())
+    )
+    assert(
+      parseExp(tokenize("(1 + 2) :: (3 + 4) :: (5 * 6) :: []")) === (EList(
+        InfixExp(IntVal(1), Plus, IntVal(2)),
+        EList(
+          InfixExp(IntVal(3), Plus, IntVal(4)),
+          EList(InfixExp(IntVal(5), Asterisk, IntVal(6)), EmptyList)
+        )
+      ), List())
+    )
   }
 }

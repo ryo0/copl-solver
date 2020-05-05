@@ -10,6 +10,7 @@ object ast {
   object Slash extends Op
   object GreaterThan extends Op
   object LessThan extends Op
+  object Cons extends Op
 
   sealed class Exp {
     def solve(env: Env): Rule = {
@@ -153,6 +154,6 @@ object ast {
   case class LetRecExp(variable: Var, valueExp: RecFunExp, inExp: Exp)
       extends Exp
   sealed class ListExp extends Exp
-  case class EList(first: Exp, rest: ListExp) extends ListExp
+  case class EList(first: Exp, second: Exp) extends ListExp
   object EmptyList extends ListExp
 }

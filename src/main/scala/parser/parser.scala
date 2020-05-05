@@ -10,7 +10,8 @@ object parser {
     AsteriskToken -> Asterisk,
     SlashToken -> Slash,
     LessThanToken -> LessThan,
-    GreaterThanToken -> GreaterThan
+    GreaterThanToken -> GreaterThan,
+    ConsToken -> Cons
   )
 
   def parseExp(tokens: List[Token]): (Exp, List[Token]) = {
@@ -224,10 +225,32 @@ object parser {
   def parseUnary(tokens: List[Token]): (Exp, List[Token]) = {
     tokens match {
       case MinusToken :: rest =>
-        val (prim, _rest) = parsePrimary(rest)
+        val (prim, _rest) = parseEList(rest)
         (InfixExp(IntVal(0), Minus, prim), _rest)
       case _ =>
-        parsePrimary(tokens)
+        parseEList(tokens)
+    }
+  }
+
+  def parseEList(tokens: List[Token]): (Exp, List[Token]) = {
+    // ここだけ右結合なので特殊
+    val (pr1, rest) = parsePrimary(tokens)
+    rest match {
+      case ConsToken :: rest2 =>
+        val (pr2, rest3) = parseEList(rest2)
+        (EList(pr1, pr2), rest3)
+      case _ =>
+        (pr1, rest)
+    }
+  }
+
+  def append(lst1: ListExp, lst2: ListExp): ListExp = {
+    lst1 match {
+      case EList(first, second: EList) =>
+        EList(first, append(second, lst2))
+      case EmptyList => lst2
+      case _ =>
+        throw new Exception("append error")
     }
   }
 
@@ -264,6 +287,8 @@ object parser {
       case FunToken :: _ =>
         val (fun, rest2) = parseFun(tokens)
         parseFunCall(fun, rest2)
+      case EmptyListToken :: rest =>
+        (EmptyList, rest)
       case _ =>
         parseExp(tokens)
     }
