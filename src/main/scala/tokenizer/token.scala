@@ -51,4 +51,6 @@ object token {
   object ConsToken extends Token
 
   object OrToken extends Token
+
+  object WithToken extends Token
 }

@@ -29,7 +29,8 @@ object tokenizer {
     "true" -> TrueToken,
     "false" -> FalseToken,
     "rec" -> RecToken,
-    "match" -> MatchToken
+    "match" -> MatchToken,
+    "with" -> WithToken
   )
 
   def tokenize(str: String): List[Token] = {

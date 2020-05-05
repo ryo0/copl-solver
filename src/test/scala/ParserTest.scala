@@ -229,5 +229,7 @@ class ParserTest extends FunSuite {
         )
       ), List())
     )
+    assert(parseExp(tokenize("x :: y")) === (EList(Var("x"), Var("y")), List()))
+
   }
 }
