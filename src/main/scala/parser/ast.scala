@@ -152,4 +152,7 @@ object ast {
       extends Exp
   case class LetRecExp(variable: Var, valueExp: RecFunExp, inExp: Exp)
       extends Exp
+  sealed class ListExp extends Exp
+  case class EList(first: Exp, rest: ListExp) extends ListExp
+  object EmptyList extends ListExp
 }
