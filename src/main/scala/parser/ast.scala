@@ -125,6 +125,39 @@ object ast {
           throw new Exception("未対応")
       }
     }
+    def string: String = {
+      this match {
+        case IntVal(n)  => s"$n"
+        case BoolVal(b) => s"$b"
+        case Var(n)     => s"$n"
+        case InfixExp(IntVal(0), Minus, right) =>
+          s"-${right.string}"
+        case InfixExp(left, op, right) =>
+          s"(${left.string} ${opMap(op)} ${right.string})"
+        case IfExp(condExp, thenExp, elseExp) =>
+          s"if ${condExp.string} then ${thenExp.string} else ${elseExp.string}"
+        case LetExp(variable, valueExp, inExp) =>
+          s"let ${variable.string} = ${valueExp.string} in ${inExp.string}"
+        case LetRecExp(variable, fun, inExp) =>
+          s"let rec ${variable.string} = ${FunExp(fun.param, fun.body).string
+            .dropRight(1)
+            .drop(1)} in ${inExp.string}"
+        case FunExp(param, body) =>
+          val paramsStr = param.name.mkString
+          s"(fun $paramsStr -> ${body.string})"
+        case RecFunExp(v, param, body) =>
+          val paramsStr = param.name.mkString
+          s"(fun $paramsStr -> ${body.string})"
+        case Closure(e, FunExp(param, body)) =>
+          val funString = FunExp(param, body).string
+          s"(${e.string}) [${funString.dropRight(1).drop(1)}]"
+        case RecClosure(e, RecFunExp(v, param, body)) =>
+          val funString = FunExp(param, body).string
+          s"(${e.string}) [rec ${v.string} = ${funString.dropRight(1).drop(1)}]"
+        case FunCall(funName, arg) =>
+          s"(${funName.string} ${arg.string})"
+      }
+    }
   }
   case class IntVal(value: Int) extends Exp {
     def +(other: IntVal): IntVal = {
