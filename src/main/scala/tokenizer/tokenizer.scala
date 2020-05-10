@@ -83,7 +83,7 @@ object tokenizer {
       }
       val c = str(0)
       val rest = str.slice(1, str.length)
-      if (c.isLetter) {
+      if (c.isLetter || c.isDigit) {
         tokenizeLetterSub(rest, acm :+ c)
       } else {
         (str, retVarOrToken(acm))

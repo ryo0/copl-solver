@@ -230,6 +230,32 @@ class ParserTest extends FunSuite {
       ), List())
     )
     assert(parseExp(tokenize("x :: y")) === (EList(Var("x"), Var("y")), List()))
+  }
 
+  test("match") {
+    assert(
+      parseExp(tokenize("match x with [] -> 0 | a :: b -> a"))._1 === Match(
+        Var("x"),
+        List(
+          Pattern(EmptyList, IntVal(0)),
+          Pattern(EList(Var("a"), Var("b")), Var("a"))
+        )
+      )
+    )
+    assert(
+      parseExp(tokenize("match l1 with [] -> l2 | x :: y -> x :: append y l2"))._1 === Match(
+        Var("l1"),
+        List(
+          Pattern(EmptyList, Var("l2")),
+          Pattern(
+            EList(Var("x"), Var("y")),
+            EList(
+              Var("x"),
+              FunCall(FunCall(Var("append"), Var("y")), Var("l2"))
+            )
+          )
+        )
+      )
+    )
   }
 }

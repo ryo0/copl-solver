@@ -16,16 +16,55 @@ object parser {
 
   def parseExp(tokens: List[Token]): (Exp, List[Token]) = {
     tokens match {
-      case IfToken :: rest =>
+      case IfToken :: _ =>
         parseIf(tokens)
-      case LetToken :: RecToken :: rest =>
+      case LetToken :: RecToken :: _ =>
         parseLetRec(tokens)
-      case LetToken :: rest =>
+      case LetToken :: _ =>
         parseLet(tokens)
-      case FunToken :: rest =>
+      case FunToken :: _ =>
         parseFun(tokens)
+      case MatchToken :: _ =>
+        parseMatch(tokens)
       case _ =>
         parseRelational(tokens)
+    }
+  }
+
+  def parseMatch(tokens: List[Token]): (Match, List[Token]) = {
+    tokens match {
+      case MatchToken :: VarToken(n) :: WithToken :: rest =>
+        val v = Var(n)
+        val (ps, rest2) = parsePatterns(rest)
+        (Match(v, ps), rest2)
+      case _ =>
+        throw new Exception("match error")
+    }
+  }
+
+  def parsePatterns(tokens: List[Token]): (List[Pattern], List[Token]) = {
+    @scala.annotation.tailrec
+    def parsePatternsSub(tokens: List[Token],
+                         ps: List[Pattern]): (List[Pattern], List[Token]) = {
+      val (pattern, rest) = parsePattern(tokens)
+      rest match {
+        case OrToken :: rest2 =>
+          parsePatternsSub(rest2, ps :+ pattern)
+        case _ =>
+          (ps :+ pattern, rest)
+      }
+    }
+    parsePatternsSub(tokens, List())
+  }
+
+  def parsePattern(tokens: List[Token]): (Pattern, List[Token]) = {
+    val (lst, rest) = parseEList(tokens)
+    rest match {
+      case ArrowToken :: rest2 =>
+        val (exp, rest3) = parseExp(rest2)
+        (Pattern(lst.asInstanceOf[ListExp], exp), rest3)
+      case _ =>
+        throw new Error("パターンがおかしい")
     }
   }
 

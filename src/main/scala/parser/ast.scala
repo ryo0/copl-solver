@@ -189,4 +189,6 @@ object ast {
   sealed class ListExp extends Exp
   case class EList(first: Exp, second: Exp) extends ListExp
   object EmptyList extends ListExp
+  case class Pattern(left: ListExp, right: Exp)
+  case class Match(v: Var, patterns: List[Pattern]) extends Exp
 }
