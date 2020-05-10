@@ -2,6 +2,7 @@ import parser.ast._
 import parser.parser.{parseExp, _}
 import tokenizer.tokenizer.tokenize
 import org.scalatest.FunSuite
+import tokenizer.token.ElseToken
 
 class ParserTest extends FunSuite {
   test("parseMul") {
@@ -209,7 +210,33 @@ class ParserTest extends FunSuite {
         FunCall(Var("fib"), InfixExp(Var("n"), Minus, IntVal(2)))
       ), List())
     )
+
+    assert(
+      parseExp(tokenize("f [] + f (1 :: 2 :: 3 :: [])")) === (InfixExp(
+        FunCall(Var("f"), EmptyList),
+        Plus,
+        FunCall(
+          Var("f"),
+          EList(IntVal(1), EList(IntVal(2), EList(IntVal(3), EmptyList)))
+        )
+      ))
+    )
+
   }
+  assert(
+    parseExp(tokenize("f (4::[]) + f [] + f (1 :: 2 :: 3 :: [])")) === (InfixExp(
+      FunCall(Var("f"), EList(IntVal(4), EmptyList)),
+      Plus,
+      InfixExp(
+        FunCall(Var("f"), EmptyList),
+        Plus,
+        FunCall(
+          Var("f"),
+          EList(IntVal(1), EList(IntVal(2), EList(IntVal(3), EmptyList)))
+        )
+      )
+    ))
+  )
   test("EList") {
     assert(
       parseExp(tokenize(" 1 :: 2 :: []")) === (EList(
