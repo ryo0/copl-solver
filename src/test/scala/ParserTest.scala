@@ -189,10 +189,19 @@ class ParserTest extends FunSuite {
         IntVal(2)
       ), List())
     )
+
     assert(
       parseExp(tokenize("f (f x)")) === (FunCall(
         Var("f"),
         FunCall(Var("f"), Var("x"))
+      ),
+      List())
+    )
+
+    assert(
+      parseExp(tokenize("f (f (f x))")) === (FunCall(
+        Var("f"),
+        FunCall(Var("f"), FunCall(Var("f"), Var("x")))
       ),
       List())
     )
@@ -242,6 +251,39 @@ class ParserTest extends FunSuite {
         EList(IntVal(3), EmptyList)
       ), List())
     )
+
+    assert(
+      parseExp(tokenize(" apply ((fun x -> x * x) :: (fun y -> y + 3))")) === (
+        FunCall(
+          Var("apply"),
+          EList(
+            FunExp(Var("x"), InfixExp(Var("x"), Asterisk, Var("x"))),
+            FunExp(Var("y"), InfixExp(Var("y"), Plus, IntVal(3)))
+          )
+        ),
+        List()
+      )
+    )
+
+    assert(
+      parseExp(tokenize("apply ((fun x -> x * x) :: (fun y -> y + 3) :: []) 4")) === (
+        FunCall(
+          FunCall(
+            Var("apply"),
+            EList(
+              FunExp(Var("x"), InfixExp(Var("x"), Asterisk, Var("x"))),
+              EList(
+                FunExp(Var("y"), InfixExp(Var("y"), Plus, IntVal(3))),
+                EmptyList
+              )
+            )
+          ),
+          IntVal(4)
+        ),
+        List()
+      )
+    )
+
   }
   test("EList") {
     assert(
