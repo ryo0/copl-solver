@@ -13,4 +13,34 @@ object main extends App {
     )
   )
   file42.close()
+
+  val file43 = new PrintWriter("EvalML4Result/3.txt")
+  file43.write(
+    solve("let rec f = fun x -> if x < 1 then [] else x :: f (x - 1) in f 3")
+  )
+  file43.close()
+
+  val file44 = new PrintWriter("EvalML4Result/4.txt")
+  file44.write(
+    solve(
+      "let rec length = fun l -> match l with [] -> 0 | x :: y -> 1 + length y in length (1 :: 2 :: 3 :: [])"
+    )
+  )
+  file44.close()
+
+  val file45 = new PrintWriter("EvalML4Result/5.txt")
+  file45.write(
+    solve(
+      "let rec length = fun l -> match l with [] -> 0 | x :: y -> 1 + length y in length ((1 :: 2 :: []) :: (3 :: 4 :: 5 :: []) :: [])"
+    )
+  )
+  file45.close()
+
+  val file46 = new PrintWriter("EvalML4Result/6.txt")
+  file46.write(
+    solve(
+      "let rec append = fun l1 -> fun l2 -> match l1 with [] -> l2 | x :: y -> x :: append y l2 in append (1 :: 2 :: []) (3 :: 4 :: 5 :: [])"
+    )
+  )
+  file46.close()
 }

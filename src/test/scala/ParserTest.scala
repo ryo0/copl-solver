@@ -221,22 +221,28 @@ class ParserTest extends FunSuite {
         )
       ), List())
     )
-
-  }
-  assert(
-    parseExp(tokenize("f (4::[]) + f [] + f (1 :: 2 :: 3 :: [])")) === (InfixExp(
-      InfixExp(
-        FunCall(Var("f"), EList(IntVal(4), EmptyList)),
+    assert(
+      parseExp(tokenize("f (4::[]) + f [] + f (1 :: 2 :: 3 :: [])")) === (InfixExp(
+        InfixExp(
+          FunCall(Var("f"), EList(IntVal(4), EmptyList)),
+          Plus,
+          FunCall(Var("f"), EmptyList),
+        ),
         Plus,
-        FunCall(Var("f"), EmptyList),
-      ),
-      Plus,
-      FunCall(
-        Var("f"),
-        EList(IntVal(1), EList(IntVal(2), EList(IntVal(3), EmptyList)))
-      )
-    ), List())
-  )
+        FunCall(
+          Var("f"),
+          EList(IntVal(1), EList(IntVal(2), EList(IntVal(3), EmptyList)))
+        )
+      ), List())
+    )
+
+    assert(
+      parseExp(tokenize("append (1 :: []) (3 :: [])")) === (FunCall(
+        FunCall(Var("append"), EList(IntVal(1), EmptyList)),
+        EList(IntVal(3), EmptyList)
+      ), List())
+    )
+  }
   test("EList") {
     assert(
       parseExp(tokenize(" 1 :: 2 :: []")) === (EList(
