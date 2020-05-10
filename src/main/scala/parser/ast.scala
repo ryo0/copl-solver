@@ -20,11 +20,7 @@ object ast {
         case BoolVal(b) =>
           EBool(env, BoolVal(b))
         case Var(n) =>
-          if (env.head._1 == n) {
-            EVar1(env, Var(n))
-          } else {
-            EVar2(env, Var(n), Var(n).solve(env.tail))
-          }
+          EVar(env, Var(n))
         case InfixExp(e1, Plus, e2) =>
           val r1 = e1.solve(env)
           val r2 = e2.solve(env)
@@ -178,13 +174,17 @@ object ast {
         case FunCall(funName, arg) =>
           s"(${funName.string} ${arg.string})"
         case EList(left, right) =>
-          s"${left.string} :: ${right.string}"
+          if (right.isInstanceOf[ListExp]) {
+            s"(${left.string} :: ${right.string})"
+          } else {
+            s"${left.string} :: ${right.string}"
+          }
         case EmptyList =>
           s"[]"
         case Pattern(left, right) =>
-          s"| ${left.string} -> ${right.string}\n"
+          s"| ${left.string} -> ${right.string} "
         case Match(v, patterns) =>
-          s"match ${v.string} with\n" + patterns
+          s"match ${v.string} with " + patterns
             .map(p => p.string)
             .mkString
             .drop(1)

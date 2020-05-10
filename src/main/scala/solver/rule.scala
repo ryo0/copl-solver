@@ -1,6 +1,7 @@
 package solver
 
 import parser.ast._
+import eval.eval.getValFromEnv
 
 object rule {
   type Env = List[(String, Exp)]
@@ -71,8 +72,7 @@ object rule {
                   e1Rule: Rule,
                   e3Rule: Rule)
       extends Rule
-  case class EVar1(env: Env, variable: Var) extends Rule
-  case class EVar2(env: Env, variable: Var, r: Rule) extends Rule
+  case class EVar(env: Env, variable: Var) extends Rule
   case class ELet(env: Env, variable: Exp, e1: Exp, e2: Exp, r1: Rule, r2: Rule)
       extends Rule
   case class ELetRec(env: Env, variable: Exp, e1: Exp, e2: Exp, r: Rule)
@@ -132,8 +132,7 @@ object rule {
         case ELt(_, _, _, i3, _, _, _)        => i3
         case EIfT(_, _, _, _, _, e2Rule)      => e2Rule.value
         case EIfF(_, _, _, _, _, e3Rule)      => e3Rule.value
-        case EVar1(env, _)                    => env.head._2
-        case EVar2(_, _, rule)                => rule.value
+        case EVar(env, v)                     => getValFromEnv(v.name, env)
         case ELet(_, _, _, _, _, r2)          => r2.value
         case ELetRec(_, _, _, _, r)           => r.value
         case EFun(_, _, _, eClosure)          => eClosure.value
@@ -160,12 +159,8 @@ object rule {
           s"${env.string} |- ${value.string} evalto ${value.string} by E-Int{};"
         case EBool(env, value) =>
           s"${env.toString()} |- ${value.string} evalto ${value.string} by E-Bool{};"
-        case EVar1(env, variable) =>
-          s"${env.string} |- ${variable.name} evalto ${env.head._2.string} by E-Var1{};"
-        case EVar2(env, variable, rule) =>
-          s"${env.string} |- ${variable.name} evalto ${rule.value.string} by E-Var2{\n" +
-            s"$indentPlus1${rule.string(nest + 1)}\n" +
-            s"$indent};"
+        case EVar(env, variable) =>
+          s"${env.string} |- ${variable.name} evalto ${getValFromEnv(variable.name, env).string} by E-Var{};"
         case EPlus(env, e1, e2, i3, e1Rule, e2Rule, bPlus) =>
           s"${env.string} |- ${e1.string} + ${e2.string} evalto ${i3.string} by E-Plus{\n" +
             s"$indentPlus1${e1Rule.string(nest + 1)}\n" +
@@ -252,21 +247,17 @@ object rule {
             s"$indentPlus1${r2.string(nest + 1)}\n" +
             s"$indent};"
         case EMatchNil(env, e1, e2, e3, x, y, r1, r2) =>
-          s"${env.string} |- match ${e1.string} with\n" +
-            s"[] -> ${e2.string}\n" +
-            s"| ${x.string} :: ${y.string} -> ${e3.string}\n" +
-            s"evalto ${r2.value.string} by E-MatchNil{\n" +
+          s"${env.string} |- match ${e1.string} with [] -> ${e2.string} | ${x.string} :: ${y.string} -> ${e3.string}" +
+            s" evalto ${r2.value.string} by E-MatchNil{\n" +
             s"$indentPlus1${r1.string(nest + 1)}\n" +
             s"$indentPlus1${r2.string(nest + 1)}\n" +
-            s"$indent"
+            s"$indent};"
         case EMatchCons(env, e1, e2, e3, x, y, r1, r2) =>
-          s"${env.string} |- match ${e1.string} with\n" +
-            s"[] -> ${e2.string}\n" +
-            s"| ${x.string} :: ${y.string} -> ${e3.string}\n" +
-            s"evalto ${r2.value.string} by E-MatchNil{\n" +
+          s"${env.string} |- match ${e1.string} with [] -> ${e2.string} | ${x.string} :: ${y.string} -> ${e3.string}" +
+            s" evalto ${r2.value.string} by E-MatchCons{\n" +
             s"$indentPlus1${r1.string(nest + 1)}\n" +
             s"$indentPlus1${r2.string(nest + 1)}\n" +
-            s"$indent"
+            s"$indent};"
       }
     }
   }
