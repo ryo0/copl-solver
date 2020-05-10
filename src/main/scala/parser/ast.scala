@@ -120,7 +120,28 @@ object ast {
                   EApp(env, funName, arg, r1, r2, r3)
               }
           }
-
+        case EmptyList =>
+          ENil(env, EmptyList)
+        case EList(e1, e2) =>
+          val r1 = e1.solve(env)
+          val r2 = e2.solve(env)
+          ECons(env, e1, e2, r1, r2)
+        case Match(e1, patterns) =>
+          val r1 = e1.solve(env)
+          val e2 = patterns.head.right
+          val x = patterns.tail.head.left.asInstanceOf[EList].first
+          val y = patterns.tail.head.left.asInstanceOf[EList].second
+          val e3 = patterns.tail.head.right
+          e1.solve(env).value match {
+            case EmptyList =>
+              val r2 = e2.solve(env)
+              EMatchNil(env, e1, e2, e3, x, y, r1, r2)
+            case EList(left, right) =>
+              val v1 = left
+              val v2 = right
+              val r2 = e3.solve((y.string, v2) :: (x.string, v1) :: env)
+              EMatchCons(env, e1, e2, e3, x, y, r1, r2)
+          }
         case _ =>
           throw new Exception("未対応")
       }

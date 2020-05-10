@@ -91,6 +91,26 @@ object rule {
       extends Rule
   case class EAppRec(env: Env, e1: Exp, e2: Exp, r1: Rule, r2: Rule, r3: Rule)
       extends Rule
+  case class ENil(env: Env, emptyList: ListExp) extends Rule
+  case class ECons(env: Env, e1: Exp, e2: Exp, r1: Rule, r2: Rule) extends Rule
+  case class EMatchNil(env: Env,
+                       e1: Exp,
+                       e2: Exp,
+                       e3: Exp,
+                       x: Exp,
+                       y: Exp,
+                       r1: Rule,
+                       r2: Rule)
+      extends Rule
+  case class EMatchCons(env: Env,
+                        e1: Exp,
+                        e2: Exp,
+                        e3: Exp,
+                        x: Exp,
+                        y: Exp,
+                        r1: Rule,
+                        r2: Rule)
+      extends Rule
 
   implicit class NestString(str: String) {
     def mul(nest: Int): String = {
@@ -122,8 +142,13 @@ object rule {
           Closure(env, FunExp(variable, body))
         case ERecClosure(env, variable: Var, param: Var, body) =>
           RecClosure(env, RecFunExp(variable, param, body))
-        case EApp(_, _, _, _, _, r3)    => r3.value
-        case EAppRec(_, _, _, _, _, r3) => r3.value
+        case EApp(_, _, _, _, _, r3)             => r3.value
+        case EAppRec(_, _, _, _, _, r3)          => r3.value
+        case ENil(_, emp)                        => emp
+        case ECons(_, _, _, r1, r2)              => EList(r1.value, r2.value)
+        case EMatchNil(_, _, _, _, _, _, _, r2)  => r2.value
+        case EMatchCons(_, _, _, _, _, _, _, r2) => r2.value
+
       }
     }
 
