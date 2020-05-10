@@ -177,6 +177,17 @@ object ast {
           s"(${e.string}) [rec ${v.string} = ${funString.dropRight(1).drop(1)}]"
         case FunCall(funName, arg) =>
           s"(${funName.string} ${arg.string})"
+        case EList(left, right) =>
+          s"${left.string} :: ${right.string}"
+        case EmptyList =>
+          s"[]"
+        case Pattern(left, right) =>
+          s"| ${left.string} -> ${right.string}\n"
+        case Match(v, patterns) =>
+          s"match ${v.string} with\n" + patterns
+            .map(p => p.string)
+            .mkString
+            .drop(1)
       }
     }
   }
@@ -210,6 +221,6 @@ object ast {
   sealed class ListExp extends Exp
   case class EList(first: Exp, second: Exp) extends ListExp
   object EmptyList extends ListExp
-  case class Pattern(left: ListExp, right: Exp)
+  case class Pattern(left: ListExp, right: Exp) extends Exp
   case class Match(v: Var, patterns: List[Pattern]) extends Exp
 }

@@ -244,6 +244,29 @@ object rule {
             s"$indentPlus1${r2.string(nest + 1)}\n" +
             s"$indentPlus1${r3.string(nest + 1)}\n" +
             s"$indent};"
+        case ENil(env, emptyList) =>
+          s"${env.string} |- ${emptyList.string} evalto ${emptyList.string} by E-Nil{};"
+        case ECons(env, e1, e2, r1, r2) =>
+          s"${env.string} |- ${e1.string} :: ${e2.string} evalto ${r1.value.string} :: ${r2.value.string} by E-Cons {\n" +
+            s"$indentPlus1${r1.string(nest + 1)}\n" +
+            s"$indentPlus1${r2.string(nest + 1)}\n" +
+            s"$indent};"
+        case EMatchNil(env, e1, e2, e3, x, y, r1, r2) =>
+          s"${env.string} |- match ${e1.string} with\n" +
+            s"[] -> ${e2.string}\n" +
+            s"| ${x.string} :: ${y.string} -> ${e3.string}\n" +
+            s"evalto ${r2.value.string} by E-MatchNil{\n" +
+            s"$indentPlus1${r1.string(nest + 1)}\n" +
+            s"$indentPlus1${r2.string(nest + 1)}\n" +
+            s"$indent"
+        case EMatchCons(env, e1, e2, e3, x, y, r1, r2) =>
+          s"${env.string} |- match ${e1.string} with\n" +
+            s"[] -> ${e2.string}\n" +
+            s"| ${x.string} :: ${y.string} -> ${e3.string}\n" +
+            s"evalto ${r2.value.string} by E-MatchNil{\n" +
+            s"$indentPlus1${r1.string(nest + 1)}\n" +
+            s"$indentPlus1${r2.string(nest + 1)}\n" +
+            s"$indent"
       }
     }
   }
