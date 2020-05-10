@@ -1,4 +1,4 @@
-import parser.ast._
+import parser.ast.{Plus, _}
 import parser.parser.{parseExp, _}
 import tokenizer.tokenizer.tokenize
 import org.scalatest.FunSuite
@@ -219,23 +219,23 @@ class ParserTest extends FunSuite {
           Var("f"),
           EList(IntVal(1), EList(IntVal(2), EList(IntVal(3), EmptyList)))
         )
-      ))
+      ), List())
     )
 
   }
   assert(
     parseExp(tokenize("f (4::[]) + f [] + f (1 :: 2 :: 3 :: [])")) === (InfixExp(
-      FunCall(Var("f"), EList(IntVal(4), EmptyList)),
-      Plus,
       InfixExp(
-        FunCall(Var("f"), EmptyList),
+        FunCall(Var("f"), EList(IntVal(4), EmptyList)),
         Plus,
-        FunCall(
-          Var("f"),
-          EList(IntVal(1), EList(IntVal(2), EList(IntVal(3), EmptyList)))
-        )
+        FunCall(Var("f"), EmptyList),
+      ),
+      Plus,
+      FunCall(
+        Var("f"),
+        EList(IntVal(1), EList(IntVal(2), EList(IntVal(3), EmptyList)))
       )
-    ))
+    ), List())
   )
   test("EList") {
     assert(

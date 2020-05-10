@@ -91,7 +91,8 @@ object parser {
           case _ =>
             (fun.asInstanceOf[FunCall], tokens)
         }
-      case IntToken(_) :: _ | VarToken(_) :: _ | FunToken :: _ =>
+      case IntToken(_) :: _ | VarToken(_) :: _ | FunToken :: _ |
+          EmptyListToken :: _ =>
         val (arg, rest) = parseArg(tokens)
         arg match {
           case Some(FunCall(f, a)) =>
@@ -115,6 +116,8 @@ object parser {
       case LParen =>
         val (exp, rest) = parsePrimary(tokens)
         (Some(exp), rest)
+      case EmptyListToken =>
+        (Some(EmptyList), tokens.tail)
       case VarToken(n) =>
         (Some(Var(n)), tokens.tail)
       case IntToken(n) =>
