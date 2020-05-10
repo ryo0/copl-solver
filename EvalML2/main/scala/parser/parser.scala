@@ -40,7 +40,6 @@ object parser {
             (fun.asInstanceOf[FunCall], tokens)
         }
       case _ =>
-        println(fun, tokens)
         (fun.asInstanceOf[FunCall], tokens)
     }
   }

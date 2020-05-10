@@ -55,7 +55,7 @@ object main extends App {
   val file48 = new PrintWriter("EvalML4Result/8.txt")
   file48.write(
     solve(
-      "let rec append = fun l1 -> fun l2 -> match l1 with [] -> l2 | x :: y -> x :: append y l2 in append (1 :: 2 :: []) (3 :: 4 :: 5 :: [])"
+      "let rec apply = fun l -> fun x -> match l with [] -> x | f :: l -> apply l (f x) in apply ((fun x -> x * x) :: (fun y -> y + 3) :: []) 4 "
     )
   )
   file48.close()

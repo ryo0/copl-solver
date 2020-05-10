@@ -106,7 +106,6 @@ object ast {
               val r1 = funName.solve(env)
               r1.value match {
                 case RecClosure(ce, RecFunExp(v, p, b)) =>
-                  println(arg)
                   val r2 = arg.solve(env)
                   val r3 =
                     b.solve((p.name, r2.value) :: (v.name, r1.value) :: ce)
