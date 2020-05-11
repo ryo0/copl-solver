@@ -105,25 +105,11 @@ object parser {
     } else {
       (fun.asInstanceOf[FunCall], tokens)
     }
-
   }
 
   def isArg(token: Token): Boolean = {
     token == LParen || token == EmptyListToken || token
       .isInstanceOf[VarToken] || token.isInstanceOf[IntToken]
-  }
-
-  def parseArg(tokens: List[Token]): (Option[Exp], List[Token]) = {
-    if (tokens.isEmpty) {
-      return (None, tokens)
-    }
-
-    if (isArg(tokens.head)) {
-      val (exp, rest) = parsePrimary(tokens)
-      (Some(exp), rest)
-    } else {
-      (None, tokens)
-    }
   }
 
   def parseFun(tokens: List[Token]): (FunExp, List[Token]) = {
@@ -323,12 +309,12 @@ object parser {
       case FalseToken :: rest =>
         (BoolVal(false), rest)
       case VarToken(n) :: rest =>
-        val (arg, _) = parseArg(rest)
-        arg match {
-          case Some(_) =>
-            parseFunCall(Var(n), rest)
-          case _ =>
-            (Var(n), rest)
+        if (rest.isEmpty) {
+          (Var(n), rest)
+        } else if (isArg(rest.head)) {
+          parseFunCall(Var(n), rest)
+        } else {
+          (Var(n), rest)
         }
       case FunToken :: _ =>
         val (fun, rest2) = parseFun(tokens)
