@@ -68,30 +68,49 @@ object parser {
     }
   }
 
+  def getTokensInParen(tokens: List[Token]): (List[Token], List[Token]) = {
+    @scala.annotation.tailrec
+    def getParenExpSub(counter: Int,
+                       acm: List[Token],
+                       tokens: List[Token]): (List[Token], List[Token]) = {
+      if (counter == 0 && acm.nonEmpty) {
+        return (acm, tokens)
+      }
+      tokens match {
+        case LParen :: rest =>
+          getParenExpSub(counter + 1, acm :+ LParen, rest)
+        case RParen :: rest =>
+          getParenExpSub(counter - 1, acm :+ RParen, rest)
+        case first :: rest =>
+          getParenExpSub(counter, acm :+ first, rest)
+      }
+    }
+    if (tokens.isEmpty) {
+      (List(), List())
+    } else if (tokens.head == LParen) {
+      getParenExpSub(1, List(tokens.head), tokens.tail)
+    } else {
+      (List(tokens.head), tokens.tail)
+    }
+  }
+
   def parseFunCall(fun: Exp, tokens: List[Token]): (FunCall, List[Token]) = {
     if (tokens.isEmpty) {
       return (fun.asInstanceOf[FunCall], tokens)
     }
-    tokens match {
-      case LParen :: _ | IntToken(_) :: _ | VarToken(_) :: _ | FunToken :: _ |
-          EmptyListToken :: _ =>
-        val (arg, rest) = parseArg(tokens)
-        arg match {
-          case Some(FunCall(f, a)) =>
-            tokens match {
-              case LParen :: VarToken(_) :: _ =>
-                parseFunCall(FunCall(fun, FunCall(f, a)), rest)
-              case _ =>
-                parseFunCall(FunCall(FunCall(fun, f), a), rest)
-            }
-          case Some(argExp) =>
-            parseFunCall(FunCall(fun, argExp), rest)
-          case _ =>
-            (fun.asInstanceOf[FunCall], tokens)
-        }
-      case _ =>
-        (fun.asInstanceOf[FunCall], tokens)
+    if (isArg(tokens.head)) {
+      val (atom, rest) = getTokensInParen(tokens)
+      val (arg, _) = parsePrimary(atom)
+      parseFunCall(FunCall(fun, arg), rest)
+    } else {
+      (fun.asInstanceOf[FunCall], tokens)
     }
+
+  }
+
+  def isArg(token: Token): Boolean = {
+    token == LParen || token == EmptyListToken || token
+      .isInstanceOf[VarToken] || token.isInstanceOf[IntToken]
   }
 
   def parseArg(tokens: List[Token]): (Option[Exp], List[Token]) = {
@@ -99,18 +118,11 @@ object parser {
       return (None, tokens)
     }
 
-    tokens.head match {
-      case LParen =>
-        val (exp, rest) = parsePrimary(tokens)
-        (Some(exp), rest)
-      case EmptyListToken =>
-        (Some(EmptyList), tokens.tail)
-      case VarToken(n) =>
-        (Some(Var(n)), tokens.tail)
-      case IntToken(n) =>
-        (Some(IntVal(n)), tokens.tail)
-      case _ =>
-        (None, tokens)
+    if (isArg(tokens.head)) {
+      val (exp, rest) = parsePrimary(tokens)
+      (Some(exp), rest)
+    } else {
+      (None, tokens)
     }
   }
 
@@ -289,10 +301,15 @@ object parser {
         val (exp, rest2) = parseExp(rest)
         rest2 match {
           case RParen :: rest3 =>
-            val (arg, _) = parseArg(rest3)
-            arg match {
-              case Some(_) =>
-                parseFunCall(exp, rest3)
+            exp match {
+              case Var(_) | FunExp(_, _) =>
+                if (rest3.isEmpty) {
+                  (exp, rest3)
+                } else if (isArg(rest3.head)) {
+                  parseFunCall(exp, rest3)
+                } else {
+                  (exp, rest3)
+                }
               case _ =>
                 (exp, rest3)
             }

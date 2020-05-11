@@ -2,7 +2,7 @@ import parser.ast.{Plus, _}
 import parser.parser.{parseExp, _}
 import tokenizer.tokenizer.tokenize
 import org.scalatest.FunSuite
-import tokenizer.token.ElseToken
+import tokenizer.token.{ConsToken, ElseToken, LParen, RParen, VarToken}
 
 class ParserTest extends FunSuite {
   test("parseMul") {
@@ -199,6 +199,14 @@ class ParserTest extends FunSuite {
     )
 
     assert(
+      parseExp(tokenize("f ((fun x -> x) x)")) === (FunCall(
+        Var("f"),
+        FunCall(FunExp(Var("x"), Var("x")), Var("x"))
+      ),
+      List())
+    )
+
+    assert(
       parseExp(tokenize("f (f (f x))")) === (FunCall(
         Var("f"),
         FunCall(Var("f"), FunCall(Var("f"), Var("x")))
@@ -283,8 +291,27 @@ class ParserTest extends FunSuite {
         List()
       )
     )
-
   }
+  test("getTokensInParen") {
+    assert(
+      getTokensInParen(tokenize("(a b c) :: (d e f)")) === (List(
+        LParen,
+        VarToken("a"),
+        VarToken("b"),
+        VarToken("c"),
+        RParen
+      ),
+      List(
+        ConsToken,
+        LParen,
+        VarToken("d"),
+        VarToken("e"),
+        VarToken("f"),
+        RParen
+      ))
+    )
+  }
+
   test("EList") {
     assert(
       parseExp(tokenize(" 1 :: 2 :: []")) === (EList(
