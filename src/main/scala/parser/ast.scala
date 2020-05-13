@@ -151,13 +151,28 @@ object ast {
         case (EList(p1, p2), EList(v1, v2)) =>
           val mr1 = p1.matches(v1)
           val mr2 = p2.matches(v2)
-          MCons(mr1.env.append(mr2.env), p1, p2, v1, v2, mr1, mr2)
+          MCons(mr1.getEnv.append(mr2.getEnv), p1, p2, v1, v2, mr1, mr2)
         case (x, v) =>
           val env: Env = List((x.string, v))
           MVar(env, x, v)
       }
     }
-    def notMatch(v: Exp): NotMatchRule = {}
+    def notMatch(v: Exp): NotMatchRule = {
+      (this, v) match {
+        case (EmptyList, EList(v1, v2)) =>
+          NMConsNil(v1, v2)
+        case (EList(p1, p2), EmptyList) =>
+          NMNilCons(p1, p2)
+        case (EList(p1, p2), EList(v1, v2)) =>
+          if (p1 != v1) {
+            val nmr = p1.notMatch(v1)
+            NMConsConsL(p1, p2, v1, v2, nmr)
+          } else {
+            val nmr = p2.notMatch(v2)
+            NMConsConsR(p1, p2, v1, v2, nmr)
+          }
+      }
+    }
     def string: String = {
       this match {
         case IntVal(n)  => s"$n"

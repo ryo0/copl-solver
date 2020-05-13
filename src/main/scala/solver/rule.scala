@@ -124,7 +124,7 @@ object rule {
                      r2: Rule)
       extends Rule
   sealed class MatchRule extends Rule {
-    def env = {
+    def getEnv = {
       this match {
         case MCons(env, p1, p2, v1, v2, mr1, mr2) => env
         case MNil(env, el1, el2)                  => env
