@@ -183,10 +183,6 @@ object ast {
           NMNilCons(p1, p2)
         case (EList(p1, p2), EList(v1, v2)) =>
           if (!p1.checkMatching(v1)) {
-            println("this, v")
-            println(this, v)
-            println("p, v")
-            println(p1, v1)
             val nmr = p1.notMatch(v1)
             NMConsConsL(p1, p2, v1, v2, nmr)
           } else if (!p2.checkMatching(v2)) {
@@ -230,11 +226,7 @@ object ast {
         case FunCall(funName, arg) =>
           s"(${funName.string} ${arg.string})"
         case EList(left, right) =>
-          if (right.isInstanceOf[ListExp]) {
-            s"(${left.string} :: ${right.string})"
-          } else {
-            s"${left.string} :: ${right.string}"
-          }
+          s"(${left.string} :: ${right.string})"
         case EmptyList =>
           s"[]"
         case Pattern(left, right) =>

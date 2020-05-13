@@ -77,15 +77,4 @@ object main extends App {
     )
   )
   file52.close()
-
-  println(
-    EList(Var("x"), EList(WildCard, Var("y")))
-      .matches(
-        EList(
-          IntVal(1),
-          EList(IntVal(2), EList(IntVal(3), EList(IntVal(4), EmptyList)))
-        )
-      )
-      .string(0)
-  )
 }

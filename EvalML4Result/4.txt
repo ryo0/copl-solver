@@ -1,62 +1,62 @@
- |- let rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y))  in (length (1 :: (2 :: (3 :: [])))) evalto 3 by E-LetRec{
-     length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ] |- length (1 :: (2 :: (3 :: []))) evalto 3 by E-AppRec{
-          length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ] |- length evalto () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ] by E-Var{};
-          length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ] |- 1 :: (2 :: (3 :: [])) evalto 1 :: (2 :: (3 :: [])) by E-Cons {
-               length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ] |- 1 evalto 1 by E-Int{};
-               length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ] |- 2 :: (3 :: []) evalto 2 :: (3 :: []) by E-Cons {
-                    length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ] |- 2 evalto 2 by E-Int{};
-                    length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ] |- 3 :: [] evalto 3 :: [] by E-Cons {
-                         length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ] |- 3 evalto 3 by E-Int{};
-                         length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ] |- [] evalto [] by E-Nil{};
+ |- let rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y))  in (length (1 :: (2 :: (3 :: [])))) evalto 3 by E-LetRec{
+     length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ] |- length (1 :: (2 :: (3 :: []))) evalto 3 by E-AppRec{
+          length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ] |- length evalto () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ] by E-Var{};
+          length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ] |- 1 :: (2 :: (3 :: [])) evalto 1 :: (2 :: (3 :: [])) by E-Cons {
+               length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ] |- 1 evalto 1 by E-Int{};
+               length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ] |- 2 :: (3 :: []) evalto 2 :: (3 :: []) by E-Cons {
+                    length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ] |- 2 evalto 2 by E-Int{};
+                    length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ] |- 3 :: [] evalto 3 :: [] by E-Cons {
+                         length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ] |- 3 evalto 3 by E-Int{};
+                         length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ] |- [] evalto [] by E-Nil{};
                     };
                };
           };
-          length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))) |- match l with [] -> 0 |  x :: y -> (1 + (length y))  evalto 3 by E-MatchN{
-               length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))) |- l evalto (1 :: (2 :: (3 :: []))) by E-Var{};
+          length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))) |- match l with [] -> 0 |  (x :: y) -> (1 + (length y))  evalto 3 by E-MatchN{
+               length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))) |- l evalto (1 :: (2 :: (3 :: []))) by E-Var{};
                [] doesn't match 1 :: (2 :: (3 :: [])) by NM-ConsNil{};
-               length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))) |- match l with x :: y -> (1 + (length y)) evalto 3 by E-MatchM1{
-                    length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))) |- l evalto (1 :: (2 :: (3 :: []))) by E-Var{};
+               length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))) |- match l with (x :: y) -> (1 + (length y)) evalto 3 by E-MatchM1{
+                    length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))) |- l evalto (1 :: (2 :: (3 :: []))) by E-Var{};
                     x :: y matches 1 :: (2 :: (3 :: [])) when (x = 1,y = (2 :: (3 :: []))) by M-Cons{
                          x matches 1 when (x = 1) by M-Var{};
                          y matches (2 :: (3 :: [])) when (y = (2 :: (3 :: []))) by M-Var{};
                     };
-                    length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))),x = 1,y = (2 :: (3 :: [])) |- 1 + (length y) evalto 3 by E-Plus{
-                         length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))),x = 1,y = (2 :: (3 :: [])) |- 1 evalto 1 by E-Int{};
-                         length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))),x = 1,y = (2 :: (3 :: [])) |- length y evalto 2 by E-AppRec{
-                              length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))),x = 1,y = (2 :: (3 :: [])) |- length evalto () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ] by E-Var{};
-                              length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))),x = 1,y = (2 :: (3 :: [])) |- y evalto (2 :: (3 :: [])) by E-Var{};
-                              length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (2 :: (3 :: [])) |- match l with [] -> 0 |  x :: y -> (1 + (length y))  evalto 2 by E-MatchN{
-                                   length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (2 :: (3 :: [])) |- l evalto (2 :: (3 :: [])) by E-Var{};
+                    length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))),x = 1,y = (2 :: (3 :: [])) |- 1 + (length y) evalto 3 by E-Plus{
+                         length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))),x = 1,y = (2 :: (3 :: [])) |- 1 evalto 1 by E-Int{};
+                         length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))),x = 1,y = (2 :: (3 :: [])) |- length y evalto 2 by E-AppRec{
+                              length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))),x = 1,y = (2 :: (3 :: [])) |- length evalto () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ] by E-Var{};
+                              length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (1 :: (2 :: (3 :: []))),x = 1,y = (2 :: (3 :: [])) |- y evalto (2 :: (3 :: [])) by E-Var{};
+                              length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (2 :: (3 :: [])) |- match l with [] -> 0 |  (x :: y) -> (1 + (length y))  evalto 2 by E-MatchN{
+                                   length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (2 :: (3 :: [])) |- l evalto (2 :: (3 :: [])) by E-Var{};
                                    [] doesn't match 2 :: (3 :: []) by NM-ConsNil{};
-                                   length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (2 :: (3 :: [])) |- match l with x :: y -> (1 + (length y)) evalto 2 by E-MatchM1{
-                                        length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (2 :: (3 :: [])) |- l evalto (2 :: (3 :: [])) by E-Var{};
+                                   length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (2 :: (3 :: [])) |- match l with (x :: y) -> (1 + (length y)) evalto 2 by E-MatchM1{
+                                        length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (2 :: (3 :: [])) |- l evalto (2 :: (3 :: [])) by E-Var{};
                                         x :: y matches 2 :: (3 :: []) when (x = 2,y = (3 :: [])) by M-Cons{
                                              x matches 2 when (x = 2) by M-Var{};
                                              y matches (3 :: []) when (y = (3 :: [])) by M-Var{};
                                         };
-                                        length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (2 :: (3 :: [])),x = 2,y = (3 :: []) |- 1 + (length y) evalto 2 by E-Plus{
-                                             length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (2 :: (3 :: [])),x = 2,y = (3 :: []) |- 1 evalto 1 by E-Int{};
-                                             length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (2 :: (3 :: [])),x = 2,y = (3 :: []) |- length y evalto 1 by E-AppRec{
-                                                  length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (2 :: (3 :: [])),x = 2,y = (3 :: []) |- length evalto () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ] by E-Var{};
-                                                  length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (2 :: (3 :: [])),x = 2,y = (3 :: []) |- y evalto (3 :: []) by E-Var{};
-                                                  length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (3 :: []) |- match l with [] -> 0 |  x :: y -> (1 + (length y))  evalto 1 by E-MatchN{
-                                                       length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (3 :: []) |- l evalto (3 :: []) by E-Var{};
+                                        length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (2 :: (3 :: [])),x = 2,y = (3 :: []) |- 1 + (length y) evalto 2 by E-Plus{
+                                             length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (2 :: (3 :: [])),x = 2,y = (3 :: []) |- 1 evalto 1 by E-Int{};
+                                             length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (2 :: (3 :: [])),x = 2,y = (3 :: []) |- length y evalto 1 by E-AppRec{
+                                                  length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (2 :: (3 :: [])),x = 2,y = (3 :: []) |- length evalto () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ] by E-Var{};
+                                                  length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (2 :: (3 :: [])),x = 2,y = (3 :: []) |- y evalto (3 :: []) by E-Var{};
+                                                  length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (3 :: []) |- match l with [] -> 0 |  (x :: y) -> (1 + (length y))  evalto 1 by E-MatchN{
+                                                       length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (3 :: []) |- l evalto (3 :: []) by E-Var{};
                                                        [] doesn't match 3 :: [] by NM-ConsNil{};
-                                                       length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (3 :: []) |- match l with x :: y -> (1 + (length y)) evalto 1 by E-MatchM1{
-                                                            length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (3 :: []) |- l evalto (3 :: []) by E-Var{};
+                                                       length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (3 :: []) |- match l with (x :: y) -> (1 + (length y)) evalto 1 by E-MatchM1{
+                                                            length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (3 :: []) |- l evalto (3 :: []) by E-Var{};
                                                             x :: y matches 3 :: [] when (x = 3,y = []) by M-Cons{
                                                                  x matches 3 when (x = 3) by M-Var{};
                                                                  y matches [] when (y = []) by M-Var{};
                                                             };
-                                                            length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (3 :: []),x = 3,y = [] |- 1 + (length y) evalto 1 by E-Plus{
-                                                                 length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (3 :: []),x = 3,y = [] |- 1 evalto 1 by E-Int{};
-                                                                 length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (3 :: []),x = 3,y = [] |- length y evalto 0 by E-AppRec{
-                                                                      length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (3 :: []),x = 3,y = [] |- length evalto () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ] by E-Var{};
-                                                                      length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = (3 :: []),x = 3,y = [] |- y evalto [] by E-Var{};
-                                                                      length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = [] |- match l with [] -> 0 |  x :: y -> (1 + (length y))  evalto 0 by E-MatchM2{
-                                                                           length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = [] |- l evalto [] by E-Var{};
+                                                            length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (3 :: []),x = 3,y = [] |- 1 + (length y) evalto 1 by E-Plus{
+                                                                 length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (3 :: []),x = 3,y = [] |- 1 evalto 1 by E-Int{};
+                                                                 length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (3 :: []),x = 3,y = [] |- length y evalto 0 by E-AppRec{
+                                                                      length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (3 :: []),x = 3,y = [] |- length evalto () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ] by E-Var{};
+                                                                      length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = (3 :: []),x = 3,y = [] |- y evalto [] by E-Var{};
+                                                                      length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = [] |- match l with [] -> 0 |  (x :: y) -> (1 + (length y))  evalto 0 by E-MatchM2{
+                                                                           length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = [] |- l evalto [] by E-Var{};
                                                                            [] matches [] when () by M-Nil{};
-                                                                           length = () [rec length = fun l -> match l with  [] -> 0 | x :: y -> (1 + (length y)) ],l = [] |- 0 evalto 0 by E-Int{};
+                                                                           length = () [rec length = fun l -> match l with  [] -> 0 | (x :: y) -> (1 + (length y)) ],l = [] |- 0 evalto 0 by E-Int{};
                                                                       };
                                                                  };
                                                                  1 plus 0 is 1 by B-Plus{};
