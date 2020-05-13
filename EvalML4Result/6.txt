@@ -26,49 +26,49 @@
                [] doesn't match 1 :: (2 :: []) by NM-ConsNil{};
                append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))) |- match l1 with x :: y -> x :: ((append y) l2) evalto (1 :: (2 :: (3 :: (4 :: (5 :: []))))) by E-MatchM1{
                     append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))) |- l1 evalto (1 :: (2 :: [])) by E-Var{};
-                    x :: y matches 1 :: (2 :: []) when (y = (2 :: []),x = 1) by M-Cons{
+                    x :: y matches 1 :: (2 :: []) when (x = 1,y = (2 :: [])) by M-Cons{
                          x matches 1 when (x = 1) by M-Var{};
                          y matches (2 :: []) when (y = (2 :: [])) by M-Var{};
-};
-                    append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))),y = (2 :: []),x = 1 |- x :: ((append y) l2) evalto 1 :: (2 :: (3 :: (4 :: (5 :: [])))) by E-Cons {
-                         append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))),y = (2 :: []),x = 1 |- x evalto 1 by E-Var{};
-                         append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))),y = (2 :: []),x = 1 |- (append y) l2 evalto (2 :: (3 :: (4 :: (5 :: [])))) by E-App{
-                              append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))),y = (2 :: []),x = 1 |- append y evalto (append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: [])) [fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) ] by E-AppRec{
-                                   append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))),y = (2 :: []),x = 1 |- append evalto () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )] by E-Var{};
-                                   append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))),y = (2 :: []),x = 1 |- y evalto (2 :: []) by E-Var{};
+                    };
+                    append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))),x = 1,y = (2 :: []) |- x :: ((append y) l2) evalto 1 :: (2 :: (3 :: (4 :: (5 :: [])))) by E-Cons {
+                         append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))),x = 1,y = (2 :: []) |- x evalto 1 by E-Var{};
+                         append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))),x = 1,y = (2 :: []) |- (append y) l2 evalto (2 :: (3 :: (4 :: (5 :: [])))) by E-App{
+                              append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))),x = 1,y = (2 :: []) |- append y evalto (append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: [])) [fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) ] by E-AppRec{
+                                   append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))),x = 1,y = (2 :: []) |- append evalto () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )] by E-Var{};
+                                   append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))),x = 1,y = (2 :: []) |- y evalto (2 :: []) by E-Var{};
                                    append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []) |- fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2)  evalto (append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: [])) [fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) ] by E-Fun{};
                               };
-                              append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))),y = (2 :: []),x = 1 |- l2 evalto (3 :: (4 :: (5 :: []))) by E-Var{};
+                              append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (1 :: (2 :: [])),l2 = (3 :: (4 :: (5 :: []))),x = 1,y = (2 :: []) |- l2 evalto (3 :: (4 :: (5 :: []))) by E-Var{};
                               append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))) |- match l1 with [] -> l2 |  x :: y -> x :: ((append y) l2)  evalto (2 :: (3 :: (4 :: (5 :: [])))) by E-MatchN{
                                    append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))) |- l1 evalto (2 :: []) by E-Var{};
                                    [] doesn't match 2 :: [] by NM-ConsNil{};
                                    append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))) |- match l1 with x :: y -> x :: ((append y) l2) evalto (2 :: (3 :: (4 :: (5 :: [])))) by E-MatchM1{
                                         append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))) |- l1 evalto (2 :: []) by E-Var{};
-                                        x :: y matches 2 :: [] when (y = [],x = 2) by M-Cons{
+                                        x :: y matches 2 :: [] when (x = 2,y = []) by M-Cons{
                                              x matches 2 when (x = 2) by M-Var{};
                                              y matches [] when (y = []) by M-Var{};
-};
-                                        append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))),y = [],x = 2 |- x :: ((append y) l2) evalto 2 :: (3 :: (4 :: (5 :: []))) by E-Cons {
-                                             append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))),y = [],x = 2 |- x evalto 2 by E-Var{};
-                                             append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))),y = [],x = 2 |- (append y) l2 evalto (3 :: (4 :: (5 :: []))) by E-App{
-                                                  append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))),y = [],x = 2 |- append y evalto (append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = []) [fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) ] by E-AppRec{
-                                                       append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))),y = [],x = 2 |- append evalto () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )] by E-Var{};
-                                                       append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))),y = [],x = 2 |- y evalto [] by E-Var{};
+                                        };
+                                        append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))),x = 2,y = [] |- x :: ((append y) l2) evalto 2 :: (3 :: (4 :: (5 :: []))) by E-Cons {
+                                             append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))),x = 2,y = [] |- x evalto 2 by E-Var{};
+                                             append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))),x = 2,y = [] |- (append y) l2 evalto (3 :: (4 :: (5 :: []))) by E-App{
+                                                  append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))),x = 2,y = [] |- append y evalto (append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = []) [fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) ] by E-AppRec{
+                                                       append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))),x = 2,y = [] |- append evalto () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )] by E-Var{};
+                                                       append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))),x = 2,y = [] |- y evalto [] by E-Var{};
                                                        append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = [] |- fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2)  evalto (append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = []) [fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) ] by E-Fun{};
                                                   };
-                                                  append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))),y = [],x = 2 |- l2 evalto (3 :: (4 :: (5 :: []))) by E-Var{};
+                                                  append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = (2 :: []),l2 = (3 :: (4 :: (5 :: []))),x = 2,y = [] |- l2 evalto (3 :: (4 :: (5 :: []))) by E-Var{};
                                                   append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = [],l2 = (3 :: (4 :: (5 :: []))) |- match l1 with [] -> l2 |  x :: y -> x :: ((append y) l2)  evalto (3 :: (4 :: (5 :: []))) by E-MatchM2{
                                                        append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = [],l2 = (3 :: (4 :: (5 :: []))) |- l1 evalto [] by E-Var{};
                                                        [] matches [] when () by M-Nil{};
                                                        append = () [rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> x :: ((append y) l2) )],l1 = [],l2 = (3 :: (4 :: (5 :: []))) |- l2 evalto (3 :: (4 :: (5 :: []))) by E-Var{};
-};
+                                                  };
                                              };
                                         };
-};
-};
+                                   };
+                              };
                          };
                     };
-};
-};
+               };
+          };
      };
 };

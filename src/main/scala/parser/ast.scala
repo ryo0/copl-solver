@@ -152,12 +152,12 @@ object ast {
           true
         case (EList(p1, p2), EList(v1, v2)) =>
           p1.checkMatching(v1) && p2.checkMatching(v2)
-        case (x, v) =>
-          true
         case (EmptyList, EList(v1, v2)) =>
           false
         case (EList(p1, p2), EmptyList) =>
           false
+        case (x, v) =>
+          true
       }
     }
     def matches(v: Exp): MatchRule = {
@@ -171,6 +171,8 @@ object ast {
           val mr2 = p2.matches(v2)
           MCons(mr2.getEnv.appendNoDouble(mr1.getEnv), p1, p2, v1, v2, mr1, mr2)
         case (x, v) =>
+          println(x)
+          println(v)
           val env: Env = List((x.string, v))
           MVar(env, x, v)
       }
