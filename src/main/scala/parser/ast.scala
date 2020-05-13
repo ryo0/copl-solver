@@ -122,24 +122,42 @@ object ast {
           val r1 = e1.solve(env)
           val r2 = e2.solve(env)
           ECons(env, e1, e2, r1, r2)
-        case Match(e1, patterns) =>
-          val r1 = e1.solve(env)
-          val e2 = patterns.head.right
-          val x = patterns.tail.head.left.asInstanceOf[EList].first
-          val y = patterns.tail.head.left.asInstanceOf[EList].second
-          val e3 = patterns.tail.head.right
-          e1.solve(env).value match {
-            case EmptyList =>
-              val r2 = e2.solve(env)
-              EMatchNil(env, e1, e2, e3, x, y, r1, r2)
-            case EList(left, right) =>
-              val v1 = left
-              val v2 = right
-              val r2 = e3.solve((y.string, v2) :: (x.string, v1) :: env)
-              EMatchCons(env, e1, e2, e3, x, y, r1, r2)
+        case Match(e0, Pattern(p, e) :: List()) =>
+          val r1 = e0.solve(env)
+          val v = r1.value
+          val mr = p.matches(v)
+          val r2 = e.solve(mr.getEnv.append(env))
+          EMatchM1(env, e0, p, v, r1, mr, r2)
+        case Match(e0, Pattern(p, e) :: c) =>
+          val r1 = e0.solve(env)
+          val v = r1.value
+          if (p.checkMatching(v)) {
+            val mr = p.matches(v)
+            val r2 = e.solve(env)
+            EMatchM2(env, e0, p, v, c, r1, mr, r2)
+          } else {
+            val nmr = p.notMatch(v)
+            val r2 = Match(e0, c).solve(env)
+            EMatchN(env, e0, p, v, c, r1, nmr, r2)
           }
         case _ =>
           throw new Exception("未対応")
+      }
+    }
+    def checkMatching(v: Exp): Boolean = {
+      (this, v) match {
+        case (EmptyList, EmptyList) =>
+          true
+        case (WildCard, _) =>
+          true
+        case (EList(p1, p2), EList(v1, v2)) =>
+          p1.checkMatching(v1) && p2.checkMatching(v2)
+        case (x, v) =>
+          x == v
+        case (EmptyList, EList(v1, v2)) =>
+          false
+        case (EList(p1, p2), EmptyList) =>
+          false
       }
     }
     def matches(v: Exp): MatchRule = {
@@ -151,7 +169,7 @@ object ast {
         case (EList(p1, p2), EList(v1, v2)) =>
           val mr1 = p1.matches(v1)
           val mr2 = p2.matches(v2)
-          MCons(mr1.getEnv.append(mr2.getEnv), p1, p2, v1, v2, mr1, mr2)
+          MCons(mr1.getEnv.appendNoDouble(mr2.getEnv), p1, p2, v1, v2, mr1, mr2)
         case (x, v) =>
           val env: Env = List((x.string, v))
           MVar(env, x, v)

@@ -13,6 +13,19 @@ object rule {
       env.asInstanceOf[List[(String, Exp)]] ::: env2
         .asInstanceOf[List[(String, Exp)]]
     }
+    def appendNoDouble(env2: Env): Env = {
+      val result = env.append(env2)
+      var keyList: List[String] = List()
+      result.filter(
+        e =>
+          if (keyList.contains(e._1)) {
+            false
+          } else {
+            keyList = e._1 :: keyList
+            true
+        }
+      )
+    }
   }
   val opMap: Map[Op, String] = Map(
     Plus -> "+",
@@ -109,7 +122,7 @@ object rule {
                       e0: Exp,
                       p: Exp,
                       v: Exp,
-                      c: Exp,
+                      c: List[Pattern],
                       r1: Rule,
                       mr: MatchRule,
                       r2: Rule)
@@ -118,7 +131,7 @@ object rule {
                      e0: Exp,
                      p: Exp,
                      v: Exp,
-                     c: Exp,
+                     c: List[Pattern],
                      r1: Rule,
                      nmr: NotMatchRule,
                      r2: Rule)
@@ -181,11 +194,13 @@ object rule {
           Closure(env, FunExp(variable, body))
         case ERecClosure(env, variable: Var, param: Var, body) =>
           RecClosure(env, RecFunExp(variable, param, body))
-        case EApp(_, _, _, _, _, r3)    => r3.value
-        case EAppRec(_, _, _, _, _, r3) => r3.value
-        case ENil(_, emp)               => emp
-        case ECons(_, _, _, r1, r2)     => EList(r1.value, r2.value)
-
+        case EApp(_, _, _, _, _, r3)                => r3.value
+        case EAppRec(_, _, _, _, _, r3)             => r3.value
+        case ENil(_, emp)                           => emp
+        case ECons(_, _, _, r1, r2)                 => EList(r1.value, r2.value)
+        case EMatchM1(env, e0, p, v, r1, mr, r2)    => r2.value
+        case EMatchM2(env, e0, p, v, c, r1, mr, r2) => r2.value
+        case EMatchN(env, e0, p, v, c, r1, nmr, r2) => r2.value
       }
     }
 
