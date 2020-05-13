@@ -8,18 +8,27 @@
                          f = () [fun x -> match x with  [] -> 0 | a :: b -> a ] |- 4 evalto 4 by E-Int{};
                          f = () [fun x -> match x with  [] -> 0 | a :: b -> a ] |- [] evalto [] by E-Nil{};
                     };
-                    x = (4 :: []) |- match x with [] -> 0 | a :: b -> a evalto 4 by E-MatchCons{
+                    x = (4 :: []) |- match x with [] -> 0 |  a :: b -> a  evalto 4 by E-MatchN{
                          x = (4 :: []) |- x evalto (4 :: []) by E-Var{};
-                         x = (4 :: []),a = 4,b = [] |- a evalto 4 by E-Var{};
-                    };
+                         [] doesn't match 4 :: [] by NM-ConsNil{};
+                         x = (4 :: []) |- match x with a :: b -> a evalto 4 by E-MatchM1{
+                              x = (4 :: []) |- x evalto (4 :: []) by E-Var{};
+                              a :: b matches 4 :: [] when (b = [],a = 4) by M-Cons{
+                                   a matches 4 when (a = 4) by M-Var{};
+                                   b matches [] when (b = []) by M-Var{};
+};
+                              x = (4 :: []),b = [],a = 4 |- a evalto 4 by E-Var{};
+};
+};
                };
                f = () [fun x -> match x with  [] -> 0 | a :: b -> a ] |- f [] evalto 0 by E-App{
                     f = () [fun x -> match x with  [] -> 0 | a :: b -> a ] |- f evalto () [fun x -> match x with  [] -> 0 | a :: b -> a ] by E-Var{};
                     f = () [fun x -> match x with  [] -> 0 | a :: b -> a ] |- [] evalto [] by E-Nil{};
-                    x = [] |- match x with [] -> 0 | a :: b -> a evalto 0 by E-MatchNil{
+                    x = [] |- match x with [] -> 0 |  a :: b -> a  evalto 0 by E-MatchM2{
                          x = [] |- x evalto [] by E-Var{};
+                         [] matches [] when () by M-Nil{};
                          x = [] |- 0 evalto 0 by E-Int{};
-                    };
+};
                };
                4 plus 0 is 4 by B-Plus{};
           };
@@ -35,10 +44,18 @@
                          };
                     };
                };
-               x = (1 :: (2 :: (3 :: []))) |- match x with [] -> 0 | a :: b -> a evalto 1 by E-MatchCons{
+               x = (1 :: (2 :: (3 :: []))) |- match x with [] -> 0 |  a :: b -> a  evalto 1 by E-MatchN{
                     x = (1 :: (2 :: (3 :: []))) |- x evalto (1 :: (2 :: (3 :: []))) by E-Var{};
-                    x = (1 :: (2 :: (3 :: []))),a = 1,b = (2 :: (3 :: [])) |- a evalto 1 by E-Var{};
-               };
+                    [] doesn't match 1 :: (2 :: (3 :: [])) by NM-ConsNil{};
+                    x = (1 :: (2 :: (3 :: []))) |- match x with a :: b -> a evalto 1 by E-MatchM1{
+                         x = (1 :: (2 :: (3 :: []))) |- x evalto (1 :: (2 :: (3 :: []))) by E-Var{};
+                         a :: b matches 1 :: (2 :: (3 :: [])) when (b = (2 :: (3 :: [])),a = 1) by M-Cons{
+                              a matches 1 when (a = 1) by M-Var{};
+                              b matches (2 :: (3 :: [])) when (b = (2 :: (3 :: []))) by M-Var{};
+};
+                         x = (1 :: (2 :: (3 :: []))),b = (2 :: (3 :: [])),a = 1 |- a evalto 1 by E-Var{};
+};
+};
           };
           4 plus 1 is 5 by B-Plus{};
      };

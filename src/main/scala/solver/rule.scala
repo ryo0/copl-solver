@@ -113,7 +113,7 @@ object rule {
   case class EMatchM1(env: Env,
                       e0: Exp,
                       p: Exp,
-                      v: Exp,
+                      e: Exp,
                       r1: Rule,
                       mr: MatchRule,
                       r2: Rule)
@@ -121,7 +121,7 @@ object rule {
   case class EMatchM2(env: Env,
                       e0: Exp,
                       p: Exp,
-                      v: Exp,
+                      e: Exp,
                       c: List[Pattern],
                       r1: Rule,
                       mr: MatchRule,
@@ -130,14 +130,14 @@ object rule {
   case class EMatchN(env: Env,
                      e0: Exp,
                      p: Exp,
-                     v: Exp,
+                     e: Exp,
                      c: List[Pattern],
                      r1: Rule,
                      nmr: NotMatchRule,
                      r2: Rule)
       extends Rule
   sealed class MatchRule extends Rule {
-    def getEnv = {
+    def getEnv: Env = {
       this match {
         case MCons(env, p1, p2, v1, v2, mr1, mr2) => env
         case MNil(env, el1, el2)                  => env
@@ -198,9 +198,9 @@ object rule {
         case EAppRec(_, _, _, _, _, r3)             => r3.value
         case ENil(_, emp)                           => emp
         case ECons(_, _, _, r1, r2)                 => EList(r1.value, r2.value)
-        case EMatchM1(env, e0, p, v, r1, mr, r2)    => r2.value
-        case EMatchM2(env, e0, p, v, c, r1, mr, r2) => r2.value
-        case EMatchN(env, e0, p, v, c, r1, nmr, r2) => r2.value
+        case EMatchM1(env, e0, p, e, r1, mr, r2)    => r2.value
+        case EMatchM2(env, e0, p, e, c, r1, mr, r2) => r2.value
+        case EMatchN(env, e0, p, e, c, r1, nmr, r2) => r2.value
       }
     }
 
@@ -299,6 +299,51 @@ object rule {
             s"$indentPlus1${r1.string(nest + 1)}\n" +
             s"$indentPlus1${r2.string(nest + 1)}\n" +
             s"$indent};"
+        case MVar(env, x, v) =>
+          s"${x.string} matches ${v.string} when (${env.string}) by M-Var{};"
+        case MNil(env, el1, el2) =>
+          s"${el1.string} matches ${el2.string} when (${env.string}) by M-Nil{};"
+        case MCons(env, p1, p2, v1, v2, mr1, mr2) =>
+          s"${p1.string} :: ${p2.string} matches ${v1.string} :: ${v2.string} when (${env.string}) by M-Cons{\n" +
+            s"$indentPlus1${mr1.string(nest + 1)}\n" +
+            s"$indentPlus1${mr2.string(nest + 1)}\n" +
+            "};"
+        case MWild(env, v) =>
+          s"_ matches ${v.string} when (${env.string}) by M-Wild{};"
+        case NMConsNil(v1, v2) =>
+          s"[] doesn't match ${v1.string} :: ${v2.string} by NM-ConsNil{};"
+        case NMNilCons(v1, v2) =>
+          s"${v1.string} :: ${v2.string} doesn't match [] by NM-NilCons{};"
+        case NMConsConsL(p1, p2, v1, v2, nmr) =>
+          s"${p1.string} :: ${p2.string} doesn't match ${v1.string} :: ${v2.string} by NM-ConsConsL{\n" +
+            s"$indentPlus1${nmr.string(nest + 1)}"
+        case NMConsConsR(p1, p2, v1, v2, nmr) =>
+          s"${p1.string} :: ${p2.string} doesn't match ${v1.string} :: ${v2.string} by NM-ConsConsL{\n" +
+            s"$indentPlus1${nmr.string(nest + 1)}"
+        case EMatchM1(env, e0, p, e, r1, mr, r2) =>
+          s"${env.string} |- match ${e0.string} with ${p.string} -> ${e.string} evalto ${r2.value.string} by E-MatchM1{\n" +
+            s"$indentPlus1${r1.string(nest + 1)}\n" +
+            s"$indentPlus1${mr.string(nest + 1)}\n" +
+            s"$indentPlus1${r2.string(nest + 1)}\n" +
+            "};"
+        case EMatchM2(env, e0, p, e, c, r1, mr, r2) =>
+          s"${env.string} |- match ${e0.string} with ${p.string} -> ${e.string} | ${c
+            .map(p => p.string)
+            .mkString(" ")
+            .drop(1)} evalto ${r2.value.string} by E-MatchM2{\n" +
+            s"$indentPlus1${r1.string(nest + 1)}\n" +
+            s"$indentPlus1${mr.string(nest + 1)}\n" +
+            s"$indentPlus1${r2.string(nest + 1)}\n" +
+            "};"
+        case EMatchN(env, e0, p, e, c, r1, nmr, r2) =>
+          s"${env.string} |- match ${e0.string} with ${p.string} -> ${e.string} | ${c
+            .map(p => p.string)
+            .mkString(" ")
+            .drop(1)} evalto ${r2.value.string} by E-MatchN{\n" +
+            s"$indentPlus1${r1.string(nest + 1)}\n" +
+            s"$indentPlus1${nmr.string(nest + 1)}\n" +
+            s"$indentPlus1${r2.string(nest + 1)}\n" +
+            "};"
       }
     }
   }

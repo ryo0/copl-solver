@@ -127,18 +127,18 @@ object ast {
           val v = r1.value
           val mr = p.matches(v)
           val r2 = e.solve(mr.getEnv.append(env))
-          EMatchM1(env, e0, p, v, r1, mr, r2)
+          EMatchM1(env, e0, p, e, r1, mr, r2)
         case Match(e0, Pattern(p, e) :: c) =>
           val r1 = e0.solve(env)
           val v = r1.value
           if (p.checkMatching(v)) {
             val mr = p.matches(v)
             val r2 = e.solve(env)
-            EMatchM2(env, e0, p, v, c, r1, mr, r2)
+            EMatchM2(env, e0, p, e, c, r1, mr, r2)
           } else {
             val nmr = p.notMatch(v)
             val r2 = Match(e0, c).solve(env)
-            EMatchN(env, e0, p, v, c, r1, nmr, r2)
+            EMatchN(env, e0, p, e, c, r1, nmr, r2)
           }
         case _ =>
           throw new Exception("未対応")
@@ -196,6 +196,7 @@ object ast {
         case IntVal(n)  => s"$n"
         case BoolVal(b) => s"$b"
         case Var(n)     => s"$n"
+        case WildCard   => "_"
         case InfixExp(IntVal(0), Minus, right) =>
           s"-${right.string}"
         case InfixExp(left, op, right) =>
