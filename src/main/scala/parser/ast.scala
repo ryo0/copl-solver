@@ -171,8 +171,6 @@ object ast {
           val mr2 = p2.matches(v2)
           MCons(mr2.getEnv.appendNoDouble(mr1.getEnv), p1, p2, v1, v2, mr1, mr2)
         case (x, v) =>
-          println(x)
-          println(v)
           val env: Env = List((x.string, v))
           MVar(env, x, v)
       }

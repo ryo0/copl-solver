@@ -1,6 +1,9 @@
 import solver.solver.solve
 import java.io.PrintWriter
 
+import parser.ast.{EList, EmptyList, IntVal, Var, WildCard}
+import tokenizer.token.ElseToken
+
 object main extends App {
   val file41 = new PrintWriter("EvalML4Result/1.txt")
   file41.write(solve("(1 + 2) :: (3 + 4) :: []"))
@@ -75,4 +78,14 @@ object main extends App {
   )
   file52.close()
 
+  println(
+    EList(Var("x"), EList(WildCard, Var("y")))
+      .matches(
+        EList(
+          IntVal(1),
+          EList(IntVal(2), EList(IntVal(3), EList(IntVal(4), EmptyList)))
+        )
+      )
+      .string(0)
+  )
 }
