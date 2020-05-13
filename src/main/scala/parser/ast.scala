@@ -133,7 +133,7 @@ object ast {
           val v = r1.value
           if (p.checkMatching(v)) {
             val mr = p.matches(v)
-            val r2 = e.solve(env)
+            val r2 = e.solve(mr.getEnv.append(env))
             EMatchM2(env, e0, p, e, c, r1, mr, r2)
           } else {
             val nmr = p.notMatch(v)
@@ -153,7 +153,7 @@ object ast {
         case (EList(p1, p2), EList(v1, v2)) =>
           p1.checkMatching(v1) && p2.checkMatching(v2)
         case (x, v) =>
-          x == v
+          true
         case (EmptyList, EList(v1, v2)) =>
           false
         case (EList(p1, p2), EmptyList) =>
@@ -169,7 +169,7 @@ object ast {
         case (EList(p1, p2), EList(v1, v2)) =>
           val mr1 = p1.matches(v1)
           val mr2 = p2.matches(v2)
-          MCons(mr1.getEnv.appendNoDouble(mr2.getEnv), p1, p2, v1, v2, mr1, mr2)
+          MCons(mr2.getEnv.appendNoDouble(mr1.getEnv), p1, p2, v1, v2, mr1, mr2)
         case (x, v) =>
           val env: Env = List((x.string, v))
           MVar(env, x, v)
@@ -182,12 +182,18 @@ object ast {
         case (EList(p1, p2), EmptyList) =>
           NMNilCons(p1, p2)
         case (EList(p1, p2), EList(v1, v2)) =>
-          if (p1 != v1) {
+          if (!p1.checkMatching(v1)) {
+            println("this, v")
+            println(this, v)
+            println("p, v")
+            println(p1, v1)
             val nmr = p1.notMatch(v1)
             NMConsConsL(p1, p2, v1, v2, nmr)
-          } else {
+          } else if (!p2.checkMatching(v2)) {
             val nmr = p2.notMatch(v2)
             NMConsConsR(p1, p2, v1, v2, nmr)
+          } else {
+            throw new Exception("not Matchが誤って呼ばれている")
           }
       }
     }

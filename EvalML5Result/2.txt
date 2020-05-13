@@ -1,0 +1,29 @@
+ |- let rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l')  in (heads ((1 :: (2 :: [])) :: ([] :: ((3 :: []) :: [])))) evalto [] by E-LetRec{
+     heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- heads ((1 :: (2 :: [])) :: ([] :: ((3 :: []) :: []))) evalto [] by E-AppRec{
+          heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- heads evalto () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] by E-Var{};
+          heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- (1 :: (2 :: [])) :: ([] :: ((3 :: []) :: [])) evalto (1 :: (2 :: [])) :: ([] :: ((3 :: []) :: [])) by E-Cons {
+               heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- 1 :: (2 :: []) evalto 1 :: (2 :: []) by E-Cons {
+                    heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- 1 evalto 1 by E-Int{};
+                    heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- 2 :: [] evalto 2 :: [] by E-Cons {
+                         heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- 2 evalto 2 by E-Int{};
+                         heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- [] evalto [] by E-Nil{};
+                    };
+               };
+               heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- [] :: ((3 :: []) :: []) evalto [] :: ((3 :: []) :: []) by E-Cons {
+                    heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- [] evalto [] by E-Nil{};
+                    heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- (3 :: []) :: [] evalto (3 :: []) :: [] by E-Cons {
+                         heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- 3 :: [] evalto 3 :: [] by E-Cons {
+                              heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- 3 evalto 3 by E-Int{};
+                              heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- [] evalto [] by E-Nil{};
+                         };
+                         heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ] |- [] evalto [] by E-Nil{};
+                    };
+               };
+          };
+          heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ],l = ((1 :: (2 :: [])) :: ([] :: ((3 :: []) :: []))) |- match l with [] -> [] |  [] :: l' -> (heads l')  | x :: _ :: l' -> x :: (heads l')  evalto [] by E-MatchM2{
+               heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ],l = ((1 :: (2 :: [])) :: ([] :: ((3 :: []) :: []))) |- l evalto ((1 :: (2 :: [])) :: ([] :: ((3 :: []) :: []))) by E-Var{};
+               [] matches ((1 :: (2 :: [])) :: ([] :: ((3 :: []) :: []))) when ([] = ((1 :: (2 :: [])) :: ([] :: ((3 :: []) :: [])))) by M-Var{};
+               heads = () [rec heads = fun l -> match l with  [] -> [] | [] :: l' -> (heads l') | x :: _ :: l' -> x :: (heads l') ],l = ((1 :: (2 :: [])) :: ([] :: ((3 :: []) :: []))),[] = ((1 :: (2 :: [])) :: ([] :: ((3 :: []) :: []))) |- [] evalto [] by E-Nil{};
+};
+     };
+};

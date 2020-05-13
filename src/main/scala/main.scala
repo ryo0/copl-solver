@@ -60,4 +60,19 @@ object main extends App {
   )
   file48.close()
 
+  val file51 = new PrintWriter("EvalML5Result/1.txt")
+  file51.write(
+    solve(
+      "let rec max = fun l -> match l with x :: [] -> x | x :: y :: z -> if x < y then max (y :: z) else max (x :: z) in max (9 :: 2 :: 3 :: [])"
+    )
+  )
+  file51.close()
+  val file52 = new PrintWriter("EvalML5Result/2.txt")
+  file52.write(
+    solve(
+      "let rec heads = fun l -> match l with [] -> [] | [] :: l' -> heads l' | (x :: _) :: l' -> x :: heads l' in heads ((1 :: 2 :: []) :: [] :: (3 :: []) :: [])"
+    )
+  )
+  file52.close()
+
 }
