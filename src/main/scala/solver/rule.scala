@@ -93,24 +93,51 @@ object rule {
       extends Rule
   case class ENil(env: Env, emptyList: ListExp) extends Rule
   case class ECons(env: Env, e1: Exp, e2: Exp, r1: Rule, r2: Rule) extends Rule
-  case class EMatchNil(env: Env,
-                       e1: Exp,
-                       e2: Exp,
-                       e3: Exp,
-                       x: Exp,
-                       y: Exp,
-                       r1: Rule,
-                       r2: Rule)
+  case class EMatchM1(env: Env,
+                      e0: Exp,
+                      p: Exp,
+                      v: Exp,
+                      r1: Rule,
+                      mr: MatchRule,
+                      r2: Rule)
       extends Rule
-  case class EMatchCons(env: Env,
-                        e1: Exp,
-                        e2: Exp,
-                        e3: Exp,
-                        x: Exp,
-                        y: Exp,
-                        r1: Rule,
-                        r2: Rule)
+  case class EMatchM2(env: Env,
+                      e0: Exp,
+                      p: Exp,
+                      v: Exp,
+                      c: Exp,
+                      r1: Rule,
+                      mr: MatchRule,
+                      r2: Rule)
       extends Rule
+  case class EMatchN(env: Env,
+                     e0: Exp,
+                     p: Exp,
+                     v: Exp,
+                     c: Exp,
+                     r1: Rule,
+                     nmr: NotMatchRule,
+                     r2: Rule)
+      extends Rule
+  sealed class MatchRule
+  sealed class NotMatchRule
+  case class MVar(x: Exp, v: Exp) extends MatchRule
+  case class MNil(el1: Exp, el2: Exp) extends MatchRule
+  case class MCons(env: Env,
+                   p1: Exp,
+                   p2: Exp,
+                   v1: Exp,
+                   v2: Exp,
+                   mr1: MatchRule,
+                   mr2: MatchRule)
+      extends MatchRule
+  case class MWild(v: Exp) extends MatchRule
+  case class NMConsNil(v1: Exp, v2: Exp) extends NotMatchRule
+  case class NMNilCons(p1: Exp, p2: Exp) extends NotMatchRule
+  case class NMConsConsL(p1: Exp, p2: Exp, v1: Exp, v2: Exp, nmr: NotMatchRule)
+      extends NotMatchRule
+  case class NMConsConsR(p1: Exp, p2: Exp, v1: Exp, v2: Exp, nmr: NotMatchRule)
+      extends NotMatchRule
 
   implicit class NestString(str: String) {
     def mul(nest: Int): String = {
@@ -141,12 +168,10 @@ object rule {
           Closure(env, FunExp(variable, body))
         case ERecClosure(env, variable: Var, param: Var, body) =>
           RecClosure(env, RecFunExp(variable, param, body))
-        case EApp(_, _, _, _, _, r3)             => r3.value
-        case EAppRec(_, _, _, _, _, r3)          => r3.value
-        case ENil(_, emp)                        => emp
-        case ECons(_, _, _, r1, r2)              => EList(r1.value, r2.value)
-        case EMatchNil(_, _, _, _, _, _, _, r2)  => r2.value
-        case EMatchCons(_, _, _, _, _, _, _, r2) => r2.value
+        case EApp(_, _, _, _, _, r3)    => r3.value
+        case EAppRec(_, _, _, _, _, r3) => r3.value
+        case ENil(_, emp)               => emp
+        case ECons(_, _, _, r1, r2)     => EList(r1.value, r2.value)
 
       }
     }
@@ -243,18 +268,6 @@ object rule {
           s"${env.string} |- ${emptyList.string} evalto ${emptyList.string} by E-Nil{};"
         case ECons(env, e1, e2, r1, r2) =>
           s"${env.string} |- ${e1.string} :: ${e2.string} evalto ${r1.value.string} :: ${r2.value.string} by E-Cons {\n" +
-            s"$indentPlus1${r1.string(nest + 1)}\n" +
-            s"$indentPlus1${r2.string(nest + 1)}\n" +
-            s"$indent};"
-        case EMatchNil(env, e1, e2, e3, x, y, r1, r2) =>
-          s"${env.string} |- match ${e1.string} with [] -> ${e2.string} | ${x.string} :: ${y.string} -> ${e3.string}" +
-            s" evalto ${r2.value.string} by E-MatchNil{\n" +
-            s"$indentPlus1${r1.string(nest + 1)}\n" +
-            s"$indentPlus1${r2.string(nest + 1)}\n" +
-            s"$indent};"
-        case EMatchCons(env, e1, e2, e3, x, y, r1, r2) =>
-          s"${env.string} |- match ${e1.string} with [] -> ${e2.string} | ${x.string} :: ${y.string} -> ${e3.string}" +
-            s" evalto ${r2.value.string} by E-MatchCons{\n" +
             s"$indentPlus1${r1.string(nest + 1)}\n" +
             s"$indentPlus1${r2.string(nest + 1)}\n" +
             s"$indent};"
