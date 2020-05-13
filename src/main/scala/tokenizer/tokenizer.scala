@@ -14,7 +14,8 @@ object tokenizer {
       '<' -> LessThanToken,
       '>' -> GreaterThanToken,
       '=' -> EqualToken,
-      '|' -> OrToken
+      '|' -> OrToken,
+      '_' -> WildCardToken
     )
   val tokenMap2Heads = List('-', ':', '[')
   val tokenMap2: Map[String, Token] =

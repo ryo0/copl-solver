@@ -302,6 +302,8 @@ object parser {
           case _ =>
             throw new Exception("erorr, カッコが閉じてない")
         }
+      case WildCardToken :: rest =>
+        (WildCard, rest)
       case IntToken(n) :: rest =>
         (IntVal(n), rest)
       case TrueToken :: rest =>

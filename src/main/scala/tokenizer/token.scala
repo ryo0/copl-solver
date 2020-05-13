@@ -53,4 +53,6 @@ object token {
   object OrToken extends Token
 
   object WithToken extends Token
+
+  object WildCardToken extends Token
 }

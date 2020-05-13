@@ -142,6 +142,22 @@ object ast {
           throw new Exception("未対応")
       }
     }
+    def matches(v: Exp): MatchRule = {
+      (this, v) match {
+        case (EmptyList, EmptyList) =>
+          MNil(List(), EmptyList, EmptyList)
+        case (WildCard, _) =>
+          MWild(List(), v)
+        case (EList(p1, p2), EList(v1, v2)) =>
+          val mr1 = p1.matches(v1)
+          val mr2 = p2.matches(v2)
+          MCons(mr1.env.append(mr2.env), p1, p2, v1, v2, mr1, mr2)
+        case (x, v) =>
+          val env: Env = List((x.string, v))
+          MVar(env, x, v)
+      }
+    }
+    def notMatch(v: Exp): NotMatchRule = {}
     def string: String = {
       this match {
         case IntVal(n)  => s"$n"
@@ -223,4 +239,5 @@ object ast {
   object EmptyList extends ListExp
   case class Pattern(left: ListExp, right: Exp) extends Exp
   case class Match(v: Var, patterns: List[Pattern]) extends Exp
+  object WildCard extends Exp
 }

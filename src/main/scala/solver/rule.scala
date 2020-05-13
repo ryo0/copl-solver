@@ -9,6 +9,10 @@ object rule {
     def string: String = {
       env.reverse.map(e => s"${e._1} = ${e._2.string},").mkString.dropRight(1)
     }
+    def append(env2: Env): Env = {
+      env.asInstanceOf[List[(String, Exp)]] ::: env2
+        .asInstanceOf[List[(String, Exp)]]
+    }
   }
   val opMap: Map[Op, String] = Map(
     Plus -> "+",
@@ -119,10 +123,19 @@ object rule {
                      nmr: NotMatchRule,
                      r2: Rule)
       extends Rule
-  sealed class MatchRule
-  sealed class NotMatchRule
-  case class MVar(x: Exp, v: Exp) extends MatchRule
-  case class MNil(el1: Exp, el2: Exp) extends MatchRule
+  sealed class MatchRule extends Rule {
+    def env = {
+      this match {
+        case MCons(env, p1, p2, v1, v2, mr1, mr2) => env
+        case MNil(env, el1, el2)                  => env
+        case MWild(env, v)                        => env
+        case MVar(env, x, v)                      => env
+      }
+    }
+  }
+  sealed class NotMatchRule extends Rule
+  case class MVar(env: Env, x: Exp, v: Exp) extends MatchRule
+  case class MNil(env: Env, el1: Exp, el2: Exp) extends MatchRule
   case class MCons(env: Env,
                    p1: Exp,
                    p2: Exp,
@@ -131,7 +144,7 @@ object rule {
                    mr1: MatchRule,
                    mr2: MatchRule)
       extends MatchRule
-  case class MWild(v: Exp) extends MatchRule
+  case class MWild(env: Env, v: Exp) extends MatchRule
   case class NMConsNil(v1: Exp, v2: Exp) extends NotMatchRule
   case class NMNilCons(p1: Exp, p2: Exp) extends NotMatchRule
   case class NMConsConsL(p1: Exp, p2: Exp, v1: Exp, v2: Exp, nmr: NotMatchRule)
