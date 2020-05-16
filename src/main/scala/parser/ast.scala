@@ -1,5 +1,7 @@
 package parser
 
+import java.lang.reflect.TypeVariable
+
 import solver.rule._
 import solver.typeRule._
 
@@ -11,8 +13,8 @@ object ast {
   object Slash extends Op
   object GreaterThan extends Op
   object LessThan extends Op
-  object Cons extends Op
 
+  object Cons extends Op
   sealed class Exp {
     def typeSolve(typeEnv: TypeEnv): TypeRule = {
       this match {
@@ -25,6 +27,12 @@ object ast {
           val tr2 = thenExp.typeSolve(typeEnv)
           val tr3 = elseExp.typeSolve(typeEnv)
           TIf(typeEnv, condExp, thenExp, elseExp, tr1, tr2, tr3)
+        case Var(n) =>
+          TVar(typeEnv, Var(n))
+        case LetExp(variable, valueExp, inExp) =>
+          val tr1 = valueExp.typeSolve(typeEnv)
+          val tr2 = inExp.typeSolve((variable.name, tr1.mlType) :: typeEnv)
+          TLet(typeEnv, variable, valueExp, inExp, tr1, tr2)
       }
     }
     def solve(env: Env): Rule = {
