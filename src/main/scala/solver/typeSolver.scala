@@ -1,0 +1,3 @@
+package solver
+
+object typeSolver {}

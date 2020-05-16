@@ -1,6 +1,7 @@
 package parser
 
 import solver.rule._
+import solver.typeRule._
 
 object ast {
   sealed class Op
@@ -13,6 +14,19 @@ object ast {
   object Cons extends Op
 
   sealed class Exp {
+    def typeSolve(typeEnv: TypeEnv): TypeRule = {
+      this match {
+        case IntVal(n) =>
+          TInt(typeEnv, IntVal(n))
+        case BoolVal(b) =>
+          TBool(typeEnv, BoolVal(b))
+        case IfExp(condExp, thenExp, elseExp) =>
+          val tr1 = condExp.typeSolve(typeEnv)
+          val tr2 = thenExp.typeSolve(typeEnv)
+          val tr3 = elseExp.typeSolve(typeEnv)
+          TIf(typeEnv, condExp, thenExp, elseExp, tr1, tr2, tr3)
+      }
+    }
     def solve(env: Env): Rule = {
       this match {
         case IntVal(n) =>
