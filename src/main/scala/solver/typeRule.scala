@@ -49,11 +49,48 @@ object typeRule {
         case TMinus(_, _, _, _, _) => MLIntType
         case TTimes(_, _, _, _, _) => MLIntType
         case TLt(_, _, _, _, _)    => MLBoolType
+        case TFun(typeEnv, x, e, tr1) =>
+          MLFunType(getTypeFromTypeEnv(x.name, tr1.getTypeEnv), tr1.mlType)
+        case TApp(typeEnv, e1, e2, tr1, tr2) => {
+          tr1.mlType match {
+            case MLFunType(arg, body) =>
+              body
+            case _ =>
+              throw new Exception("error")
+          }
+        }
+        case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2)         => tr2.mlType
+        case TNil(typeEnv, t)                                 => t
+        case TCons(typeEnv, e1, e2, tr1, tr2)                 => tr1.mlType
+        case TMatch(typeEnv, e1, e2, x, y, e3, tr1, tr2, tr3) => tr2.mlType
+      }
+    }
+
+    def getTypeEnv: TypeEnv = {
+      this match {
+        case TInt(typeEnv, _)                                 => typeEnv
+        case TBool(typeEnv, _)                                => typeEnv
+        case TIf(typeEnv, _, _, _, _, _, _)                   => typeEnv
+        case TVar(typeEnv, _)                                 => typeEnv
+        case TLet(typeEnv, _, _, _, _, _)                     => typeEnv
+        case TPlus(typeEnv, _, _, _, _)                       => typeEnv
+        case TMinus(typeEnv, _, _, _, _)                      => typeEnv
+        case TTimes(typeEnv, _, _, _, _)                      => typeEnv
+        case TLt(typeEnv, _, _, _, _)                         => typeEnv
+        case TFun(typeEnv, _, _, _)                           => typeEnv
+        case TApp(typeEnv, e1, e2, tr1, tr2)                  => typeEnv
+        case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2)         => typeEnv
+        case TNil(typeEnv, t)                                 => typeEnv
+        case TCons(typeEnv, e1, e2, tr1, tr2)                 => typeEnv
+        case TMatch(typeEnv, e1, e2, x, y, e3, tr1, tr2, tr3) => typeEnv
       }
     }
   }
+
   case class TInt(typeEnv: TypeEnv, i: IntVal) extends TypeRule
+
   case class TBool(typeEnv: TypeEnv, b: BoolVal) extends TypeRule
+
   case class TIf(typeEnv: TypeEnv,
                  e1: Exp,
                  e2: Exp,
@@ -62,37 +99,82 @@ object typeRule {
                  tr2: TypeRule,
                  tr3: TypeRule)
       extends TypeRule
+
   case class TPlus(typeEnv: TypeEnv,
                    e1: Exp,
                    e2: Exp,
                    tr1: TypeRule,
                    tr2: TypeRule)
       extends TypeRule
+
   case class TMinus(typeEnv: TypeEnv,
                     e1: Exp,
                     e2: Exp,
                     tr1: TypeRule,
                     tr2: TypeRule)
       extends TypeRule
+
   case class TTimes(typeEnv: TypeEnv,
                     e1: Exp,
                     e2: Exp,
                     tr1: TypeRule,
                     tr2: TypeRule)
       extends TypeRule
+
   case class TLt(typeEnv: TypeEnv,
                  e1: Exp,
                  e2: Exp,
                  tr1: TypeRule,
                  tr2: TypeRule)
       extends TypeRule
+
   case class TVar(typeEnv: TypeEnv, x: Var) extends TypeRule
+
   case class TLet(typeEnv: TypeEnv,
                   x: Var,
                   e1: Exp,
                   e2: Exp,
                   tr1: TypeRule,
                   tr2: TypeRule)
+      extends TypeRule
+
+  case class TFun(typeEnv: TypeEnv, x: Var, e: Exp, tr1: TypeRule)
+      extends TypeRule
+
+  case class TApp(typeEnv: TypeEnv,
+                  e1: Exp,
+                  e2: Exp,
+                  tr1: TypeRule,
+                  tr2: TypeRule)
+      extends TypeRule
+
+  case class TLetRec(typeEnv: TypeEnv,
+                     x: Var,
+                     y: Var,
+                     e1: Exp,
+                     e2: Exp,
+                     tr1: TypeRule,
+                     tr2: TypeRule)
+      extends TypeRule
+
+  case class TNil(typeEnv: TypeEnv, t: MLType) extends TypeRule
+
+  case class TCons(typeEnv: TypeEnv,
+                   e1: Exp,
+                   e2: Exp,
+                   tr1: TypeRule,
+                   tr2: TypeRule)
+      extends TypeRule
+
+  case class TMatch(typeEnv: TypeEnv,
+                    e1: Exp,
+                    e2: Exp,
+                    x: Var,
+                    y: Var,
+                    e3: Exp,
+                    tr1: TypeRule,
+                    tr2: TypeRule,
+                    tr3: TypeRule)
       extends TypeRule
 
   implicit class NestString(str: String) {

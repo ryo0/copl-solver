@@ -1,7 +1,5 @@
 package parser
 
-import java.lang.reflect.TypeVariable
-
 import solver.rule._
 import solver.typeRule._
 
