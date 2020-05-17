@@ -141,6 +141,11 @@ object typeRule {
             s"$indent};"
         case TVar(typeEnv, x) =>
           s"${typeEnv.string} |- ${x.string} : ${getTypeFromTypeEnv(x.name, typeEnv).string} by T-Var{};"
+        case TLet(typeEnv, x, e1, e2, tr1, tr2) =>
+          s"${typeEnv.string} |- let ${x.string} = ${e1.string} in ${e2.string} : ${tr2.mlType.string} by T-Let{\n" +
+            s"$indentPlus1${tr1.string(nest + 1)}\n" +
+            s"$indentPlus1${tr2.string(nest + 1)}\n" +
+            s"$indent};"
       }
     }
   }

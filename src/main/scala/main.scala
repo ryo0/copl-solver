@@ -23,4 +23,8 @@ object main extends App {
     )
   )
   file83.close()
+
+  val file84 = new PrintWriter("TypingML4Result/4.txt")
+  file84.write(typeSolve("let x = 3 < 2 in let y = 5 in if x then y else 2"))
+  file84.close()
 }
