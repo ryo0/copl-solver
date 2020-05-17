@@ -22,6 +22,22 @@ object ast {
           TInt(typeEnv, IntVal(n))
         case BoolVal(b) =>
           TBool(typeEnv, BoolVal(b))
+        case InfixExp(e1, Plus, e2) =>
+          val tr1 = e1.typeSolve(typeEnv)
+          val tr2 = e2.typeSolve(typeEnv)
+          TPlus(typeEnv, e1, e2, tr1, tr2)
+        case InfixExp(e1, Minus, e2) =>
+          val tr1 = e1.typeSolve(typeEnv)
+          val tr2 = e2.typeSolve(typeEnv)
+          TMinus(typeEnv, e1, e2, tr1, tr2)
+        case InfixExp(e1, Asterisk, e2) =>
+          val tr1 = e1.typeSolve(typeEnv)
+          val tr2 = e2.typeSolve(typeEnv)
+          TTimes(typeEnv, e1, e2, tr1, tr2)
+        case InfixExp(e1, LessThan, e2) =>
+          val tr1 = e1.typeSolve(typeEnv)
+          val tr2 = e2.typeSolve(typeEnv)
+          TLt(typeEnv, e1, e2, tr1, tr2)
         case IfExp(condExp, thenExp, elseExp) =>
           val tr1 = condExp.typeSolve(typeEnv)
           val tr2 = thenExp.typeSolve(typeEnv)

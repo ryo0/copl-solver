@@ -3,12 +3,26 @@ package solver
 import parser.ast._
 
 object typeRule {
-  sealed class MLType
+  sealed class MLType {
+    def string: String = {
+      this match {
+        case MLIntType            => "int"
+        case MLBoolType           => "bool"
+        case MLFunType(arg, body) => s"${arg.string} -> (${body.string})"
+        case MLListType(lst)      => s"${lst.string} list"
+      }
+    }
+  }
   object MLIntType extends MLType
   object MLBoolType extends MLType
   case class MLFunType(arg: MLType, body: MLType) extends MLType
   case class MLListType(lst: MLType) extends MLType
   type TypeEnv = List[(String, MLType)]
+  implicit class TypeEnvString(typeEnv: TypeEnv) {
+    def string: String = {
+      typeEnv.map(e => s"${e._1} : ${e._2.string},").mkString.dropRight(1)
+    }
+  }
 
   def getValFromTypeEnv(key: String, env: TypeEnv): MLType = {
     for (e <- env) {
@@ -28,6 +42,10 @@ object typeRule {
         case TVar(typeEnv, x)           => getValFromTypeEnv(x.name, typeEnv)
         case TLet(_, _, _, _, _, tr2) =>
           tr2.mlType
+        case TPlus(_, _, _, _, _)  => MLIntType
+        case TMinus(_, _, _, _, _) => MLIntType
+        case TTimes(_, _, _, _, _) => MLIntType
+        case TLt(_, _, _, _, _)    => MLBoolType
       }
     }
   }
@@ -41,6 +59,30 @@ object typeRule {
                  tr2: TypeRule,
                  tr3: TypeRule)
       extends TypeRule
+  case class TPlus(typeEnv: TypeEnv,
+                   e1: Exp,
+                   e2: Exp,
+                   tr1: TypeRule,
+                   tr2: TypeRule)
+      extends TypeRule
+  case class TMinus(typeEnv: TypeEnv,
+                    e1: Exp,
+                    e2: Exp,
+                    tr1: TypeRule,
+                    tr2: TypeRule)
+      extends TypeRule
+  case class TTimes(typeEnv: TypeEnv,
+                    e1: Exp,
+                    e2: Exp,
+                    tr1: TypeRule,
+                    tr2: TypeRule)
+      extends TypeRule
+  case class TLt(typeEnv: TypeEnv,
+                 e1: Exp,
+                 e2: Exp,
+                 tr1: TypeRule,
+                 tr2: TypeRule)
+      extends TypeRule
   case class TVar(typeEnv: TypeEnv, x: Var) extends TypeRule
   case class TLet(typeEnv: TypeEnv,
                   x: Var,
@@ -49,4 +91,46 @@ object typeRule {
                   tr1: TypeRule,
                   tr2: TypeRule)
       extends TypeRule
+
+  implicit class NestString(str: String) {
+    def mul(nest: Int): String = {
+      if (nest == 0) { "" } else if (nest == 1) {
+        str
+      } else {
+        str + str.mul(nest - 1)
+      }
+    }
+  }
+  implicit class TypeRuleString(typeRule: TypeRule) {
+    def string(nest: Int = 0): String = {
+      val indent = "     ".mul(nest)
+      val indentPlus1 = "     ".mul(nest + 1)
+      typeRule match {
+        case TInt(typeEnv, i) =>
+          s"${typeEnv.string} |- ${i.string} : int by T-Int{};"
+        case TBool(typeEnv, b) =>
+          s"${typeEnv.string} |- ${b.string} : bool by T-Bool{};"
+        case TPlus(typeEnv, e1, e2, tr1, tr2) =>
+          s"${typeEnv.string} |- ${e1.string} + ${e2.string} : int by T-Plus{\n" +
+            s"$indentPlus1${tr1.string(nest + 1)}\n" +
+            s"$indentPlus1${tr2.string(nest + 1)}\n" +
+            s"$indent};"
+        case TMinus(typeEnv, e1, e2, tr1, tr2) =>
+          s"${typeEnv.string} |- ${e1.string} - ${e2.string} : int by T-Minus{\n" +
+            s"$indentPlus1${tr1.string(nest + 1)}\n" +
+            s"$indentPlus1${tr2.string(nest + 1)}\n" +
+            s"$indent};"
+        case TTimes(typeEnv, e1, e2, tr1, tr2) =>
+          s"${typeEnv.string} |- ${e1.string} * ${e2.string} : int by T-Times{\n" +
+            s"$indentPlus1${tr1.string(nest + 1)}\n" +
+            s"$indentPlus1${tr2.string(nest + 1)}\n" +
+            s"$indent};"
+        case TLt(typeEnv, e1, e2, tr1, tr2) =>
+          s"${typeEnv.string} |- ${e1.string} < ${e2.string} : int by T-Lt{\n" +
+            s"$indentPlus1${tr1.string(nest + 1)}\n" +
+            s"$indentPlus1${tr2.string(nest + 1)}\n" +
+            s"$indent};"
+      }
+    }
+  }
 }
