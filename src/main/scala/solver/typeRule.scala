@@ -20,11 +20,14 @@ object typeRule {
   type TypeEnv = List[(String, MLType)]
   implicit class TypeEnvString(typeEnv: TypeEnv) {
     def string: String = {
-      typeEnv.map(e => s"${e._1} : ${e._2.string},").mkString.dropRight(1)
+      typeEnv.reverse
+        .map(e => s"${e._1} : ${e._2.string},")
+        .mkString
+        .dropRight(1)
     }
   }
 
-  def getValFromTypeEnv(key: String, env: TypeEnv): MLType = {
+  def getTypeFromTypeEnv(key: String, env: TypeEnv): MLType = {
     for (e <- env) {
       if (e._1 == key) {
         return e._2
@@ -39,7 +42,7 @@ object typeRule {
         case TInt(_, _)                 => MLIntType
         case TBool(_, _)                => MLBoolType
         case TIf(_, _, _, _, _, _, tr3) => tr3.mlType
-        case TVar(typeEnv, x)           => getValFromTypeEnv(x.name, typeEnv)
+        case TVar(typeEnv, x)           => getTypeFromTypeEnv(x.name, typeEnv)
         case TLet(_, _, _, _, _, tr2) =>
           tr2.mlType
         case TPlus(_, _, _, _, _)  => MLIntType
@@ -126,10 +129,18 @@ object typeRule {
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indent};"
         case TLt(typeEnv, e1, e2, tr1, tr2) =>
-          s"${typeEnv.string} |- ${e1.string} < ${e2.string} : int by T-Lt{\n" +
+          s"${typeEnv.string} |- ${e1.string} < ${e2.string} : bool by T-Lt{\n" +
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indent};"
+        case TIf(typeEnv, e1, e2, e3, tr1, tr2, tr3) =>
+          s"${typeEnv.string} |- if ${e1.string} then ${e2.string} else ${e3.string}: ${tr3.mlType.string} by T-If{\n" +
+            s"$indentPlus1${tr1.string(nest + 1)}\n" +
+            s"$indentPlus1${tr2.string(nest + 1)}\n" +
+            s"$indentPlus1${tr3.string(nest + 1)}\n" +
+            s"$indent};"
+        case TVar(typeEnv, x) =>
+          s"${typeEnv.string} |- ${x.string} : ${getTypeFromTypeEnv(x.name, typeEnv).string} by T-Var{};"
       }
     }
   }
