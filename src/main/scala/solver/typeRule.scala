@@ -216,7 +216,7 @@ object typeRule {
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indent};"
         case TIf(typeEnv, e1, e2, e3, tr1, tr2, tr3) =>
-          s"${typeEnv.string} |- if ${e1.string} then ${e2.string} else ${e3.string}: ${tr3.mlType.string} by T-If{\n" +
+          s"${typeEnv.string} |- if ${e1.string} then ${e2.string} else ${e3.string}: ${this.typeRule.mlType.string} by T-If{\n" +
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indentPlus1${tr3.string(nest + 1)}\n" +
@@ -224,9 +224,34 @@ object typeRule {
         case TVar(typeEnv, x) =>
           s"${typeEnv.string} |- ${x.string} : ${getTypeFromTypeEnv(x.name, typeEnv).string} by T-Var{};"
         case TLet(typeEnv, x, e1, e2, tr1, tr2) =>
-          s"${typeEnv.string} |- let ${x.string} = ${e1.string} in ${e2.string} : ${tr2.mlType.string} by T-Let{\n" +
+          s"${typeEnv.string} |- let ${x.string} = ${e1.string} in ${e2.string} : ${this.typeRule.mlType.string} by T-Let{\n" +
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
+            s"$indent};"
+        case TFun(typeEnv, x, e, tr1) =>
+          s"${typeEnv.string} |-fun ${x.string} -> ${e.string} : ${this.typeRule.mlType.string} by T-Fun{\n" +
+            s"$indentPlus1${tr1.string(nest + 1)}\n" +
+            s"$indent};"
+        case TApp(typeEnv, e1, e2, tr1, tr2) =>
+          s"${typeEnv.string} |- ${e1.string} ${e2.string} : ${this.typeRule.mlType.string} by T-App{\n" +
+            s"$indentPlus1${tr1.string(nest + 1)}\n" +
+            s"$indentPlus1${tr2.string(nest + 1)}\n" +
+            s"$indent};"
+        case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2) =>
+          s"${typeEnv.string} |- let rec ${x.string} = fun ${y.string} -> ${e1.string} in ${e2.string} : ${this.typeRule.mlType.string} by T-LetRec{\n" +
+            s"$indentPlus1${tr1.string(nest + 1)}\n" +
+            s"$indentPlus1${tr2.string(nest + 1)}\n" +
+            s"$indent};"
+        case TCons(typeEnv, e1, e2, tr1, tr2) =>
+          s"${typeEnv.string} |- ${e1.string} :: ${e2.string} : ${this.typeRule.mlType.string} by T-Cons{\n" +
+            s"$indentPlus1${tr1.string(nest + 1)}\n" +
+            s"$indentPlus1${tr2.string(nest + 1)}\n" +
+            s"$indent};"
+        case TMatch(typeEnv, e1, e2, x, y, e3, tr1, tr2, tr3) =>
+          s"${typeEnv.string} |- match ${e1.string} with [] -> ${e2.string} | ${x.string} :: ${y.string} -> ${e3.string} : ${this.typeRule.mlType.string} by T-Cons{\n" +
+            s"$indentPlus1${tr1.string(nest + 1)}\n" +
+            s"$indentPlus1${tr2.string(nest + 1)}\n" +
+            s"$indentPlus1${tr3.string(nest + 1)}\n" +
             s"$indent};"
       }
     }
