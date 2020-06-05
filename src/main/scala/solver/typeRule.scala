@@ -49,7 +49,7 @@ object typeRule {
         case MLIntType  => "int"
         case MLBoolType => "bool"
         case MLFunType(arg, body) =>
-          s"${arg.string(typeEnv)} -> (${body.string(typeEnv)})"
+          s"(${arg.string(typeEnv)} -> ${body.string(typeEnv)})"
         case MLListType(lst) => s"${lst.string(typeEnv)} list"
         case TypeVar(name)   => s"$name"
       }
