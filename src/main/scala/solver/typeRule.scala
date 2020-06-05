@@ -5,7 +5,7 @@ import parser.ast._
 object typeRule {
   type Equations = List[Equation]
   case class Equation(left: MLType, right: MLType)
-  type TypeAnswer = Map[TypeVar, MLType]
+  type TypeAnswer = Map[MLType, MLType]
 
   implicit class Unification(E: Equations) {
     def substitute(typeAnswer: TypeAnswer): Equations = {
@@ -18,7 +18,7 @@ object typeRule {
       }
     }
     def unify(): TypeAnswer = {
-      E match {
+      E.distinct match {
         case List() =>
           Map()
         case Equation(left, right) :: eqs =>
@@ -27,9 +27,19 @@ object typeRule {
           } else {
             (left, right) match {
               case (TypeVar(n), right) =>
-              case (left, TypeVar(n))  =>
+                val ta: TypeAnswer = Map(TypeVar(n) -> right)
+                val s = eqs.substitute(ta).unify()
+                s + (TypeVar(n).substitute(s) -> right)
+              case (left, TypeVar(n)) =>
+                val ta: TypeAnswer = Map(TypeVar(n) -> left)
+                val s = eqs.substitute(ta).unify()
+                s + (TypeVar(n).substitute(s) -> left)
             }
           }
+        case Equation(MLFunType(t11, t12), MLFunType(t21, t22)) :: eqs =>
+          (Equation(t11, t21) :: Equation(t12, t22) :: eqs).unify()
+        case Equation(MLListType(t1), MLListType(t2)) :: eqs =>
+          (Equation(t1, t2) :: eqs).unify()
       }
     }
   }
