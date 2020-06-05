@@ -21,6 +21,10 @@ object typeRule {
       E.distinct match {
         case List() =>
           Map()
+        case Equation(MLFunType(t11, t12), MLFunType(t21, t22)) :: eqs =>
+          (Equation(t11, t21) :: Equation(t12, t22) :: eqs).unify()
+        case Equation(MLListType(t1), MLListType(t2)) :: eqs =>
+          (Equation(t1, t2) :: eqs).unify()
         case Equation(left, right) :: eqs =>
           if (left == right) {
             eqs.unify()
@@ -29,17 +33,13 @@ object typeRule {
               case (TypeVar(n), right) =>
                 val ta: TypeAnswer = Map(TypeVar(n) -> right)
                 val s = eqs.substitute(ta).unify()
-                s + (TypeVar(n).substitute(s) -> right)
+                s + (TypeVar(n) -> right.substitute(s))
               case (left, TypeVar(n)) =>
                 val ta: TypeAnswer = Map(TypeVar(n) -> left)
                 val s = eqs.substitute(ta).unify()
-                s + (TypeVar(n).substitute(s) -> left)
+                s + (TypeVar(n) -> left.substitute(s))
             }
           }
-        case Equation(MLFunType(t11, t12), MLFunType(t21, t22)) :: eqs =>
-          (Equation(t11, t21) :: Equation(t12, t22) :: eqs).unify()
-        case Equation(MLListType(t1), MLListType(t2)) :: eqs =>
-          (Equation(t1, t2) :: eqs).unify()
       }
     }
   }

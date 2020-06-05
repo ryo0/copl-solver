@@ -1,1 +1,1 @@
-List(Equation(TypeVar(x3),MLFunType(solver.typeRule$MLBoolType$@5e5792a0,TypeVar(x4))), Equation(MLFunType(TypeVar(x1),MLFunType(TypeVar(x2),TypeVar(x1))),MLFunType(solver.typeRule$MLIntType$@26653222,TypeVar(x3))))TypeVar(x4)
+List(Equation(TypeVar(x3),MLFunType(solver.typeRule$MLBoolType$@6093dd95,TypeVar(x4))), Equation(MLFunType(TypeVar(x1),MLFunType(TypeVar(x2),TypeVar(x1))),MLFunType(solver.typeRule$MLIntType$@4883b407,TypeVar(x3))))TypeVar(x4)

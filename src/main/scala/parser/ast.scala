@@ -22,7 +22,6 @@ object ast {
   val newTypeVarName: () => String = typeVarNameGenerator()
   val newTypeVar: () => TypeVar = () => {
     val r = TypeVar(newTypeVarName())
-    println(r)
     r
   }
   sealed class Op
@@ -40,7 +39,6 @@ object ast {
         case IntVal(n) =>
           (List(), MLIntType)
         case BoolVal(b) =>
-          println("bool called")
           (List(), MLBoolType)
         case Var(n) =>
           (List(), getTypeFromTypeEnv(n, typeEnv))
