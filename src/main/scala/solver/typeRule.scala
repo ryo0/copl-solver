@@ -6,10 +6,32 @@ object typeRule {
   type Equations = List[Equation]
   case class Equation(left: MLType, right: MLType)
   type TypeAnswer = Map[TypeVar, MLType]
+
   implicit class Unification(E: Equations) {
-//    def unify(): TypeAnswer = {
-//      // typeExtractの第二返り値MLTypeと対応するTypeAnswerが求めたい型
-//    }
+    def substitute(typeAnswer: TypeAnswer): Equations = {
+      E match {
+        case Equation(left, right) :: rest =>
+          Equation(left.substitute(typeAnswer), right.substitute(typeAnswer)) :: rest
+            .substitute(typeAnswer)
+        case List() =>
+          List()
+      }
+    }
+    def unify(): TypeAnswer = {
+      E match {
+        case List() =>
+          Map()
+        case Equation(left, right) :: eqs =>
+          if (left == right) {
+            eqs.unify()
+          } else {
+            (left, right) match {
+              case (TypeVar(n), right) =>
+              case (left, TypeVar(n))  =>
+            }
+          }
+      }
+    }
   }
   sealed class MLType {
     def string: String = {
@@ -18,6 +40,25 @@ object typeRule {
         case MLBoolType           => "bool"
         case MLFunType(arg, body) => s"${arg.string} -> (${body.string})"
         case MLListType(lst)      => s"${lst.string} list"
+      }
+    }
+
+    def substitute(typeAnswer: TypeAnswer): MLType = {
+      this match {
+        case TypeVar(n) => {
+          val result = typeAnswer.get(TypeVar(n))
+          result match {
+            case Some(r) =>
+              r
+            case None =>
+              TypeVar(n)
+          }
+        }
+        case MLIntType  => MLIntType
+        case MLBoolType => MLBoolType
+        case MLFunType(arg, body) =>
+          MLFunType(arg.substitute(typeAnswer), body.substitute(typeAnswer))
+        case MLListType(lst) => MLListType(lst.substitute(typeAnswer))
       }
     }
 

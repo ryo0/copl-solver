@@ -30,9 +30,9 @@ object main extends App {
   file85.write(typeExtract("let k = fun x -> fun y -> x in k 3 true"))
   file85.close()
 
-//  val file86 = new PrintWriter("TypingML4Result/4.txt")
-//  file86.write(typeExtract("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-//  file86.close()
+  val file86 = new PrintWriter("TypingML4Result/6.txt")
+  file86.write(typeExtract("let k = fun x -> fun y -> x in k (1::[]) 3 "))
+  file86.close()
 //  val file87 = new PrintWriter("TypingML4Result/4.txt")
 //  file87.write(typeSolve("let x = 3 < 2 in let y = 5 in if x then y else 2"))
 //  file87.close()

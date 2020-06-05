@@ -1,0 +1,1 @@
+List(Equation(TypeVar(x8),MLFunType(solver.typeRule$MLIntType$@26653222,TypeVar(x9))), Equation(MLFunType(TypeVar(x5),MLFunType(TypeVar(x6),TypeVar(x5))),MLFunType(MLListType(TypeVar(x7)),TypeVar(x8))), Equation(MLListType(TypeVar(x7)),MLListType(solver.typeRule$MLIntType$@26653222)))TypeVar(x9)
