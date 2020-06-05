@@ -1,6 +1,7 @@
 package parser
 
 import tokenizer.token._
+import tokenizer.token.{TrueToken, FalseToken}
 import ast._
 
 object parser {
@@ -108,7 +109,8 @@ object parser {
   }
 
   def isArg(token: Token): Boolean = {
-    token == LParen || token == EmptyListToken || token
+    token == LParen || token == EmptyListToken || token == TrueToken ||
+    token == FalseToken || token
       .isInstanceOf[VarToken] || token.isInstanceOf[IntToken]
   }
 

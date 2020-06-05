@@ -13,5 +13,10 @@ object typeSolver {
     solved.string(0)
   }
   def initSolve(exp: Exp): TypeRule = { exp.typeSolve(List()) }
-
+  def typeExtract(string: String): String = {
+    val exp = parser.parser.parseExp(tokenize(string))._1
+    println(exp)
+    val result = exp.typeExtract(List())
+    result._1.toString() + result._2.toString
+  }
 }

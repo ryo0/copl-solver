@@ -252,6 +252,13 @@ class ParserTest extends FunSuite {
         )
       ), List())
     )
+    assert(
+      parseExp(tokenize("let k = fun x -> fun y -> x in k 3 true"))._1 === LetExp(
+        Var("k"),
+        FunExp(Var("x"), FunExp(Var("y"), Var("x"))),
+        FunCall(FunCall(Var("k"), IntVal(3)), BoolVal(true))
+      )
+    )
 
     assert(
       parseExp(tokenize("append (1 :: []) (3 :: [])")) === (FunCall(

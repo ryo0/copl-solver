@@ -4,6 +4,27 @@ import solver.rule._
 import solver.typeRule._
 
 object ast {
+  def typeVarNameCounter(): () => Int = {
+    var counter = 0
+    def counterBody(): Int = {
+      counter += 1
+      counter
+    }
+    counterBody
+  }
+  def typeVarNameGenerator(): () => String = {
+    val counter = typeVarNameCounter()
+    def generatorBody(): String = {
+      "x" + counter()
+    }
+    generatorBody
+  }
+  val newTypeVarName: () => String = typeVarNameGenerator()
+  val newTypeVar: () => TypeVar = () => {
+    val r = TypeVar(newTypeVarName())
+    println(r)
+    r
+  }
   sealed class Op
   object Plus extends Op
   object Minus extends Op
@@ -15,27 +36,11 @@ object ast {
   object Cons extends Op
   sealed class Exp {
     def typeExtract(typeEnv: TypeEnv): (Equations, MLType) = {
-      def typeVarNameCounter(): () => Int = {
-        var counter = 0
-        def counterBody(): Int = {
-          counter += 1
-          counter
-        }
-        counterBody
-      }
-      def typeVarNameGenerator(): () => String = {
-        val counter = typeVarNameCounter()
-        def generatorBody(): String = {
-          "x" + counter()
-        }
-        generatorBody
-      }
-      val newTypeVarName = typeVarNameGenerator()
-      val newTypeVar = () => { TypeVar(newTypeVarName()) }
       this match {
         case IntVal(n) =>
           (List(), MLIntType)
         case BoolVal(b) =>
+          println("bool called")
           (List(), MLBoolType)
         case Var(n) =>
           (List(), getTypeFromTypeEnv(n, typeEnv))
@@ -69,7 +74,7 @@ object ast {
           val (eq1, t1) = funName.typeExtract(typeEnv)
           val (eq2, t2) = arg.typeExtract(typeEnv)
           val a = newTypeVar()
-          val eq3 = (Equation(t1, MLFunType(t2, a))) :: eq1 ::: eq2
+          val eq3 = Equation(t1, MLFunType(t2, a)) :: eq1 ::: eq2
           (eq3, a)
         case LetRecExp(variable, RecFunExp(_, param, body), inExp) =>
           val a1 = newTypeVar()
