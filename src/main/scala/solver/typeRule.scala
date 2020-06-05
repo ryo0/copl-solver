@@ -20,6 +20,16 @@ object typeRule {
         case MLListType(lst)      => s"${lst.string} list"
       }
     }
+
+    def ftv(a: TypeVar): Boolean = {
+      this match {
+        case TypeVar(_)           => true
+        case MLIntType            => false
+        case MLBoolType           => false
+        case MLFunType(arg, body) => arg.ftv(a) || body.ftv(a)
+        case MLListType(lst)      => lst.ftv(a)
+      }
+    }
   }
   object MLIntType extends MLType
   object MLBoolType extends MLType
