@@ -1,1 +1,14 @@
-List(Equation(solver.typeRule$MLIntType$@1753acfe,solver.typeRule$MLIntType$@1753acfe), Equation(solver.typeRule$MLIntType$@1753acfe,solver.typeRule$MLIntType$@1753acfe), Equation(solver.typeRule$MLBoolType$@68be2bc2,solver.typeRule$MLBoolType$@68be2bc2), Equation(solver.typeRule$MLIntType$@1753acfe,solver.typeRule$MLIntType$@1753acfe))solver.typeRule$MLIntType$@1753acfe
+ |- let x = (3 < 2) in let y = 5 in if x then y else 2 : int by T-Let{
+      |- 3 < 2 : bool by T-Lt{
+           |- 3 : int by T-Int{};
+           |- 2 : int by T-Int{};
+     };
+     x : bool |- let y = 5 in if x then y else 2 : int by T-Let{
+          x : bool |- 5 : int by T-Int{};
+          x : bool,y : int |- if x then y else 2: int by T-If{
+               x : bool,y : int |- x : bool by T-Var{};
+               x : bool,y : int |- y : int by T-Var{};
+               x : bool,y : int |- 2 : int by T-Int{};
+          };
+     };
+};

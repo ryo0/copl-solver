@@ -1,1 +1,6 @@
-List(Equation(TypeVar(x3),MLFunType(solver.typeRule$MLBoolType$@6093dd95,TypeVar(x4))), Equation(MLFunType(TypeVar(x1),MLFunType(TypeVar(x2),TypeVar(x1))),MLFunType(solver.typeRule$MLIntType$@4883b407,TypeVar(x3))))TypeVar(x4)
+ |-fun x -> (x + 1) : int by T-Fun{
+     x : int |- x + 1 : int by T-Plus{
+          x : int |- x : int by T-Var{};
+          x : int |- 1 : int by T-Int{};
+     };
+};

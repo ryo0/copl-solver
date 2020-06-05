@@ -34,6 +34,11 @@ object ast {
 
   object Cons extends Op
   sealed class Exp {
+    def getType(typeEnv: TypeEnv = List()): MLType = {
+      val e = this.typeExtract(typeEnv)
+      val typeAnswerMap = e._1.unify()
+      e._2.substitute(typeAnswerMap)
+    }
     def typeExtract(typeEnv: TypeEnv): (Equations, MLType) = {
       this match {
         case IntVal(n) =>
@@ -137,16 +142,16 @@ object ast {
           val tr2 = inExp.typeSolve((variable.name, tr1.mlType) :: typeEnv)
           TLet(typeEnv, variable, valueExp, inExp, tr1, tr2)
         case FunExp(param, body) =>
-          val paramType = param.typeSolve(typeEnv).mlType
-          val solvedBody = body.typeSolve((param.name, paramType) :: typeEnv)
+          val funType = this.getType(typeEnv).asInstanceOf[MLFunType]
+          val solvedBody = body.typeSolve((param.name, funType.arg) :: typeEnv)
           TFun(typeEnv, param, body, solvedBody)
         case FunCall(funName, arg) =>
           val tr1 = funName.typeSolve(typeEnv)
           val tr2 = arg.typeSolve(typeEnv)
           TApp(typeEnv, funName, arg, tr1, tr2)
         case LetRecExp(variable, RecFunExp(_, param, body), inExp) =>
-          val xType = variable.typeSolve(typeEnv).mlType
-          val yType = param.typeSolve(typeEnv).mlType
+          val xType = variable.getType(typeEnv)
+          val yType = param.getType(typeEnv)
           val tr1 = body.typeSolve(
             (variable.name, xType) :: (param.name, yType) :: typeEnv
           )
