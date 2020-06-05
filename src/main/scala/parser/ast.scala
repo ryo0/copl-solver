@@ -144,7 +144,7 @@ object ast {
         case FunExp(param, body) =>
           val funType = this.getType(typeEnv).asInstanceOf[MLFunType]
           val solvedBody = body.typeSolve((param.name, funType.arg) :: typeEnv)
-          TFun(typeEnv, param, body, solvedBody)
+          TFun(typeEnv, param, body, solvedBody, funType)
         case FunCall(funName, arg) =>
           val tr1 = funName.typeSolve(typeEnv)
           val tr2 = arg.typeSolve(typeEnv)

@@ -29,6 +29,11 @@ object main extends App {
   val file85 = new PrintWriter("TypingML4Result/5.txt")
   file85.write(typeSolve("fun x -> x + 1"))
   file85.close()
+
+  val file86 = new PrintWriter("TypingML4Result/6.txt")
+  file86.write(typeSolve("let f = fun x -> x + 1 in f 4"))
+  file86.close()
+
 //  val file87 = new PrintWriter("TypingML4Result/4.txt")
 //  file87.write(typeSolve("let x = 3 < 2 in let y = 5 in if x then y else 2"))
 //  file87.close()

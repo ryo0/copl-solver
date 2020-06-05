@@ -117,12 +117,11 @@ object typeRule {
         case TVar(typeEnv, x)           => x.getType(typeEnv)
         case TLet(_, _, _, _, _, tr2) =>
           tr2.mlType
-        case TPlus(_, _, _, _, _)  => MLIntType
-        case TMinus(_, _, _, _, _) => MLIntType
-        case TTimes(_, _, _, _, _) => MLIntType
-        case TLt(_, _, _, _, _)    => MLBoolType
-        case TFun(typeEnv, x, e, tr1) =>
-          tr1.mlType
+        case TPlus(_, _, _, _, _)        => MLIntType
+        case TMinus(_, _, _, _, _)       => MLIntType
+        case TTimes(_, _, _, _, _)       => MLIntType
+        case TLt(_, _, _, _, _)          => MLBoolType
+        case TFun(typeEnv, x, e, tr1, t) => t
         case TApp(typeEnv, e1, e2, tr1, tr2) => {
           tr2.mlType
         }
@@ -145,7 +144,7 @@ object typeRule {
         case TMinus(typeEnv, _, _, _, _)                      => typeEnv
         case TTimes(typeEnv, _, _, _, _)                      => typeEnv
         case TLt(typeEnv, _, _, _, _)                         => typeEnv
-        case TFun(typeEnv, _, _, _)                           => typeEnv
+        case TFun(typeEnv, _, _, _, _)                        => typeEnv
         case TApp(typeEnv, e1, e2, tr1, tr2)                  => typeEnv
         case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2)         => typeEnv
         case TNil(typeEnv, t)                                 => typeEnv
@@ -206,7 +205,7 @@ object typeRule {
                   tr2: TypeRule)
       extends TypeRule
 
-  case class TFun(typeEnv: TypeEnv, x: Var, e: Exp, tr1: TypeRule)
+  case class TFun(typeEnv: TypeEnv, x: Var, e: Exp, tr1: TypeRule, t: MLType)
       extends TypeRule
 
   case class TApp(typeEnv: TypeEnv,
@@ -298,9 +297,8 @@ object typeRule {
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indent};"
-        case TFun(typeEnv, x, e, tr1) =>
-          s"${typeEnv.string} |-fun ${x.string} -> ${e.string} : ${this.typeRule.mlType
-            .string(typeEnv)} by T-Fun{\n" +
+        case TFun(typeEnv, x, e, tr1, t) =>
+          s"${typeEnv.string} |-fun ${x.string} -> ${e.string} : ${t.string(typeEnv)} by T-Fun{\n" +
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indent};"
         case TApp(typeEnv, e1, e2, tr1, tr2) =>
