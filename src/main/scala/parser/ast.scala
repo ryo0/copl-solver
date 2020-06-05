@@ -14,6 +14,55 @@ object ast {
 
   object Cons extends Op
   sealed class Exp {
+    def typeExtract(typeEnv: TypeEnv): (Equations, MLType) = {
+      def typeVarNameCounter(): () => Int = {
+        var counter = 0
+        def counterBody(): Int = {
+          counter += 1
+          counter
+        }
+        counterBody
+      }
+      def typeVarNameGenerator(): () => String = {
+        val counter = typeVarNameCounter()
+        def generatorBody(): String = {
+          "x" + counter()
+        }
+        generatorBody
+      }
+      this match {
+        case IntVal(n) =>
+          (List(), MLIntType)
+        case BoolVal(b) =>
+          (List(), MLBoolType)
+        case Var(n) =>
+          (List(), getTypeFromTypeEnv(n, typeEnv))
+        case InfixExp(e1, op, e2) =>
+          val (eq1, t1) = e1.typeExtract(typeEnv)
+          val (eq2, t2) = e2.typeExtract(typeEnv)
+          val eq3 = (eq1 ::: eq2) :+
+            Equation(t1, MLIntType) :+ Equation(t2, MLIntType)
+          op match {
+            case LessThan =>
+              (eq3, MLBoolType)
+            case _ =>
+              (eq3, MLIntType)
+          }
+        case IfExp(condExp, thenExp, elseExp) =>
+          val (eq1, t1) = condExp.typeExtract(typeEnv)
+          val (eq2, t2) = thenExp.typeExtract(typeEnv)
+          val (eq3, t3) = elseExp.typeExtract(typeEnv)
+          val eq4 = (eq1 ::: eq2 ::: eq3) :+
+            Equation(t1, MLBoolType) :+ Equation(t2, t3)
+          (eq4, t2)
+        case LetExp(variable, valueExp, inExp)                     =>
+        case FunExp(param, body)                                   =>
+        case FunCall(funName, arg)                                 =>
+        case LetRecExp(variable, RecFunExp(_, param, body), inExp) =>
+        case EList(left, right)                                    =>
+        case Match(e1: Var, patterns: List[Pattern])               =>
+      }
+    }
     def typeSolve(typeEnv: TypeEnv): TypeRule = {
       this match {
         case IntVal(n) =>

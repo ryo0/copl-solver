@@ -3,6 +3,14 @@ package solver
 import parser.ast._
 
 object typeRule {
+  type Equations = List[Equation]
+  case class Equation(left: MLType, right: MLType)
+  type TypeAnswer = Map[TypeVar, MLType]
+  implicit class Unification(E: Equations) {
+//    def unify(): TypeAnswer = {
+//      // typeExtractの第二返り値MLTypeと対応するTypeAnswerが求めたい型
+//    }
+  }
   sealed class MLType {
     def string: String = {
       this match {
@@ -17,6 +25,7 @@ object typeRule {
   object MLBoolType extends MLType
   case class MLFunType(arg: MLType, body: MLType) extends MLType
   case class MLListType(lst: MLType) extends MLType
+  case class TypeVar(name: String) extends MLType
   type TypeEnv = List[(String, MLType)]
   implicit class TypeEnvString(typeEnv: TypeEnv) {
     def string: String = {
