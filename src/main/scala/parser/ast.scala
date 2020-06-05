@@ -30,6 +30,8 @@ object ast {
         }
         generatorBody
       }
+      val newTypeVarName = typeVarNameGenerator()
+      val newTypeVar = () => { TypeVar(newTypeVarName()) }
       this match {
         case IntVal(n) =>
           (List(), MLIntType)
@@ -55,12 +57,47 @@ object ast {
           val eq4 = (eq1 ::: eq2 ::: eq3) :+
             Equation(t1, MLBoolType) :+ Equation(t2, t3)
           (eq4, t2)
-        case LetExp(variable, valueExp, inExp)                     =>
-        case FunExp(param, body)                                   =>
-        case FunCall(funName, arg)                                 =>
+        case LetExp(variable, valueExp, inExp) =>
+          val (eq1, t1) = valueExp.typeExtract(typeEnv)
+          val (eq2, t2) = inExp.typeExtract((variable.name, t1) :: typeEnv)
+          (eq1 ::: eq2, t2)
+        case FunExp(param, body) =>
+          val a = newTypeVar()
+          val (eq, t0) = body.typeExtract((param.name, a) :: typeEnv)
+          (eq, MLFunType(a, t0))
+        case FunCall(funName, arg) =>
+          val (eq1, t1) = funName.typeExtract(typeEnv)
+          val (eq2, t2) = arg.typeExtract(typeEnv)
+          val a = newTypeVar()
+          val eq3 = (Equation(t1, MLFunType(t2, a))) :: eq1 ::: eq2
+          (eq3, a)
         case LetRecExp(variable, RecFunExp(_, param, body), inExp) =>
-        case EList(left, right)                                    =>
-        case Match(e1: Var, patterns: List[Pattern])               =>
+          val a1 = newTypeVar()
+          val a2 = newTypeVar()
+          val (eq1, t1) =
+            body.typeExtract((variable.name, a1) :: (param.name, a2) :: typeEnv)
+          val (eq2, t2) = inExp.typeExtract((variable.name, a1) :: typeEnv)
+          val eq3 = Equation(a1, MLFunType(a2, t1)) :: eq1 ::: eq2
+          (eq3, t2)
+        case EmptyList =>
+          val a = newTypeVar()
+          (List(), MLListType(a))
+        case EList(left, right) =>
+          val (eq1, t1) = left.typeExtract(typeEnv)
+          val (eq2, t2) = right.typeExtract(typeEnv)
+          val eq3 = Equation(t2, MLListType(t1)) :: (eq1 ::: eq2)
+          (eq3, t2)
+        case Match(
+            e1: Var,
+            Pattern(EmptyList, right1) :: Pattern(EList(Var(x), Var(y)), right2) :: List()
+            ) =>
+          val (eq1, t1) = e1.typeExtract(typeEnv)
+          val (eq2, t2) = right1.typeExtract(typeEnv)
+          val a = newTypeVar()
+          val (eq3, t3) =
+            right2.typeExtract((x, a) :: (y, MLListType(a)) :: typeEnv)
+          val eq4 = Equation(t1, MLListType(a)) :: Equation(t2, t3) :: eq1 ::: eq2 ::: eq3
+          (eq4, t2)
       }
     }
     def typeSolve(typeEnv: TypeEnv): TypeRule = {
