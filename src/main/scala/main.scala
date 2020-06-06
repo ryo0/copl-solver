@@ -45,16 +45,16 @@ object main extends App {
   file88.close()
 
   val file89 = new PrintWriter("TypingML4Result/9.txt")
-  file89.write(typeSolve("let x = 3 < 2 in let y = 5 in if x then y else 2"))
+  file89.write(typeSolve("4 :: []"))
   file89.close()
-//
-//  val file810 = new PrintWriter("TypingML4Result/4.txt")
-//  file810.write(typeSolve("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-//  file810.close()
-//
-//  val file811 = new PrintWriter("TypingML4Result/4.txt")
-//  file811.write(typeSolve("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-//  file811.close()
+
+  val file810 = new PrintWriter("TypingML4Result/10.txt")
+  file810.write(typeSolve("true :: false :: []"))
+  file810.close()
+
+  val file811 = new PrintWriter("TypingML4Result/11.txt")
+  file811.write(typeSolve("fun x -> fun y -> x"))
+  file811.close()
 //
 //  val file812 = new PrintWriter("TypingML4Result/4.txt")
 //  file812.write(typeSolve("let x = 3 < 2 in let y = 5 in if x then y else 2"))

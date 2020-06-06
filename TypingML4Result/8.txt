@@ -12,7 +12,7 @@
           };
      };
      max : (int -> (int -> int)) |- (max 3) 5 : int by T-App{
-          max : (int -> (int -> int)) |- max 3 : int by T-App{
+          max : (int -> (int -> int)) |- max 3 : (int -> int) by T-App{
                max : (int -> (int -> int)) |- max : (int -> (int -> int)) by T-Var{};
                max : (int -> (int -> int)) |- 3 : int by T-Int{};
           };
