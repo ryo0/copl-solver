@@ -55,26 +55,36 @@ object main extends App {
   val file811 = new PrintWriter("TypingML4Result/11.txt")
   file811.write(typeSolve("fun x -> fun y -> x"))
   file811.close()
-//
-//  val file812 = new PrintWriter("TypingML4Result/4.txt")
-//  file812.write(typeSolve("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-//  file812.close()
-//
-//  val file813 = new PrintWriter("TypingML4Result/4.txt")
-//  file813.write(typeSolve("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-//  file813.close()
-//
-//  val file814 = new PrintWriter("TypingML4Result/4.txt")
-//  file814.write(typeSolve("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-//  file814.close()
-//
-//  val file815 = new PrintWriter("TypingML4Result/4.txt")
-//  file815.write(typeSolve("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-//  file815.close()
-//
-//  val file816 = new PrintWriter("TypingML4Result/4.txt")
-//  file816.write(typeSolve("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-//  file816.close()
+
+  val file812 = new PrintWriter("TypingML4Result/12.txt")
+  file812.write(typeSolve("let k = fun x -> fun y -> x in k 3 true"))
+  file812.close()
+
+  val file813 = new PrintWriter("TypingML4Result/13.txt")
+  file813.write(typeSolve("let k = fun x -> fun y -> x in k (1::[]) 3"))
+  file813.close()
+
+  val file814 = new PrintWriter("TypingML4Result/14.txt")
+  file814.write(
+    typeSolve("let k = fun x -> fun y -> x in k true (fun x -> x + 1)")
+  )
+  file814.close()
+
+  val file815 = new PrintWriter("TypingML4Result/15.txt")
+  file815.write(
+    typeSolve(
+      "let compose = fun f -> fun g -> fun x -> f (g x) in let p = fun x -> x * x in let q = fun x -> x + 4 in compose p q "
+    )
+  )
+  file815.close()
+
+  val file816 = new PrintWriter("TypingML4Result/16.txt")
+  file816.write(
+    typeSolve(
+      "let compose = fun f -> fun g -> fun x -> f (g x) in let p = fun x -> if x then 3 else 4 in let q = fun x -> x < 4 in compose p q"
+    )
+  )
+  file816.close()
 //
 //  val file817 = new PrintWriter("TypingML4Result/4.txt")
 //  file817.write(typeSolve("let x = 3 < 2 in let y = 5 in if x then y else 2"))

@@ -1,0 +1,38 @@
+ |- let compose = (fun f -> (fun g -> (fun x -> (f (g x))))) in let p = (fun x -> (x * x)) in let q = (fun x -> (x + 4)) in ((compose p) q) : (int -> int) by T-Let{
+      |-fun f -> (fun g -> (fun x -> (f (g x)))) : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))) by T-Fun{
+          f : (x68 -> x69) |-fun g -> (fun x -> (f (g x))) : ((x71 -> x72) -> (x71 -> x73)) by T-Fun{
+               f : (x68 -> x69),g : (x71 -> x72) |-fun x -> (f (g x)) : (x74 -> x76) by T-Fun{
+                    f : (x68 -> x69),g : (x71 -> x72),x : x74 |- f (g x) : x79 by T-App{
+                         f : (x68 -> x69),g : (x71 -> x72),x : x74 |- f : (x68 -> x69) by T-Var{};
+                         f : (x68 -> x69),g : (x71 -> x72),x : x74 |- g x : x77 by T-App{
+                              f : (x68 -> x69),g : (x71 -> x72),x : x74 |- g : (x71 -> x72) by T-Var{};
+                              f : (x68 -> x69),g : (x71 -> x72),x : x74 |- x : x74 by T-Var{};
+                         };
+                    };
+               };
+          };
+     };
+     compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))) |- let p = (fun x -> (x * x)) in let q = (fun x -> (x + 4)) in ((compose p) q) : (int -> int) by T-Let{
+          compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))) |-fun x -> (x * x) : (int -> int) by T-Fun{
+               compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))),x : int |- x * x : int by T-Times{
+                    compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))),x : int |- x : int by T-Var{};
+                    compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))),x : int |- x : int by T-Var{};
+               };
+          };
+          compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))),p : (int -> int) |- let q = (fun x -> (x + 4)) in ((compose p) q) : (int -> int) by T-Let{
+               compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))),p : (int -> int) |-fun x -> (x + 4) : (int -> int) by T-Fun{
+                    compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))),p : (int -> int),x : int |- x + 4 : int by T-Plus{
+                         compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))),p : (int -> int),x : int |- x : int by T-Var{};
+                         compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))),p : (int -> int),x : int |- 4 : int by T-Int{};
+                    };
+               };
+               compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))),p : (int -> int),q : (int -> int) |- (compose p) q : (int -> int) by T-App{
+                    compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))),p : (int -> int),q : (int -> int) |- compose p : ((x67 -> int) -> (x67 -> int)) by T-App{
+                         compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))),p : (int -> int),q : (int -> int) |- compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))) by T-Var{};
+                         compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))),p : (int -> int),q : (int -> int) |- p : (int -> int) by T-Var{};
+                    };
+                    compose : ((x68 -> x69) -> ((x67 -> x68) -> (x67 -> x69))),p : (int -> int),q : (int -> int) |- q : (int -> int) by T-Var{};
+               };
+          };
+     };
+};

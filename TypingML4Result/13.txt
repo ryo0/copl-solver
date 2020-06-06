@@ -1,0 +1,17 @@
+ |- let k = (fun x -> (fun y -> x)) in ((k (1 :: [])) 3) : int list by T-Let{
+      |-fun x -> (fun y -> x) : (x38 -> (x39 -> x38)) by T-Fun{
+          x : x38 |-fun y -> x : (x40 -> x38) by T-Fun{
+               x : x38,y : x40 |- x : x38 by T-Var{};
+          };
+     };
+     k : (x38 -> (x39 -> x38)) |- (k (1 :: [])) 3 : int list by T-App{
+          k : (x38 -> (x39 -> x38)) |- k (1 :: []) : (x39 -> int list) by T-App{
+               k : (x38 -> (x39 -> x38)) |- k : (x38 -> (x39 -> x38)) by T-Var{};
+               k : (x38 -> (x39 -> x38)) |- 1 :: [] : int list by T-Cons{
+                    k : (x38 -> (x39 -> x38)) |- 1 : int by T-Int{};
+                    k : (x38 -> (x39 -> x38)) |- [] : int list by T-Nil{};
+               };
+          };
+          k : (x38 -> (x39 -> x38)) |- 3 : int by T-Int{};
+     };
+};

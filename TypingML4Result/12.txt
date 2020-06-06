@@ -1,0 +1,14 @@
+ |- let k = (fun x -> (fun y -> x)) in ((k 3) true) : int by T-Let{
+      |-fun x -> (fun y -> x) : (x28 -> (x29 -> x28)) by T-Fun{
+          x : x28 |-fun y -> x : (x30 -> x28) by T-Fun{
+               x : x28,y : x30 |- x : x28 by T-Var{};
+          };
+     };
+     k : (x28 -> (x29 -> x28)) |- (k 3) true : int by T-App{
+          k : (x28 -> (x29 -> x28)) |- k 3 : (x29 -> int) by T-App{
+               k : (x28 -> (x29 -> x28)) |- k : (x28 -> (x29 -> x28)) by T-Var{};
+               k : (x28 -> (x29 -> x28)) |- 3 : int by T-Int{};
+          };
+          k : (x28 -> (x29 -> x28)) |- true : bool by T-Bool{};
+     };
+};
