@@ -1,18 +1,16 @@
 package solver
-import parser.ast._
+import parser.parser._
 import tokenizer.tokenizer.tokenize
 import typeRule._
 object typeSolver {
-  def typeSolve(string: String): String = {
-    initSolve(parser.parser.parseExp(tokenize(string))._1).string(0)
-  }
-
-  def typeSolveInEnv(typeEnv: TypeEnv, string: String): String = {
-    val exp = parser.parser.parseExp(tokenize(string))._1
-    val solved = exp.typeSolve(typeEnv)
+  def typeSolveWithEnvAndType(string: String): String = {
+    val tokens = tokenize(string)
+    val (typeEnv, rest1) = parseTypeEnv(tokens)
+    val (exp, rest2) = parseExp(rest1)
+    val (t, _) = parseType(rest2)
+    val solved = exp.typeSolve(typeEnv, Some(t))
     solved.string(0)
   }
-  def initSolve(exp: Exp): TypeRule = { exp.typeSolve(List()) }
   def typeExtract(string: String): String = {
     val exp = parser.parser.parseExp(tokenize(string))._1
     val result = exp.typeExtract(List())

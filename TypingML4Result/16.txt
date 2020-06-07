@@ -1,38 +1,38 @@
  |- let compose = (fun f -> (fun g -> (fun x -> (f (g x))))) in let p = (fun x -> if x then 3 else 4) in let q = (fun x -> (x < 4)) in ((compose p) q) : (int -> int) by T-Let{
-      |-fun f -> (fun g -> (fun x -> (f (g x)))) : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))) by T-Fun{
-          f : (x104 -> x105) |-fun g -> (fun x -> (f (g x))) : ((x107 -> x108) -> (x107 -> x109)) by T-Fun{
-               f : (x104 -> x105),g : (x107 -> x108) |-fun x -> (f (g x)) : (x110 -> x112) by T-Fun{
-                    f : (x104 -> x105),g : (x107 -> x108),x : x110 |- f (g x) : x115 by T-App{
-                         f : (x104 -> x105),g : (x107 -> x108),x : x110 |- f : (x104 -> x105) by T-Var{};
-                         f : (x104 -> x105),g : (x107 -> x108),x : x110 |- g x : x113 by T-App{
-                              f : (x104 -> x105),g : (x107 -> x108),x : x110 |- g : (x107 -> x108) by T-Var{};
-                              f : (x104 -> x105),g : (x107 -> x108),x : x110 |- x : x110 by T-Var{};
+      |-fun f -> (fun g -> (fun x -> (f (g x)))) : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))) by T-Fun{
+          f : ('x104 -> 'x105) |-fun g -> (fun x -> (f (g x))) : (('x107 -> 'x108) -> ('x107 -> 'x109)) by T-Fun{
+               f : ('x104 -> 'x105),g : ('x107 -> 'x108) |-fun x -> (f (g x)) : ('x110 -> 'x112) by T-Fun{
+                    f : ('x104 -> 'x105),g : ('x107 -> 'x108),x : 'x110 |- f (g x) : 'x115 by T-App{
+                         f : ('x104 -> 'x105),g : ('x107 -> 'x108),x : 'x110 |- f : ('x104 -> 'x105) by T-Var{};
+                         f : ('x104 -> 'x105),g : ('x107 -> 'x108),x : 'x110 |- g x : 'x113 by T-App{
+                              f : ('x104 -> 'x105),g : ('x107 -> 'x108),x : 'x110 |- g : ('x107 -> 'x108) by T-Var{};
+                              f : ('x104 -> 'x105),g : ('x107 -> 'x108),x : 'x110 |- x : 'x110 by T-Var{};
                          };
                     };
                };
           };
      };
-     compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))) |- let p = (fun x -> if x then 3 else 4) in let q = (fun x -> (x < 4)) in ((compose p) q) : (int -> int) by T-Let{
-          compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))) |-fun x -> if x then 3 else 4 : (bool -> int) by T-Fun{
-               compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))),x : bool |- if x then 3 else 4: int by T-If{
-                    compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))),x : bool |- x : bool by T-Var{};
-                    compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))),x : bool |- 3 : int by T-Int{};
-                    compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))),x : bool |- 4 : int by T-Int{};
+     compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))) |- let p = (fun x -> if x then 3 else 4) in let q = (fun x -> (x < 4)) in ((compose p) q) : (int -> int) by T-Let{
+          compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))) |-fun x -> if x then 3 else 4 : (bool -> int) by T-Fun{
+               compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))),x : bool |- if x then 3 else 4: int by T-If{
+                    compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))),x : bool |- x : bool by T-Var{};
+                    compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))),x : bool |- 3 : int by T-Int{};
+                    compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))),x : bool |- 4 : int by T-Int{};
                };
           };
-          compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))),p : (bool -> int) |- let q = (fun x -> (x < 4)) in ((compose p) q) : (int -> int) by T-Let{
-               compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))),p : (bool -> int) |-fun x -> (x < 4) : (int -> bool) by T-Fun{
-                    compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))),p : (bool -> int),x : int |- x < 4 : bool by T-Lt{
-                         compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))),p : (bool -> int),x : int |- x : int by T-Var{};
-                         compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))),p : (bool -> int),x : int |- 4 : int by T-Int{};
+          compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))),p : (bool -> int) |- let q = (fun x -> (x < 4)) in ((compose p) q) : (int -> int) by T-Let{
+               compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))),p : (bool -> int) |-fun x -> (x < 4) : (int -> bool) by T-Fun{
+                    compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))),p : (bool -> int),x : int |- x < 4 : bool by T-Lt{
+                         compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))),p : (bool -> int),x : int |- x : int by T-Var{};
+                         compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))),p : (bool -> int),x : int |- 4 : int by T-Int{};
                     };
                };
-               compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))),p : (bool -> int),q : (int -> bool) |- (compose p) q : (int -> int) by T-App{
-                    compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))),p : (bool -> int),q : (int -> bool) |- compose p : ((x103 -> bool) -> (x103 -> int)) by T-App{
-                         compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))),p : (bool -> int),q : (int -> bool) |- compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))) by T-Var{};
-                         compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))),p : (bool -> int),q : (int -> bool) |- p : (bool -> int) by T-Var{};
+               compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))),p : (bool -> int),q : (int -> bool) |- (compose p) q : (int -> int) by T-App{
+                    compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))),p : (bool -> int),q : (int -> bool) |- compose p : (('x103 -> bool) -> ('x103 -> int)) by T-App{
+                         compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))),p : (bool -> int),q : (int -> bool) |- compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))) by T-Var{};
+                         compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))),p : (bool -> int),q : (int -> bool) |- p : (bool -> int) by T-Var{};
                     };
-                    compose : ((x104 -> x105) -> ((x103 -> x104) -> (x103 -> x105))),p : (bool -> int),q : (int -> bool) |- q : (int -> bool) by T-Var{};
+                    compose : (('x104 -> 'x105) -> (('x103 -> 'x104) -> ('x103 -> 'x105))),p : (bool -> int),q : (int -> bool) |- q : (int -> bool) by T-Var{};
                };
           };
      };

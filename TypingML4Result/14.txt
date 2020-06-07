@@ -1,19 +1,17 @@
- |- let k = (fun x -> (fun y -> x)) in ((k true) (fun x -> (x + 1))) : bool by T-Let{
-      |-fun x -> (fun y -> x) : (x52 -> (x53 -> x52)) by T-Fun{
-          x : x52 |-fun y -> x : (x54 -> x52) by T-Fun{
-               x : x52,y : x54 |- x : x52 by T-Var{};
+ |- let k = (fun x -> (fun y -> x)) in ((k (1 :: [])) 3) : int list by T-Let{
+      |-fun x -> (fun y -> x) :  ('x17 -> ('x18 -> 'x17))  by T-Fun{
+          x : 'x17 |-fun y -> x :  ('x19 -> 'x17)  by T-Fun{
+               x : 'x17,y : 'x19 |- x : x by T-Var{};
           };
      };
-     k : (x52 -> (x53 -> x52)) |- (k true) (fun x -> (x + 1)) : bool by T-App{
-          k : (x52 -> (x53 -> x52)) |- k true : (x53 -> bool) by T-App{
-               k : (x52 -> (x53 -> x52)) |- k : (x52 -> (x53 -> x52)) by T-Var{};
-               k : (x52 -> (x53 -> x52)) |- true : bool by T-Bool{};
-          };
-          k : (x52 -> (x53 -> x52)) |-fun x -> (x + 1) : (int -> int) by T-Fun{
-               k : (x52 -> (x53 -> x52)),x : int |- x + 1 : int by T-Plus{
-                    k : (x52 -> (x53 -> x52)),x : int |- x : int by T-Var{};
-                    k : (x52 -> (x53 -> x52)),x : int |- 1 : int by T-Int{};
+     k : ('x17 -> ('x18 -> 'x17)) |- (k (1 :: [])) 3 :  int list  by T-App{
+          k : ('x17 -> ('x18 -> 'x17)) |- k (1 :: []) :  ('x18 -> int list)  by T-App{
+               k : ('x17 -> ('x18 -> 'x17)) |- k : k by T-Var{};
+               k : ('x17 -> ('x18 -> 'x17)) |- 1 :: [] :  int list  by T-Cons{
+                    k : ('x17 -> ('x18 -> 'x17)) |- 1 : int by T-Int{};
+                    k : ('x17 -> ('x18 -> 'x17)) |- [] :  int list  by T-Nil{};
                };
           };
+          k : ('x17 -> ('x18 -> 'x17)) |- 3 : int by T-Int{};
      };
 };

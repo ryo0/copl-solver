@@ -51,6 +51,8 @@ object parser {
             case None =>
               throw new Exception("型がおかしい")
           }
+        case TypeSeparatorToken :: rest =>
+          parseTypeSub(rest, acmT)
         case IntSymbolToken :: rest =>
           parseTypeSub(rest, Some(MLIntType))
         case BoolSymbolToken :: rest =>

@@ -43,18 +43,28 @@ object typeRule {
       }
     }
   }
+  def typeVarToString(name: String, typeEnv: TypeEnv): String = {
+    val result = getTypeFromTypeEnv(name, typeEnv)
+    result match {
+      case Some(r) =>
+        r.string()
+      case _ =>
+        name
+    }
+  }
   sealed class MLType {
-    def string: String = {
+    def string(typeEnv: TypeEnv = List()): String = {
       this match {
         case MLIntType  => "int"
         case MLBoolType => "bool"
         case MLFunType(arg, body) =>
-          s"(${arg.string} -> ${body.string})"
-        case MLListType(lst) => s"${lst.string} list"
-        case TypeVar(name)   => s"$name"
+          s"(${arg.string()} -> ${body.string()})"
+        case MLListType(lst) => s"${lst.string()} list"
+        case TypeVar(name) => {
+          typeVarToString(name, typeEnv)
+        }
       }
     }
-
     def substitute(typeAnswer: TypeAnswer): MLType = {
       this match {
         case TypeVar(n) => {
@@ -93,19 +103,19 @@ object typeRule {
   implicit class TypeEnvString(typeEnv: TypeEnv) {
     def string: String = {
       typeEnv.reverse
-        .map(e => s"${e._1} : ${e._2.string},")
+        .map(e => s"${e._1} : ${e._2.string(typeEnv)},")
         .mkString
         .dropRight(1)
     }
   }
 
-  def getTypeFromTypeEnv(key: String, env: TypeEnv): MLType = {
+  def getTypeFromTypeEnv(key: String, env: TypeEnv): Option[MLType] = {
     for (e <- env) {
       if (e._1 == key) {
-        return e._2
+        return Some(e._2)
       }
     }
-    throw new Exception("keyがenvにありません")
+    None
   }
 
   sealed class TypeRule {
@@ -114,7 +124,7 @@ object typeRule {
         case TInt(_, _)                  => MLIntType
         case TBool(_, _)                 => MLBoolType
         case TIf(_, _, _, _, _, _, _, t) => t
-        case TVar(typeEnv, x)            => x.getType(typeEnv)
+        case TVar(typeEnv, x)            => x.getTypeWithoutAnswer(typeEnv)
         case TLet(_, _, _, _, _, _, t) =>
           t
         case TPlus(_, _, _, _, _)                        => MLIntType
@@ -287,45 +297,49 @@ object typeRule {
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indent};"
         case TIf(typeEnv, e1, e2, e3, tr1, tr2, tr3, t) =>
-          s"${typeEnv.string} |- if ${e1.string} then ${e2.string} else ${e3.string}: ${t.string} by T-If{\n" +
+          s"${typeEnv.string} |- if ${e1.string} then ${e2.string} else ${e3.string}: ${t
+            .string(typeEnv)} by T-If{\n" +
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indentPlus1${tr3.string(nest + 1)}\n" +
             s"$indent};"
         case TVar(typeEnv, x) =>
-          s"${typeEnv.string} |- ${x.string} : ${getTypeFromTypeEnv(x.name, typeEnv).string} by T-Var{};"
+          s"${typeEnv.string} |- ${x.string} : ${x.string} by T-Var{};"
         case TLet(typeEnv, x, e1, e2, tr1, tr2, t) =>
-          s"${typeEnv.string} |- let ${x.string} = ${e1.string} in ${e2.string} : ${t.string} by T-Let{\n" +
+          s"${typeEnv.string} |- let ${x.string} = ${e1.string} in ${e2.string} : ${t
+            .string(typeEnv)} by T-Let{\n" +
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indent};"
         case TFun(typeEnv, x, e, tr1, t) =>
-          s"${typeEnv.string} |-fun ${x.string} -> ${e.string} : ${t.string} by T-Fun{\n" +
+          s"${typeEnv.string} |-fun ${x.string} -> ${e.string} :  ${t.string(typeEnv)}  by T-Fun{\n" +
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indent};"
         case TApp(typeEnv, e1, e2, tr1, tr2, t) =>
-          s"${typeEnv.string} |- ${e1.string} ${e2.string} : ${t.string} by T-App{\n" +
+          s"${typeEnv.string} |- ${e1.string} ${e2.string} :  ${t.string(typeEnv)}  by T-App{\n" +
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indent};"
         case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2, t) =>
-          s"${typeEnv.string} |- let rec ${x.string} = fun ${y.string} -> ${e1.string} in ${e2.string} : ${t.string} by T-LetRec{\n" +
+          s"${typeEnv.string} |- let rec ${x.string} = fun ${y.string} -> ${e1.string} in ${e2.string} :  ${t
+            .string(typeEnv)}  by T-LetRec{\n" +
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indent};"
         case TCons(typeEnv, e1, e2, tr1, tr2, t) =>
-          s"${typeEnv.string} |- ${e1.string} :: ${e2.string} : ${t.string} by T-Cons{\n" +
+          s"${typeEnv.string} |- ${e1.string} :: ${e2.string} :  ${t.string(typeEnv)}  by T-Cons{\n" +
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indent};"
         case TMatch(typeEnv, e1, e2, x, y, e3, tr1, tr2, tr3, t) =>
-          s"${typeEnv.string} |- match ${e1.string} with [] -> ${e2.string} | ${x.string} :: ${y.string} -> ${e3.string} : ${t.string} by T-Cons{\n" +
+          s"${typeEnv.string} |- match ${e1.string} with [] -> ${e2.string} | ${x.string} :: ${y.string} -> ${e3.string} :  ${t
+            .string(typeEnv)}  by T-Cons{\n" +
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indentPlus1${tr3.string(nest + 1)}\n" +
             s"$indent};"
         case TNil(typeEnv, t) =>
-          s"${typeEnv.string} |- [] : ${t.string} by T-Nil{};"
+          s"${typeEnv.string} |- [] :  ${t.string(typeEnv)}  by T-Nil{};"
       }
     }
   }
