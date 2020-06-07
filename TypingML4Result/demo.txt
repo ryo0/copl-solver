@@ -1,13 +1,13 @@
  |- ((fun x -> (fun y -> x)) 1) (fun x -> x) :  int  by T-App{
-      |- (fun x -> (fun y -> x)) 1 :  ('x61 -> int)  by T-App{
-           |-fun x -> (fun y -> x) :  ('x63 -> ('x64 -> 'x63))  by T-Fun{
-               x : 'x63 |-fun y -> x :  ('x64 -> 'x63)  by T-Fun{
-                    x : 'x63,y : 'x64 |- x : 'x63 by T-Var{};
+      |- (fun x -> (fun y -> x)) 1 :  ('x1 -> int)  by T-App{
+           |-fun x -> (fun y -> x) :  (int -> ('x13 -> int))  by T-Fun{
+               x : int |-fun y -> x :  ('x11 -> int)  by T-Fun{
+                    x : int,y : 'x10 |- x : int by T-Var{};
                };
           };
            |- 1 : int by T-Int{};
      };
-      |-fun x -> x :  ('x68 -> 'x68)  by T-Fun{
-          x : 'x68 |- x : 'x68 by T-Var{};
+      |-fun x -> x :  ('x18 -> 'x18)  by T-Fun{
+          x : 'x17 |- x : 'x17 by T-Var{};
      };
 };
