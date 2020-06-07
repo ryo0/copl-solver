@@ -4,7 +4,14 @@ import tokenizer.token._
 import tokenizer.token.{FalseToken, TrueToken}
 import ast._
 import solver.rule.Env
-import solver.typeRule.{MLBoolType, MLFunType, MLIntType, MLType, TypeEnv}
+import solver.typeRule.{
+  MLBoolType,
+  MLFunType,
+  MLIntType,
+  MLListType,
+  MLType,
+  TypeEnv
+}
 
 object parser {
   val opMap: Map[Token, Op] = Map(
@@ -32,24 +39,50 @@ object parser {
   }
 
   def parseType(tokens: List[Token]): (MLType, List[Token]) = {
-    tokens match {
-      case IntSymbolToken :: List() =>
-        (MLIntType, List())
-      case BoolSymbolToken :: List() =>
-        (MLBoolType, List())
-      case x :: ArrowToken :: rest =>
-        val (t, _) = parseType(List(x))
-        val (t2, rest2) = parseType(rest)
-        (MLFunType(t, t2), rest2)
-      case LParen :: _ =>
-        val (inParen, rest) = getTokensInParen(tokens)
-        val (inParenType, _) = parseType(inParen)
-        rest match {
-          case ArrowToken :: rest2 =>
-            val (t2, rest3) = parseType(rest2)
-            (MLFunType(inParenType, t2), rest3)
-        }
+    def parseTypeSub(tokens: List[Token],
+                     acmT: Option[MLType]): (MLType, List[Token]) = {
+      tokens match {
+        case List() =>
+          acmT match {
+            case Some(t) =>
+              (t, List())
+            case None =>
+              throw new Exception("型がおかしい")
+          }
+        case IntSymbolToken :: rest =>
+          parseTypeSub(rest, Some(MLIntType))
+        case BoolSymbolToken :: rest =>
+          parseTypeSub(rest, Some(MLBoolType))
+        case ListSymbolToken :: rest =>
+          acmT match {
+            case Some(t) =>
+              parseTypeSub(rest, Some(MLListType(t)))
+            case None =>
+              throw new Exception("型がおかしい")
+          }
+        case ArrowToken :: rest =>
+          acmT match {
+            case Some(at) =>
+              val (t, rest2) = parseTypeSub(rest, None)
+              parseTypeSub(rest2, Some(MLFunType(at, t)))
+            case None =>
+              throw new Exception("型がおかしい")
+          }
+        case RParen :: rest =>
+          parseTypeSub(rest, acmT)
+        case LParen :: _ =>
+          val (inParen, rest) = getTokensInParen(tokens)
+          val (inParenType, _) = parseTypeSub(inParen.tail, acmT)
+          rest match {
+            case ArrowToken :: rest2 =>
+              val (t2, rest3) = parseTypeSub(rest2, None)
+              (MLFunType(inParenType, t2), rest3)
+            case rest2 =>
+              (inParenType, rest2)
+          }
+      }
     }
+    parseTypeSub(tokens, None)
   }
   def parseExp(tokens: List[Token]): (Exp, List[Token]) = {
     tokens match {

@@ -58,6 +58,7 @@ class TokenizerTest extends FunSuite {
   }
 
   test("with type and eval") {
+    assert(tokenize("list int") === List(ListSymbolToken, IntSymbolToken))
     assert(
       tokenize("x : bool, y : int |- if x then y + 1 else y - 1 : int") ===
         List(

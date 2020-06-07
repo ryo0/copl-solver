@@ -40,7 +40,8 @@ object tokenizer {
     "match" -> MatchToken,
     "with" -> WithToken,
     "int" -> IntSymbolToken,
-    "bool" -> BoolSymbolToken
+    "bool" -> BoolSymbolToken,
+    "list" -> ListSymbolToken
   )
 
   def tokenize(str: String): List[Token] = {

@@ -2,6 +2,7 @@ import parser.ast.{Plus, _}
 import parser.parser.{parseExp, _}
 import tokenizer.tokenizer.tokenize
 import org.scalatest.FunSuite
+import solver.typeRule.{MLBoolType, MLFunType, MLIntType, MLListType}
 import tokenizer.token.{ConsToken, ElseToken, LParen, RParen, VarToken}
 
 class ParserTest extends FunSuite {
@@ -365,6 +366,34 @@ class ParserTest extends FunSuite {
           )
         )
       )
+    )
+  }
+  test("parseType") {
+    assert(parseType(tokenize("int"))._1 === MLIntType)
+    assert(parseType(tokenize("bool"))._1 === MLBoolType)
+    assert(
+      parseType(tokenize("int -> int"))._1 === MLFunType(MLIntType, MLIntType)
+    )
+    assert(
+      parseType(tokenize("int -> int -> int"))._1 === MLFunType(
+        MLIntType,
+        MLFunType(MLIntType, MLIntType)
+      )
+    )
+    assert(
+      parseType(tokenize("(int -> int) -> int"))._1 === MLFunType(
+        MLFunType(MLIntType, MLIntType),
+        MLIntType
+      )
+    )
+    assert(parseType(tokenize("int list"))._1 === MLListType(MLIntType))
+
+    assert(
+      parseType(tokenize("(int list -> int list) -> bool list"))._1 ===
+        MLFunType(
+          MLFunType(MLListType(MLIntType), MLListType(MLIntType)),
+          MLListType(MLBoolType)
+        )
     )
   }
 }

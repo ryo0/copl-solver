@@ -65,4 +65,6 @@ object token {
   object BoolSymbolToken extends Token
 
   object CommaToken extends Token
+
+  object ListSymbolToken extends Token
 }
