@@ -189,10 +189,9 @@ object ast {
             body.typeSolve((param.name, a.arg) :: typeEnv, a.body)
           TFun(typeEnv, param, body, solvedBody, this.getType(typeEnv, myType))
         case FunCall(funName, arg) =>
-          val v = newTypeVar()
           val t12 =
             funName
-              .getType((v.name, myType) :: typeEnv, MLFunType(v, myType))
+              .getType(typeEnv, funName.getTypeWithoutAnswer(typeEnv))
               .asInstanceOf[MLFunType]
           val tr1 = funName.typeSolve(typeEnv, t12)
           val tr2 = arg.typeSolve(typeEnv, t12.arg)
