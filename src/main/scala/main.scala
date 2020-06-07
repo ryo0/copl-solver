@@ -95,6 +95,13 @@ object main extends App {
     )
   )
   file815.close()
+
+  val file = new PrintWriter("TypingML4Result/demo.txt")
+  file.write(
+    typeSolveWithEnvAndType("|- (fun x -> fun y -> x) 1 (fun x -> x) : int")
+  )
+  file.close()
+
 //
 //  val file816 = new PrintWriter("TypingML4Result/16.txt")
 //  file816.write(

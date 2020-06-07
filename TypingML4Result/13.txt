@@ -1,14 +1,14 @@
  |- let k = (fun x -> (fun y -> x)) in ((k 3) true) : int by T-Let{
-      |-fun x -> (fun y -> x) :  ('x31 -> ('x32 -> 'x31))  by T-Fun{
-          x : 'x31 |-fun y -> x :  ('x33 -> 'x31)  by T-Fun{
-               x : 'x31,y : 'x33 |- x : 'x31 by T-Var{};
+      |-fun x -> (fun y -> x) :  ('x21 -> ('x22 -> 'x21))  by T-Fun{
+          x : 'x21 |-fun y -> x :  ('x22 -> 'x21)  by T-Fun{
+               x : 'x21,y : 'x22 |- x : 'x21 by T-Var{};
           };
      };
-     k : ('x31 -> ('x32 -> 'x31)) |- (k 3) true :  int  by T-App{
-          k : ('x31 -> ('x32 -> 'x31)) |- k 3 :  ('x32 -> int)  by T-App{
-               k : ('x31 -> ('x32 -> 'x31)) |- k : ('x31 -> ('x32 -> 'x31)) by T-Var{};
-               k : ('x31 -> ('x32 -> 'x31)) |- 3 : int by T-Int{};
+     k : ('x21 -> ('x22 -> 'x21)) |- (k 3) true :  int  by T-App{
+          k : ('x21 -> ('x22 -> 'x21)) |- k 3 :  ('x22 -> int)  by T-App{
+               k : ('x21 -> ('x22 -> 'x21)) |- k : ('x21 -> ('x22 -> 'x21)) by T-Var{};
+               k : ('x21 -> ('x22 -> 'x21)) |- 3 : int by T-Int{};
           };
-          k : ('x31 -> ('x32 -> 'x31)) |- true : bool by T-Bool{};
+          k : ('x21 -> ('x22 -> 'x21)) |- true : bool by T-Bool{};
      };
 };

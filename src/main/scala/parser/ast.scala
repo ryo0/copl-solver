@@ -39,15 +39,10 @@ object ast {
       val typeAnswerMap = e._1.unify()
       e._2.substitute(typeAnswerMap)
     }
-    def getType(typeEnv: TypeEnv = List(),
-                myEqAnswer: Option[MLType]): MLType = {
+    def getType(typeEnv: TypeEnv = List(), myEqAnswer: MLType): MLType = {
       val e = this.typeExtract(typeEnv)
-      val typeAnswerMap = myEqAnswer match {
-        case Some(a) =>
-          (Equation(a, e._2) :: e._1).unify()
-        case _ =>
-          e._1.unify()
-      }
+      val typeAnswerMap =
+        (Equation(myEqAnswer, e._2) :: e._1).unify()
       e._2.substitute(typeAnswerMap)
     }
     def typeExtract(typeEnv: TypeEnv): (Equations, MLType) = {
@@ -123,32 +118,32 @@ object ast {
           (eq4, t2)
       }
     }
-    def typeSolve(typeEnv: TypeEnv, eqAnswer: Option[MLType]): TypeRule = {
+    def typeSolve(typeEnv: TypeEnv, eqAnswer: MLType): TypeRule = {
       this match {
         case IntVal(n) =>
           TInt(typeEnv, IntVal(n))
         case BoolVal(b) =>
           TBool(typeEnv, BoolVal(b))
         case InfixExp(e1, Plus, e2) =>
-          val tr1 = e1.typeSolve(typeEnv, None)
-          val tr2 = e2.typeSolve(typeEnv, None)
+          val tr1 = e1.typeSolve(typeEnv, MLIntType)
+          val tr2 = e2.typeSolve(typeEnv, MLIntType)
           TPlus(typeEnv, e1, e2, tr1, tr2)
         case InfixExp(e1, Minus, e2) =>
-          val tr1 = e1.typeSolve(typeEnv, None)
-          val tr2 = e2.typeSolve(typeEnv, None)
+          val tr1 = e1.typeSolve(typeEnv, MLIntType)
+          val tr2 = e2.typeSolve(typeEnv, MLIntType)
           TMinus(typeEnv, e1, e2, tr1, tr2)
         case InfixExp(e1, Asterisk, e2) =>
-          val tr1 = e1.typeSolve(typeEnv, None)
-          val tr2 = e2.typeSolve(typeEnv, None)
+          val tr1 = e1.typeSolve(typeEnv, MLIntType)
+          val tr2 = e2.typeSolve(typeEnv, MLIntType)
           TTimes(typeEnv, e1, e2, tr1, tr2)
         case InfixExp(e1, LessThan, e2) =>
-          val tr1 = e1.typeSolve(typeEnv, None)
-          val tr2 = e2.typeSolve(typeEnv, None)
+          val tr1 = e1.typeSolve(typeEnv, MLIntType)
+          val tr2 = e2.typeSolve(typeEnv, MLIntType)
           TLt(typeEnv, e1, e2, tr1, tr2)
         case IfExp(condExp, thenExp, elseExp) =>
-          val tr1 = condExp.typeSolve(typeEnv, None)
-          val tr2 = thenExp.typeSolve(typeEnv, None)
-          val tr3 = elseExp.typeSolve(typeEnv, None)
+          val tr1 = condExp.typeSolve(typeEnv, MLBoolType)
+          val tr2 = thenExp.typeSolve(typeEnv, eqAnswer)
+          val tr3 = elseExp.typeSolve(typeEnv, eqAnswer)
           TIf(
             typeEnv,
             condExp,
@@ -162,9 +157,10 @@ object ast {
         case Var(n) =>
           TVar(typeEnv, Var(n), this.getType(typeEnv, eqAnswer))
         case LetExp(variable, valueExp, inExp) =>
-          val tr1 = valueExp.typeSolve(typeEnv, None)
+          val tr1 =
+            valueExp.typeSolve(typeEnv, valueExp.getTypeWithoutAnswer(typeEnv))
           val tr2 =
-            inExp.typeSolve((variable.name, tr1.mlType) :: typeEnv, None)
+            inExp.typeSolve((variable.name, tr1.mlType) :: typeEnv, eqAnswer)
           TLet(
             typeEnv,
             variable,
@@ -175,22 +171,23 @@ object ast {
             this.getType(typeEnv, eqAnswer)
           )
         case FunExp(param, body) =>
-          val funType = this.getType(typeEnv, eqAnswer).asInstanceOf[MLFunType]
+          val a = eqAnswer.asInstanceOf[MLFunType]
           val solvedBody =
-            body.typeSolve((param.name, funType.arg) :: typeEnv, None)
-          TFun(typeEnv, param, body, solvedBody, funType)
+            body.typeSolve((param.name, a.arg) :: typeEnv, a.body)
+          TFun(typeEnv, param, body, solvedBody, a)
         case FunCall(funName, arg) =>
-          val tr1 = funName.typeSolve(typeEnv, None)
-          val tr2 = arg.typeSolve(typeEnv, None)
+          val t1 = funName.getTypeWithoutAnswer(typeEnv)
+          val tr1 = funName.typeSolve(typeEnv, t1)
+          val tr2 = arg.typeSolve(typeEnv, arg.getTypeWithoutAnswer(typeEnv))
           TApp(typeEnv, funName, arg, tr1, tr2, this.getType(typeEnv, eqAnswer))
         case LetRecExp(variable, RecFunExp(_, param, body), inExp) =>
-          val xType = variable.getType(typeEnv, None)
-          val yType = param.getType(typeEnv, None)
+          val xType = variable.getTypeWithoutAnswer(typeEnv)
+          val yType = param.getTypeWithoutAnswer(typeEnv)
           val tr1 = body.typeSolve(
             (variable.name, xType) :: (param.name, yType) :: typeEnv,
             eqAnswer
           )
-          val tr2 = inExp.typeSolve((variable.name, xType) :: typeEnv, None)
+          val tr2 = inExp.typeSolve((variable.name, xType) :: typeEnv, eqAnswer)
           TLetRec(
             typeEnv,
             variable,
@@ -203,12 +200,13 @@ object ast {
           )
         case EList(left, right) =>
           val t = this.getType(typeEnv, eqAnswer)
-          val tr1 = left.typeSolve(typeEnv, None)
+          val a = eqAnswer.asInstanceOf[MLListType]
+          val tr1 = left.typeSolve(typeEnv, a.lst)
           right match {
             case EmptyList =>
               TCons(typeEnv, left, right, tr1, TNil(typeEnv, t), t)
             case _ =>
-              val tr2 = right.typeSolve(typeEnv, None)
+              val tr2 = right.typeSolve(typeEnv, a)
               TCons(
                 typeEnv,
                 left,
@@ -221,8 +219,8 @@ object ast {
         case Match(e1: Var, patterns: List[Pattern]) =>
           patterns match {
             case Pattern(EmptyList, e2) :: Pattern(EList(Var(x), Var(y)), e3) :: List() =>
-              val tr1 = e1.typeSolve(typeEnv, None)
-              val tr2 = e2.typeSolve(typeEnv, None)
+              val tr1 = e1.typeSolve(typeEnv, e1.getTypeWithoutAnswer(typeEnv))
+              val tr2 = e2.typeSolve(typeEnv, e2.getTypeWithoutAnswer(typeEnv))
               val tr3 =
                 e3.typeSolve(
                   (x, tr1.mlType) :: (y, tr1.mlType) :: typeEnv,
