@@ -15,7 +15,7 @@ object ast {
   def typeVarNameGenerator(): () => String = {
     val counter = typeVarNameCounter()
     def generatorBody(): String = {
-      "x" + counter()
+      "'x" + counter()
     }
     generatorBody
   }

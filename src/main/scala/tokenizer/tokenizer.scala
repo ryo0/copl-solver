@@ -15,11 +15,18 @@ object tokenizer {
       '>' -> GreaterThanToken,
       '=' -> EqualToken,
       '|' -> OrToken,
-      '_' -> WildCardToken
+      '_' -> WildCardToken,
+      ':' -> TypeSeparatorToken,
+      ',' -> CommaToken
     )
-  val tokenMap2Heads = List('-', ':', '[')
+  val tokenMap2Heads = List('-', ':', '[', '|')
   val tokenMap2: Map[String, Token] =
-    Map("->" -> ArrowToken, "::" -> ConsToken, "[]" -> EmptyListToken)
+    Map(
+      "->" -> ArrowToken,
+      "::" -> ConsToken,
+      "[]" -> EmptyListToken,
+      "|-" -> EvalSeparatorToken
+    )
   val reservedWordMap: Map[String, Token] = Map(
     "if" -> IfToken,
     "then" -> ThenToken,
@@ -31,7 +38,9 @@ object tokenizer {
     "false" -> FalseToken,
     "rec" -> RecToken,
     "match" -> MatchToken,
-    "with" -> WithToken
+    "with" -> WithToken,
+    "int" -> IntSymbolToken,
+    "bool" -> BoolSymbolToken
   )
 
   def tokenize(str: String): List[Token] = {

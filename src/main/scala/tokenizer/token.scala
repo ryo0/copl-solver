@@ -55,4 +55,14 @@ object token {
   object WithToken extends Token
 
   object WildCardToken extends Token
+
+  object EvalSeparatorToken extends Token
+
+  object TypeSeparatorToken extends Token
+
+  object IntSymbolToken extends Token
+
+  object BoolSymbolToken extends Token
+
+  object CommaToken extends Token
 }
