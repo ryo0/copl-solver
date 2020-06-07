@@ -396,4 +396,12 @@ class ParserTest extends FunSuite {
         )
     )
   }
+
+  test("parseTypeEnv") {
+    assert(
+      parseTypeEnv(
+        tokenize("x : bool, y : int |- if x then y + 1 else y - 1 : int")
+      )._1.string === "x : bool,y : int"
+    )
+  }
 }

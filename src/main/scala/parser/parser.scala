@@ -31,6 +31,8 @@ object parser {
         case VarToken(n) :: TypeSeparatorToken :: rest =>
           val (t, rest2) = parseType(rest)
           parseTypeEnvSub(rest2, (n, t) :: env)
+        case CommaToken :: rest =>
+          parseTypeEnvSub(rest, env)
         case EnvSeparatorToken :: rest =>
           (env, rest)
       }
@@ -79,6 +81,13 @@ object parser {
               (MLFunType(inParenType, t2), rest3)
             case rest2 =>
               (inParenType, rest2)
+          }
+        case _ =>
+          acmT match {
+            case Some(t) =>
+              (t, tokens)
+            case None =>
+              throw new Exception("型がおかしい")
           }
       }
     }
