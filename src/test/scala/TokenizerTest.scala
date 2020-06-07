@@ -68,7 +68,7 @@ class TokenizerTest extends FunSuite {
           VarToken("y"),
           TypeSeparatorToken,
           IntSymbolToken,
-          EvalSeparatorToken,
+          EnvSeparatorToken,
           IfToken,
           VarToken("x"),
           ThenToken,

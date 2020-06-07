@@ -25,7 +25,7 @@ object tokenizer {
       "->" -> ArrowToken,
       "::" -> ConsToken,
       "[]" -> EmptyListToken,
-      "|-" -> EvalSeparatorToken
+      "|-" -> EnvSeparatorToken
     )
   val reservedWordMap: Map[String, Token] = Map(
     "if" -> IfToken,

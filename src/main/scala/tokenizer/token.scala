@@ -56,7 +56,7 @@ object token {
 
   object WildCardToken extends Token
 
-  object EvalSeparatorToken extends Token
+  object EnvSeparatorToken extends Token
 
   object TypeSeparatorToken extends Token
 
