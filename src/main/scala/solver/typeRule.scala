@@ -44,6 +44,7 @@ object typeRule {
     }
   }
   def typeVarToString(name: String, typeEnv: TypeEnv): String = {
+    println(typeEnv)
     val result = getTypeFromTypeEnv(name, typeEnv)
     result match {
       case Some(r) =>
@@ -124,7 +125,7 @@ object typeRule {
         case TInt(_, _)                  => MLIntType
         case TBool(_, _)                 => MLBoolType
         case TIf(_, _, _, _, _, _, _, t) => t
-        case TVar(typeEnv, x)            => x.getTypeWithoutAnswer(typeEnv)
+        case TVar(typeEnv, x, t)         => t
         case TLet(_, _, _, _, _, _, t) =>
           t
         case TPlus(_, _, _, _, _)                        => MLIntType
@@ -146,7 +147,7 @@ object typeRule {
         case TInt(typeEnv, _)                                    => typeEnv
         case TBool(typeEnv, _)                                   => typeEnv
         case TIf(typeEnv, _, _, _, _, _, _, _)                   => typeEnv
-        case TVar(typeEnv, _)                                    => typeEnv
+        case TVar(typeEnv, _, _)                                 => typeEnv
         case TLet(typeEnv, _, _, _, _, _, _)                     => typeEnv
         case TPlus(typeEnv, _, _, _, _)                          => typeEnv
         case TMinus(typeEnv, _, _, _, _)                         => typeEnv
@@ -204,7 +205,7 @@ object typeRule {
                  tr2: TypeRule)
       extends TypeRule
 
-  case class TVar(typeEnv: TypeEnv, x: Var) extends TypeRule
+  case class TVar(typeEnv: TypeEnv, x: Var, t: MLType) extends TypeRule
 
   case class TLet(typeEnv: TypeEnv,
                   x: Var,
@@ -303,8 +304,8 @@ object typeRule {
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indentPlus1${tr3.string(nest + 1)}\n" +
             s"$indent};"
-        case TVar(typeEnv, x) =>
-          s"${typeEnv.string} |- ${x.string} : ${x.string} by T-Var{};"
+        case TVar(typeEnv, x, t) =>
+          s"${typeEnv.string} |- ${x.string} : ${t.string(typeEnv)} by T-Var{};"
         case TLet(typeEnv, x, e1, e2, tr1, tr2, t) =>
           s"${typeEnv.string} |- let ${x.string} = ${e1.string} in ${e2.string} : ${t
             .string(typeEnv)} by T-Let{\n" +

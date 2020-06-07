@@ -1,5 +1,5 @@
  |-fun x -> (fun y -> x) :  (int -> (int -> int))  by T-Fun{
-     x : int |-fun y -> x :  ('x3 -> int)  by T-Fun{
-          x : int,y : 'x3 |- x : x by T-Var{};
+     x : int |-fun y -> x :  ('x27 -> int)  by T-Fun{
+          x : int,y : 'x27 |- x : int by T-Var{};
      };
 };

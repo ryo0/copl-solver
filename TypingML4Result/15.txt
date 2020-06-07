@@ -1,18 +1,18 @@
  |- let k = (fun x -> (fun y -> x)) in ((k true) (fun x -> (x + 1))) : bool by T-Let{
-      |-fun x -> (fun y -> x) :  ('x31 -> ('x32 -> 'x31))  by T-Fun{
-          x : 'x31 |-fun y -> x :  ('x33 -> 'x31)  by T-Fun{
-               x : 'x31,y : 'x33 |- x : x by T-Var{};
+      |-fun x -> (fun y -> x) :  ('x55 -> ('x56 -> 'x55))  by T-Fun{
+          x : 'x55 |-fun y -> x :  ('x57 -> 'x55)  by T-Fun{
+               x : 'x55,y : 'x57 |- x : 'x55 by T-Var{};
           };
      };
-     k : ('x31 -> ('x32 -> 'x31)) |- (k true) (fun x -> (x + 1)) :  bool  by T-App{
-          k : ('x31 -> ('x32 -> 'x31)) |- k true :  ('x32 -> bool)  by T-App{
-               k : ('x31 -> ('x32 -> 'x31)) |- k : k by T-Var{};
-               k : ('x31 -> ('x32 -> 'x31)) |- true : bool by T-Bool{};
+     k : ('x55 -> ('x56 -> 'x55)) |- (k true) (fun x -> (x + 1)) :  bool  by T-App{
+          k : ('x55 -> ('x56 -> 'x55)) |- k true :  ('x56 -> bool)  by T-App{
+               k : ('x55 -> ('x56 -> 'x55)) |- k : ('x55 -> ('x56 -> 'x55)) by T-Var{};
+               k : ('x55 -> ('x56 -> 'x55)) |- true : bool by T-Bool{};
           };
-          k : ('x31 -> ('x32 -> 'x31)) |-fun x -> (x + 1) :  (int -> int)  by T-Fun{
-               k : ('x31 -> ('x32 -> 'x31)),x : int |- x + 1 : int by T-Plus{
-                    k : ('x31 -> ('x32 -> 'x31)),x : int |- x : x by T-Var{};
-                    k : ('x31 -> ('x32 -> 'x31)),x : int |- 1 : int by T-Int{};
+          k : ('x55 -> ('x56 -> 'x55)) |-fun x -> (x + 1) :  (int -> int)  by T-Fun{
+               k : ('x55 -> ('x56 -> 'x55)),x : int |- x + 1 : int by T-Plus{
+                    k : ('x55 -> ('x56 -> 'x55)),x : int |- x : int by T-Var{};
+                    k : ('x55 -> ('x56 -> 'x55)),x : int |- 1 : int by T-Int{};
                };
           };
      };

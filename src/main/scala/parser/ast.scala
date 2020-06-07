@@ -44,7 +44,6 @@ object ast {
       val e = this.typeExtract(typeEnv)
       val typeAnswerMap = myEqAnswer match {
         case Some(a) =>
-          println(Equation(a, e._2) :: e._1)
           (Equation(a, e._2) :: e._1).unify()
         case _ =>
           e._1.unify()
@@ -161,7 +160,7 @@ object ast {
             this.getType(typeEnv, eqAnswer)
           )
         case Var(n) =>
-          TVar(typeEnv, Var(n))
+          TVar(typeEnv, Var(n), this.getType(typeEnv, eqAnswer))
         case LetExp(variable, valueExp, inExp) =>
           val tr1 = valueExp.typeSolve(typeEnv, None)
           val tr2 =

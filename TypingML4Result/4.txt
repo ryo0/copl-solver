@@ -6,8 +6,8 @@
      x : bool |- let y = 5 in if x then y else 2 : int by T-Let{
           x : bool |- 5 : int by T-Int{};
           x : bool,y : int |- if x then y else 2: int by T-If{
-               x : bool,y : int |- x : x by T-Var{};
-               x : bool,y : int |- y : y by T-Var{};
+               x : bool,y : int |- x : bool by T-Var{};
+               x : bool,y : int |- y : int by T-Var{};
                x : bool,y : int |- 2 : int by T-Int{};
           };
      };
