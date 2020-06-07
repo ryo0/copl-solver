@@ -10,7 +10,8 @@ import solver.typeRule.{
   MLIntType,
   MLListType,
   MLType,
-  TypeEnv
+  TypeEnv,
+  TypeVar
 }
 
 object parser {
@@ -57,6 +58,8 @@ object parser {
           parseTypeSub(rest, Some(MLIntType))
         case BoolSymbolToken :: rest =>
           parseTypeSub(rest, Some(MLBoolType))
+        case VarToken(n) :: rest =>
+          parseTypeSub(rest, Some(TypeVar(n)))
         case ListSymbolToken :: rest =>
           acmT match {
             case Some(t) =>

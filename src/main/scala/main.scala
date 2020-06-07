@@ -98,9 +98,7 @@ object Main {
     //  file815.close()
 
     val file = new PrintWriter("TypingML4Result/demo.txt")
-    file.write(
-      typeSolveWithEnvAndType("|- (fun x -> fun y -> x) 1 (fun x -> x) : int")
-    )
+    file.write(typeSolveWithEnvAndType("|- fun x -> x : 'a -> 'a"))
     file.close()
 
     //
