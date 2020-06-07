@@ -1,8 +1,10 @@
 package parser
 
 import tokenizer.token._
-import tokenizer.token.{TrueToken, FalseToken}
+import tokenizer.token.{FalseToken, TrueToken}
 import ast._
+import solver.rule.Env
+import solver.typeRule.{MLBoolType, MLFunType, MLIntType, MLType, TypeEnv}
 
 object parser {
   val opMap: Map[Token, Op] = Map(
@@ -14,7 +16,41 @@ object parser {
     GreaterThanToken -> GreaterThan,
     ConsToken -> Cons
   )
+  def parseTypeEnv(tokens: List[Token]): (TypeEnv, List[Token]) = {
+    @scala.annotation.tailrec
+    def parseTypeEnvSub(tokens: List[Token],
+                        env: TypeEnv): (TypeEnv, List[Token]) = {
+      tokens match {
+        case VarToken(n) :: TypeSeparatorToken :: rest =>
+          val (t, rest2) = parseType(rest)
+          parseTypeEnvSub(rest2, (n, t) :: env)
+        case EnvSeparatorToken :: rest =>
+          (env, rest)
+      }
+    }
+    parseTypeEnvSub(tokens, List())
+  }
 
+  def parseType(tokens: List[Token]): (MLType, List[Token]) = {
+    tokens match {
+      case IntSymbolToken :: List() =>
+        (MLIntType, List())
+      case BoolSymbolToken :: List() =>
+        (MLBoolType, List())
+      case x :: ArrowToken :: rest =>
+        val (t, _) = parseType(List(x))
+        val (t2, rest2) = parseType(rest)
+        (MLFunType(t, t2), rest2)
+      case LParen :: _ =>
+        val (inParen, rest) = getTokensInParen(tokens)
+        val (inParenType, _) = parseType(inParen)
+        rest match {
+          case ArrowToken :: rest2 =>
+            val (t2, rest3) = parseType(rest2)
+            (MLFunType(inParenType, t2), rest3)
+        }
+    }
+  }
   def parseExp(tokens: List[Token]): (Exp, List[Token]) = {
     tokens match {
       case IfToken :: _ =>
