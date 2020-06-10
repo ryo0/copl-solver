@@ -99,11 +99,11 @@ object Main {
     //  )
     //  file815.close()
 
-//    val file = new PrintWriter("TypingML4Result/demo.txt")
-//    file.write(
-//      typeSolveWithEnvAndType("|- let id = fun x -> x in id id : bool -> bool")
-//    )
-//    file.close()
+    //    val file = new PrintWriter("TypingML4Result/demo.txt")
+    //    file.write(
+    //      typeSolveWithEnvAndType("|- let id = fun x -> x in id id : bool -> bool")
+    //    )
+    //    file.close()
 
     //
     //  val file816 = new PrintWriter("TypingML4Result/16.txt")
@@ -157,6 +157,5 @@ object Main {
     //  val file827 = new PrintWriter("TypingML4Result/4.txt")
     //  file827.write(typeSolveWithEnvAndType("let x = 3 < 2 in let y = 5 in if x then y else 2"))
     //  file827.close()
-
   }
 }

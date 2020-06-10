@@ -44,6 +44,7 @@ object typeRule {
     }
   }
   def typeVarToString(name: String, typeEnv: TypeEnv): String = {
+    println(typeEnv)
     val result = getTypeFromTypeEnv(name, typeEnv)
     result match {
       case Some(r) =>

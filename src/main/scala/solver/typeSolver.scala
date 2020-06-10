@@ -15,6 +15,7 @@ object typeSolver {
   def typeExtract(string: String): String = {
     val exp = parser.parser.parseExp(tokenize(string))._1
     val result = exp.typeExtract(List())
+    println(result._1.unify())
     result._1.toString() + result._2.toString
   }
 

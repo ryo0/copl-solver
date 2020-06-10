@@ -1,3 +1,4 @@
+<<<<<<< HEAD
  |- let id = (fun x -> x) in (id id) : (bool -> bool) by T-Let{
       |-fun x -> x :  ('x18 -> 'x18)  by T-Fun{
           x : 'x18 |- x : 'x18 by T-Var{};
@@ -5,5 +6,18 @@
      id : ('x19 -> 'x19) |- id id :  (bool -> bool)  by T-App{
           id : ('x19 -> 'x19) |- id : ('x19 -> 'x19) by T-Var{};
           id : ('x19 -> 'x19) |- id : (('x19 -> 'x19) -> ('x19 -> 'x19)) by T-Var{};
+=======
+ |- ((fun x -> (fun y -> x)) 1) (fun x -> x) :  int  by T-App{
+      |- (fun x -> (fun y -> x)) 1 :  ('x61 -> int)  by T-App{
+           |-fun x -> (fun y -> x) :  ('x63 -> ('x64 -> 'x63))  by T-Fun{
+               x : 'x63 |-fun y -> x :  ('x64 -> 'x63)  by T-Fun{
+                    x : 'x63,y : 'x64 |- x : 'x63 by T-Var{};
+               };
+          };
+           |- 1 : int by T-Int{};
+     };
+      |-fun x -> x :  ('x68 -> 'x68)  by T-Fun{
+          x : 'x68 |- x : 'x68 by T-Var{};
+>>>>>>> parent of 343f397... 自分の方針ではここが限界だと思う。
      };
 };

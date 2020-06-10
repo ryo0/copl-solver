@@ -69,7 +69,7 @@ object tokenizer {
           if (c.isDigit) {
             val (rest, intToken) = tokenizeInt(str)
             tokenizeSub(rest, acm :+ intToken)
-          } else if (c.isLetter || c == '\'') {
+          } else if (c.isLetter) {
             val (rest, letterToken) = tokenizeLetter(str)
             tokenizeSub(rest, acm :+ letterToken)
           } else {
