@@ -107,6 +107,10 @@ object typeRule {
         .mkString
         .dropRight(1)
     }
+
+    def substitute(typeAnswer: TypeAnswer): TypeEnv = {
+      typeEnv.map(e => (e._1, e._2.substitute(typeAnswer)))
+    }
   }
 
   def getTypeFromTypeEnv(key: String, env: TypeEnv): Option[MLType] = {
@@ -116,6 +120,39 @@ object typeRule {
       }
     }
     None
+  }
+
+  def getTypeAnswerOfTypeVars(typeRule: TypeRule): TypeAnswer = {
+    typeRule match {
+      case TInt(typeEnv, i) =>
+        Map()
+      case TBool(typeEnv, b) =>
+        Map()
+      case TPlus(typeEnv, e1, e2, tr1, tr2) =>
+        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
+      case TMinus(typeEnv, e1, e2, tr1, tr2) =>
+        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
+      case TTimes(typeEnv, e1, e2, tr1, tr2) =>
+        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
+      case TLt(typeEnv, e1, e2, tr1, tr2) =>
+        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
+      case TIf(typeEnv, e1, e2, e3, tr1, tr2, tr3, t) =>
+        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2) ++ getTypeAnswerOfTypeVars(
+          tr3
+        )
+      case TVar(typeEnv, x, t) =>
+        Map()
+      case TLet(typeEnv, x, e1, e2, tr1, tr2, t) =>
+        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
+      case TFun(typeEnv, x, e, tr1, t) =>
+        getTypeAnswerOfTypeVars(tr1)
+      case TApp(typeEnv, e1, e2, tr1, tr2, t) =>
+        val argTypeVar = tr1.mlType.asInstanceOf[MLFunType].arg
+        val argType = tr2.mlType
+        Map(argTypeVar -> argType) ++ getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(
+          tr2
+        )
+    }
   }
 
   sealed class TypeRule {
@@ -140,26 +177,89 @@ object typeRule {
           t
       }
     }
-
-    def getTypeEnv: TypeEnv = {
+    def substitute(typeAnswer: TypeAnswer): TypeRule = {
       this match {
-        case TInt(typeEnv, _)                                    => typeEnv
-        case TBool(typeEnv, _)                                   => typeEnv
-        case TIf(typeEnv, _, _, _, _, _, _, _)                   => typeEnv
-        case TVar(typeEnv, _, _)                                 => typeEnv
-        case TLet(typeEnv, _, _, _, _, _, _)                     => typeEnv
-        case TPlus(typeEnv, _, _, _, _)                          => typeEnv
-        case TMinus(typeEnv, _, _, _, _)                         => typeEnv
-        case TTimes(typeEnv, _, _, _, _)                         => typeEnv
-        case TLt(typeEnv, _, _, _, _)                            => typeEnv
-        case TFun(typeEnv, _, _, _, _)                           => typeEnv
-        case TApp(typeEnv, e1, e2, tr1, tr2, _)                  => typeEnv
-        case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2, t)         => typeEnv
-        case TNil(typeEnv, t)                                    => typeEnv
-        case TCons(typeEnv, e1, e2, tr1, tr2, _)                 => typeEnv
-        case TMatch(typeEnv, e1, e2, x, y, e3, tr1, tr2, tr3, _) => typeEnv
+        case TInt(typeEnv, i) =>
+          this
+        case TBool(typeEnv, b) =>
+          this
+        case TPlus(typeEnv, e1, e2, tr1, tr2) =>
+          TPlus(
+            typeEnv,
+            e1,
+            e2,
+            tr1.substitute(typeAnswer),
+            tr2.substitute(typeAnswer)
+          )
+        case TMinus(typeEnv, e1, e2, tr1, tr2) =>
+          TMinus(
+            typeEnv,
+            e1,
+            e2,
+            tr1.substitute(typeAnswer),
+            tr2.substitute(typeAnswer)
+          )
+        case TTimes(typeEnv, e1, e2, tr1, tr2) =>
+          TTimes(
+            typeEnv,
+            e1,
+            e2,
+            tr1.substitute(typeAnswer),
+            tr2.substitute(typeAnswer)
+          )
+        case TLt(typeEnv, e1, e2, tr1, tr2) =>
+          TLt(
+            typeEnv,
+            e1,
+            e2,
+            tr1.substitute(typeAnswer),
+            tr2.substitute(typeAnswer)
+          )
+        case TIf(typeEnv, e1, e2, e3, tr1, tr2, tr3, t) =>
+          TIf(
+            typeEnv,
+            e1,
+            e2,
+            e3,
+            tr1.substitute(typeAnswer),
+            tr2.substitute(typeAnswer),
+            tr3.substitute(typeAnswer),
+            t.substitute(typeAnswer)
+          )
+        case TVar(typeEnv, x, t) =>
+          TVar(typeEnv, x, t.substitute(typeAnswer))
+        case TLet(typeEnv, x, e1, e2, tr1, tr2, t) =>
+          TLet(
+            typeEnv,
+            x,
+            e1,
+            e2,
+            tr1.substitute(typeAnswer),
+            tr2.substitute(typeAnswer),
+            t.substitute(typeAnswer)
+          )
+        case TFun(typeEnv, x, e, tr1, t) =>
+          TFun(
+            typeEnv,
+            x,
+            e,
+            tr1.substitute(typeAnswer),
+            t.substitute(typeAnswer).asInstanceOf[MLFunType]
+          )
+        case TApp(typeEnv, e1, e2, tr1, tr2, t) =>
+          TApp(
+            typeEnv,
+            e1,
+            e2,
+            tr1.substitute(typeAnswer),
+            tr2.substitute(typeAnswer),
+            t.substitute(typeAnswer)
+          )
+        case _ =>
+          this
       }
     }
+
   }
 
   case class TInt(typeEnv: TypeEnv, i: IntVal) extends TypeRule
@@ -215,7 +315,7 @@ object typeRule {
                   t: MLType)
       extends TypeRule
 
-  case class TFun(typeEnv: TypeEnv, x: Var, e: Exp, tr1: TypeRule, t: MLType)
+  case class TFun(typeEnv: TypeEnv, x: Var, e: Exp, tr1: TypeRule, t: MLFunType)
       extends TypeRule
 
   case class TApp(typeEnv: TypeEnv,

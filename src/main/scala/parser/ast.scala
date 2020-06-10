@@ -234,13 +234,11 @@ object ast {
         case Match(e1: Var, patterns: List[Pattern]) =>
           patterns match {
             case Pattern(EmptyList, e2) :: Pattern(EList(Var(x), Var(y)), e3) :: List() =>
-              val tr1 = e1.typeSolve(typeEnv, e1.getTypeWithoutAnswer(typeEnv))
-              val tr2 = e2.typeSolve(typeEnv, e2.getTypeWithoutAnswer(typeEnv))
+              val e1Type = e1.getTypeWithoutAnswer(typeEnv)
+              val tr1 = e1.typeSolve(typeEnv, e1Type)
+              val tr2 = e2.typeSolve(typeEnv, e1Type)
               val tr3 =
-                e3.typeSolve(
-                  (x, tr1.mlType) :: (y, tr1.mlType) :: typeEnv,
-                  myType
-                )
+                e3.typeSolve((x, e1Type) :: (y, e1Type) :: typeEnv, myType)
               TMatch(
                 typeEnv,
                 e1,

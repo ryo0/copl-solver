@@ -75,11 +75,13 @@ object Main {
     //  )
     //  file812.close()
     //
-    //  val file813 = new PrintWriter("TypingML4Result/13.txt")
-    //  file813.write(
-    //    typeSolveWithEnvAndType("|- let k = fun x -> fun y -> x in k 3 true : int")
-    //  )
-    //  file813.close()
+    val file813 = new PrintWriter("TypingML4Result/13.txt")
+    file813.write(
+      typeSolveWithEnvAndType(
+        "|- let k = fun x -> fun y -> x in k 3 true : int"
+      )
+    )
+    file813.close()
     //
     //  val file814 = new PrintWriter("TypingML4Result/14.txt")
     //  file814.write(
@@ -97,9 +99,11 @@ object Main {
     //  )
     //  file815.close()
 
-    val file = new PrintWriter("TypingML4Result/demo.txt")
-    file.write(typeSolveWithEnvAndType("|- fun x -> x : 'a -> 'a"))
-    file.close()
+//    val file = new PrintWriter("TypingML4Result/demo.txt")
+//    file.write(
+//      typeSolveWithEnvAndType("|- let id = fun x -> x in id id : bool -> bool")
+//    )
+//    file.close()
 
     //
     //  val file816 = new PrintWriter("TypingML4Result/16.txt")
