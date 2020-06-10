@@ -6,6 +6,21 @@
 それがこのリポジトリです。  
 2020/05/14現在は3章のEvalML1, 4章のEvalML2, 5章のEvalML3, 7章のEvalML4, EvalML5に対応しています。  
 
-TypingML4に関しては、どう頑張っても上手く行かず、下のブログを見るとどうにも実行途中に型情報を入力させるという処理を書く必要があるっぽいので、出来る範囲までやってそれ以上は諦めました。無念。  
+TypingML4に関しては、現在作業中です。以下のように自動では答えが出せない問題もあるようです。  
+```
+|- (fun x -> fun y -> x) 1 (fun x -> x) : int by T-App {
+  |- (fun x -> fun y -> x) 1 : ('_a4 -> '_a4) -> int by T-App {
+    |- fun x -> fun y -> x : int -> ('_a4 -> '_a4) -> int by T-Abs {
+      x : int |- fun y -> x : ('_a4 -> '_a4) -> int by T-Abs {
+        x : int, y : '_a4 -> '_a4 |- x : int by T-Var {};
+      };
+    };
+    |- 1 : int by T-Int {};
+  };
+  |- fun x -> x : '_a4 -> '_a4 by T-Abs {
+    x : '_a4 |- x : '_a4 by T-Var {};
+  };
+};
+```
 https://roodni.hatenablog.com/entry/2020/05/02/192939  
  
