@@ -1,14 +1,14 @@
  |- let k = (fun x -> (fun y -> x)) in ((k 3) true) : int by T-Let{
       |-fun x -> (fun y -> x) :  (int -> (bool -> int))  by T-Fun{
-          x : 'x3 |-fun y -> x :  ('x5 -> int)  by T-Fun{
-               x : 'x3,y : 'x5 |- x : int by T-Var{};
+          x : 'x1 |-fun y -> x :  (bool -> int)  by T-Fun{
+               x : 'x1,y : 'x2 |- x : int by T-Var{};
           };
      };
-     k : ('x3 -> ('x4 -> 'x3)) |- (k 3) true :  int  by T-App{
-          k : ('x3 -> ('x4 -> 'x3)) |- k 3 :  (bool -> int)  by T-App{
-               k : ('x3 -> ('x4 -> 'x3)) |- k : (int -> (bool -> int)) by T-Var{};
-               k : ('x3 -> ('x4 -> 'x3)) |- 3 : int by T-Int{};
+     k : ('x1 -> ('x2 -> 'x1)) |- (k 3) true :  int  by T-App{
+          k : ('x1 -> ('x2 -> 'x1)) |- k 3 :  (bool -> int)  by T-App{
+               k : ('x1 -> ('x2 -> 'x1)) |- k : (int -> (bool -> int)) by T-Var{};
+               k : ('x1 -> ('x2 -> 'x1)) |- 3 : int by T-Int{};
           };
-          k : ('x3 -> ('x4 -> 'x3)) |- true : bool by T-Bool{};
+          k : ('x1 -> ('x2 -> 'x1)) |- true : bool by T-Bool{};
      };
 };
