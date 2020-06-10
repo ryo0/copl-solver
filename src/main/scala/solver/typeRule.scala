@@ -181,12 +181,12 @@ object typeRule {
     def substitute(typeAnswer: TypeAnswer): TypeRule = {
       this match {
         case TInt(typeEnv, i) =>
-          this
+          TInt(typeEnv.substitute(typeAnswer), i)
         case TBool(typeEnv, b) =>
-          this
+          TBool(typeEnv.substitute(typeAnswer), b)
         case TPlus(typeEnv, e1, e2, tr1, tr2) =>
           TPlus(
-            typeEnv,
+            typeEnv.substitute(typeAnswer),
             e1,
             e2,
             tr1.substitute(typeAnswer),
@@ -194,7 +194,7 @@ object typeRule {
           )
         case TMinus(typeEnv, e1, e2, tr1, tr2) =>
           TMinus(
-            typeEnv,
+            typeEnv.substitute(typeAnswer),
             e1,
             e2,
             tr1.substitute(typeAnswer),
@@ -202,7 +202,7 @@ object typeRule {
           )
         case TTimes(typeEnv, e1, e2, tr1, tr2) =>
           TTimes(
-            typeEnv,
+            typeEnv.substitute(typeAnswer),
             e1,
             e2,
             tr1.substitute(typeAnswer),
@@ -210,7 +210,7 @@ object typeRule {
           )
         case TLt(typeEnv, e1, e2, tr1, tr2) =>
           TLt(
-            typeEnv,
+            typeEnv.substitute(typeAnswer),
             e1,
             e2,
             tr1.substitute(typeAnswer),
@@ -218,7 +218,7 @@ object typeRule {
           )
         case TIf(typeEnv, e1, e2, e3, tr1, tr2, tr3, t) =>
           TIf(
-            typeEnv,
+            typeEnv.substitute(typeAnswer),
             e1,
             e2,
             e3,
@@ -228,10 +228,10 @@ object typeRule {
             t.substitute(typeAnswer)
           )
         case TVar(typeEnv, x, t) =>
-          TVar(typeEnv, x, t.substitute(typeAnswer))
+          TVar(typeEnv.substitute(typeAnswer), x, t.substitute(typeAnswer))
         case TLet(typeEnv, x, e1, e2, tr1, tr2, t) =>
           TLet(
-            typeEnv,
+            typeEnv.substitute(typeAnswer),
             x,
             e1,
             e2,
@@ -241,7 +241,7 @@ object typeRule {
           )
         case TFun(typeEnv, x, e, tr1, t) =>
           TFun(
-            typeEnv,
+            typeEnv.substitute(typeAnswer),
             x,
             e,
             tr1.substitute(typeAnswer),
@@ -249,7 +249,7 @@ object typeRule {
           )
         case TApp(typeEnv, e1, e2, tr1, tr2, t) =>
           TApp(
-            typeEnv,
+            typeEnv.substitute(typeAnswer),
             e1,
             e2,
             tr1.substitute(typeAnswer),
