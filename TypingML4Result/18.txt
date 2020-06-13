@@ -1,38 +1,38 @@
  |- let s = (fun f -> (fun g -> (fun x -> ((f x) (g x))))) in let k1 = (fun x -> (fun y -> x)) in let k2 = (fun x -> (fun y -> x)) in ((s k1) k2) : (int -> int) by T-Let{
-      |-fun f -> (fun g -> (fun x -> ((f x) (g x)))) :  ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int)))  by T-Fun{
-          f : (int -> ((int -> int) -> int)) |-fun g -> (fun x -> ((f x) (g x))) :  ((int -> (int -> int)) -> (int -> int))  by T-Fun{
-               f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)) |-fun x -> ((f x) (g x)) :  (int -> int)  by T-Fun{
-                    f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)),x : int |- (f x) (g x) :  int  by T-App{
-                         f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)),x : int |- f x :  ((int -> int) -> int)  by T-App{
-                              f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)),x : int |- f : (int -> ((int -> int) -> int)) by T-Var{};
-                              f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)),x : int |- x : int by T-Var{};
+      |-fun f -> (fun g -> (fun x -> ((f x) (g x)))) :  (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51)))  by T-Fun{
+          f : ('x48 -> (('x57 -> 'x56) -> 'x51)) |-fun g -> (fun x -> ((f x) (g x))) :  (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))  by T-Fun{
+               f : ('x48 -> (('x57 -> 'x56) -> 'x51)),g : ('x48 -> ('x57 -> 'x56)) |-fun x -> ((f x) (g x)) :  ('x48 -> 'x51)  by T-Fun{
+                    f : ('x48 -> (('x57 -> 'x56) -> 'x51)),g : ('x48 -> ('x57 -> 'x56)),x : 'x48 |- (f x) (g x) :  'x51  by T-App{
+                         f : ('x48 -> (('x57 -> 'x56) -> 'x51)),g : ('x48 -> ('x57 -> 'x56)),x : 'x48 |- f x :  (('x57 -> 'x56) -> 'x51)  by T-App{
+                              f : ('x48 -> (('x57 -> 'x56) -> 'x51)),g : ('x48 -> ('x57 -> 'x56)),x : 'x48 |- f : ('x48 -> (('x57 -> 'x56) -> 'x51)) by T-Var{};
+                              f : ('x48 -> (('x57 -> 'x56) -> 'x51)),g : ('x48 -> ('x57 -> 'x56)),x : 'x48 |- x : 'x48 by T-Var{};
                          };
-                         f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)),x : int |- g x :  (int -> int)  by T-App{
-                              f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)),x : int |- g : (int -> (int -> int)) by T-Var{};
-                              f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)),x : int |- x : int by T-Var{};
+                         f : ('x48 -> (('x57 -> 'x56) -> 'x51)),g : ('x48 -> ('x57 -> 'x56)),x : 'x48 |- g x :  ('x57 -> 'x56)  by T-App{
+                              f : ('x48 -> (('x57 -> 'x56) -> 'x51)),g : ('x48 -> ('x57 -> 'x56)),x : 'x48 |- g : ('x48 -> ('x57 -> 'x56)) by T-Var{};
+                              f : ('x48 -> (('x57 -> 'x56) -> 'x51)),g : ('x48 -> ('x57 -> 'x56)),x : 'x48 |- x : 'x48 by T-Var{};
                          };
                     };
                };
           };
      };
-     s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))) |- let k1 = (fun x -> (fun y -> x)) in let k2 = (fun x -> (fun y -> x)) in ((s k1) k2) : (int -> int) by T-Let{
-          s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))) |-fun x -> (fun y -> x) :  (int -> (int -> int))  by T-Fun{
-               s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),x : int |-fun y -> x :  (int -> int)  by T-Fun{
-                    s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),x : int,y : int |- x : int by T-Var{};
+     s : (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))) |- let k1 = (fun x -> (fun y -> x)) in let k2 = (fun x -> (fun y -> x)) in ((s k1) k2) : (int -> int) by T-Let{
+          s : (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))) |-fun x -> (fun y -> x) :  (int -> ('x50 -> int))  by T-Fun{
+               s : (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))),x : int |-fun y -> x :  ('x50 -> int)  by T-Fun{
+                    s : (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))),x : int,y : 'x50 |- x : int by T-Var{};
                };
           };
-          s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : (int -> (int -> int)) |- let k2 = (fun x -> (fun y -> x)) in ((s k1) k2) : (int -> int) by T-Let{
-               s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : (int -> (int -> int)) |-fun x -> (fun y -> x) :  (int -> (int -> int))  by T-Fun{
-                    s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : (int -> (int -> int)),x : int |-fun y -> x :  (int -> int)  by T-Fun{
-                         s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : (int -> (int -> int)),x : int,y : int |- x : int by T-Var{};
+          s : (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))),k1 : (int -> ('x50 -> int)) |- let k2 = (fun x -> (fun y -> x)) in ((s k1) k2) : (int -> int) by T-Let{
+               s : (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))),k1 : (int -> ('x50 -> int)) |-fun x -> (fun y -> x) :  ('x48 -> ('x57 -> 'x48))  by T-Fun{
+                    s : (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))),k1 : (int -> ('x50 -> int)),x : 'x48 |-fun y -> x :  ('x57 -> 'x48)  by T-Fun{
+                         s : (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))),k1 : (int -> ('x50 -> int)),x : 'x48,y : 'x57 |- x : 'x48 by T-Var{};
                     };
                };
-               s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : (int -> (int -> int)),k2 : (int -> (int -> int)) |- (s k1) k2 :  (int -> int)  by T-App{
-                    s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : (int -> (int -> int)),k2 : (int -> (int -> int)) |- s k1 :  ((int -> (int -> int)) -> (int -> int))  by T-App{
-                         s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : (int -> (int -> int)),k2 : (int -> (int -> int)) |- s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))) by T-Var{};
-                         s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : (int -> (int -> int)),k2 : (int -> (int -> int)) |- k1 : (int -> (int -> int)) by T-Var{};
+               s : (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))),k1 : (int -> ('x50 -> int)),k2 : ('x48 -> ('x57 -> 'x48)) |- (s k1) k2 :  (int -> int)  by T-App{
+                    s : (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))),k1 : (int -> ('x50 -> int)),k2 : ('x48 -> ('x57 -> 'x48)) |- s k1 :  (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))  by T-App{
+                         s : (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))),k1 : (int -> ('x50 -> int)),k2 : ('x48 -> ('x57 -> 'x48)) |- s : (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))) by T-Var{};
+                         s : (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))),k1 : (int -> ('x50 -> int)),k2 : ('x48 -> ('x57 -> 'x48)) |- k1 : (int -> ('x50 -> int)) by T-Var{};
                     };
-                    s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : (int -> (int -> int)),k2 : (int -> (int -> int)) |- k2 : (int -> (int -> int)) by T-Var{};
+                    s : (('x48 -> (('x57 -> 'x56) -> 'x51)) -> (('x48 -> ('x57 -> 'x56)) -> ('x48 -> 'x51))),k1 : (int -> ('x50 -> int)),k2 : ('x48 -> ('x57 -> 'x48)) |- k2 : ('x48 -> ('x57 -> 'x48)) by T-Var{};
                };
           };
      };

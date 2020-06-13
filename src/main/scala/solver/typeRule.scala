@@ -201,21 +201,23 @@ object typeRule {
       case TBool(typeEnv, b) =>
         List()
       case TPlus(typeEnv, e1, e2, tr1, tr2) =>
-        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
+        getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(tr2)
       case TMinus(typeEnv, e1, e2, tr1, tr2) =>
-        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
+        getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(tr2)
       case TTimes(typeEnv, e1, e2, tr1, tr2) =>
-        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
+        getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(tr2)
       case TLt(typeEnv, e1, e2, tr1, tr2) =>
-        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
+        getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(tr2)
       case TIf(typeEnv, e1, e2, e3, tr1, tr2, tr3, t) =>
-        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2) ++ getTypeAnswerOfTypeVars(
+        getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(tr2) ::: getTypeAnswerOfTypeVars(
           tr3
         )
       case TVar(typeEnv, x, t) =>
         List()
       case TLet(typeEnv, x, e1, e2, tr1, tr2, t) =>
-        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
+        (tr2.mlType, t) :: getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(
+          tr2
+        )
       case TFun(typeEnv, x, e, tr1, t) =>
         val myType = t.asInstanceOf[MLFunType]
         getTypeAnswerOfTypeVars(tr1) :+ (tr1.mlType, myType.body)
@@ -224,9 +226,12 @@ object typeRule {
         val argType = tr2.mlType
         val bodyTypeVar = tr1.mlType.asInstanceOf[MLFunType].body
         val bodyType = t
-        List((argTypeVar, argType), (bodyTypeVar, bodyType)) ::: getTypeAnswerOfTypeVars(
-          tr1
-        ) ::: getTypeAnswerOfTypeVars(tr2)
+        List(
+          (argTypeVar, argType),
+          (bodyTypeVar, bodyType),
+          (argType, argTypeVar),
+          (bodyType, bodyTypeVar)
+        ) ::: getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(tr2)
       case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2, t) =>
         getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(tr2)
       case TCons(typeEnv, e1, e2, tr1, tr2, t) =>

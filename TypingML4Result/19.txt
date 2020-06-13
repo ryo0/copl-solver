@@ -1,44 +1,44 @@
  |- let s = (fun f -> (fun g -> (fun x -> ((f x) (g x))))) in let k1 = (fun x -> (fun y -> x)) in let k2 = (fun x -> (fun y -> x)) in (((s k1) k2) (fun x -> (x + 1))) : (int -> int) by T-Let{
-      |-fun f -> (fun g -> (fun x -> ((f x) (g x)))) :  ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int)))  by T-Fun{
-          f : (int -> ((int -> int) -> int)) |-fun g -> (fun x -> ((f x) (g x))) :  ((int -> (int -> int)) -> (int -> int))  by T-Fun{
-               f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)) |-fun x -> ((f x) (g x)) :  (int -> int)  by T-Fun{
-                    f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)),x : int |- (f x) (g x) :  int  by T-App{
-                         f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)),x : int |- f x :  ((int -> int) -> int)  by T-App{
-                              f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)),x : int |- f : (int -> ((int -> int) -> int)) by T-Var{};
-                              f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)),x : int |- x : int by T-Var{};
+      |-fun f -> (fun g -> (fun x -> ((f x) (g x)))) :  (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64)))  by T-Fun{
+          f : ('x61 -> (('x70 -> 'x69) -> 'x64)) |-fun g -> (fun x -> ((f x) (g x))) :  (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))  by T-Fun{
+               f : ('x61 -> (('x70 -> 'x69) -> 'x64)),g : ('x61 -> ('x70 -> 'x69)) |-fun x -> ((f x) (g x)) :  ('x61 -> 'x64)  by T-Fun{
+                    f : ('x61 -> (('x70 -> 'x69) -> 'x64)),g : ('x61 -> ('x70 -> 'x69)),x : 'x61 |- (f x) (g x) :  'x64  by T-App{
+                         f : ('x61 -> (('x70 -> 'x69) -> 'x64)),g : ('x61 -> ('x70 -> 'x69)),x : 'x61 |- f x :  (('x70 -> 'x69) -> 'x64)  by T-App{
+                              f : ('x61 -> (('x70 -> 'x69) -> 'x64)),g : ('x61 -> ('x70 -> 'x69)),x : 'x61 |- f : ('x61 -> (('x70 -> 'x69) -> 'x64)) by T-Var{};
+                              f : ('x61 -> (('x70 -> 'x69) -> 'x64)),g : ('x61 -> ('x70 -> 'x69)),x : 'x61 |- x : 'x61 by T-Var{};
                          };
-                         f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)),x : int |- g x :  (int -> int)  by T-App{
-                              f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)),x : int |- g : (int -> (int -> int)) by T-Var{};
-                              f : (int -> ((int -> int) -> int)),g : (int -> (int -> int)),x : int |- x : int by T-Var{};
+                         f : ('x61 -> (('x70 -> 'x69) -> 'x64)),g : ('x61 -> ('x70 -> 'x69)),x : 'x61 |- g x :  ('x70 -> 'x69)  by T-App{
+                              f : ('x61 -> (('x70 -> 'x69) -> 'x64)),g : ('x61 -> ('x70 -> 'x69)),x : 'x61 |- g : ('x61 -> ('x70 -> 'x69)) by T-Var{};
+                              f : ('x61 -> (('x70 -> 'x69) -> 'x64)),g : ('x61 -> ('x70 -> 'x69)),x : 'x61 |- x : 'x61 by T-Var{};
                          };
                     };
                };
           };
      };
-     s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))) |- let k1 = (fun x -> (fun y -> x)) in let k2 = (fun x -> (fun y -> x)) in (((s k1) k2) (fun x -> (x + 1))) : (int -> int) by T-Let{
-          s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))) |-fun x -> (fun y -> x) :  ((int -> int) -> (int -> (int -> int)))  by T-Fun{
-               s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),x : (int -> int) |-fun y -> x :  (int -> (int -> int))  by T-Fun{
-                    s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),x : (int -> int),y : int |- x : (int -> int) by T-Var{};
+     s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))) |- let k1 = (fun x -> (fun y -> x)) in let k2 = (fun x -> (fun y -> x)) in (((s k1) k2) (fun x -> (x + 1))) : (int -> int) by T-Let{
+          s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))) |-fun x -> (fun y -> x) :  ((int -> int) -> ('x63 -> (int -> int)))  by T-Fun{
+               s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),x : (int -> int) |-fun y -> x :  ('x63 -> (int -> int))  by T-Fun{
+                    s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),x : (int -> int),y : 'x63 |- x : (int -> int) by T-Var{};
                };
           };
-          s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : ((int -> int) -> (int -> (int -> int))) |- let k2 = (fun x -> (fun y -> x)) in (((s k1) k2) (fun x -> (x + 1))) : (int -> int) by T-Let{
-               s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : ((int -> int) -> (int -> (int -> int))) |-fun x -> (fun y -> x) :  (int -> (int -> int))  by T-Fun{
-                    s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : ((int -> int) -> (int -> (int -> int))),x : int |-fun y -> x :  (int -> int)  by T-Fun{
-                         s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : ((int -> int) -> (int -> (int -> int))),x : int,y : int |- x : int by T-Var{};
+          s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),k1 : ((int -> int) -> ('x63 -> (int -> int))) |- let k2 = (fun x -> (fun y -> x)) in (((s k1) k2) (fun x -> (x + 1))) : (int -> int) by T-Let{
+               s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),k1 : ((int -> int) -> ('x63 -> (int -> int))) |-fun x -> (fun y -> x) :  ((int -> int) -> ('x70 -> (int -> int)))  by T-Fun{
+                    s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),k1 : ((int -> int) -> ('x63 -> (int -> int))),x : (int -> int) |-fun y -> x :  ('x70 -> (int -> int))  by T-Fun{
+                         s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),k1 : ((int -> int) -> ('x63 -> (int -> int))),x : (int -> int),y : 'x70 |- x : (int -> int) by T-Var{};
                     };
                };
-               s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : ((int -> int) -> (int -> (int -> int))),k2 : (int -> (int -> int)) |- ((s k1) k2) (fun x -> (x + 1)) :  int  by T-App{
-                    s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : ((int -> int) -> (int -> (int -> int))),k2 : (int -> (int -> int)) |- (s k1) k2 :  ((int -> int) -> (int -> int))  by T-App{
-                         s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : ((int -> int) -> (int -> (int -> int))),k2 : (int -> (int -> int)) |- s k1 :  ((int -> (int -> int)) -> (int -> int))  by T-App{
-                              s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : ((int -> int) -> (int -> (int -> int))),k2 : (int -> (int -> int)) |- s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))) by T-Var{};
-                              s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : ((int -> int) -> (int -> (int -> int))),k2 : (int -> (int -> int)) |- k1 : ((int -> int) -> (int -> (int -> int))) by T-Var{};
+               s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),k1 : ((int -> int) -> ('x63 -> (int -> int))),k2 : ((int -> int) -> ('x70 -> (int -> int))) |- ((s k1) k2) (fun x -> (x + 1)) :  (int -> int)  by T-App{
+                    s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),k1 : ((int -> int) -> ('x63 -> (int -> int))),k2 : ((int -> int) -> ('x70 -> (int -> int))) |- (s k1) k2 :  ((int -> int) -> (int -> int))  by T-App{
+                         s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),k1 : ((int -> int) -> ('x63 -> (int -> int))),k2 : ((int -> int) -> ('x70 -> (int -> int))) |- s k1 :  (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))  by T-App{
+                              s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),k1 : ((int -> int) -> ('x63 -> (int -> int))),k2 : ((int -> int) -> ('x70 -> (int -> int))) |- s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))) by T-Var{};
+                              s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),k1 : ((int -> int) -> ('x63 -> (int -> int))),k2 : ((int -> int) -> ('x70 -> (int -> int))) |- k1 : ((int -> int) -> ('x63 -> (int -> int))) by T-Var{};
                          };
-                         s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : ((int -> int) -> (int -> (int -> int))),k2 : (int -> (int -> int)) |- k2 : (int -> (int -> int)) by T-Var{};
+                         s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),k1 : ((int -> int) -> ('x63 -> (int -> int))),k2 : ((int -> int) -> ('x70 -> (int -> int))) |- k2 : ((int -> int) -> ('x70 -> (int -> int))) by T-Var{};
                     };
-                    s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : ((int -> int) -> (int -> (int -> int))),k2 : (int -> (int -> int)) |-fun x -> (x + 1) :  (int -> int)  by T-Fun{
-                         s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : ((int -> int) -> (int -> (int -> int))),k2 : (int -> (int -> int)),x : int |- x + 1 : int by T-Plus{
-                              s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : ((int -> int) -> (int -> (int -> int))),k2 : (int -> (int -> int)),x : int |- x : int by T-Var{};
-                              s : ((int -> ((int -> int) -> int)) -> ((int -> (int -> int)) -> (int -> int))),k1 : ((int -> int) -> (int -> (int -> int))),k2 : (int -> (int -> int)),x : int |- 1 : int by T-Int{};
+                    s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),k1 : ((int -> int) -> ('x63 -> (int -> int))),k2 : ((int -> int) -> ('x70 -> (int -> int))) |-fun x -> (x + 1) :  (int -> int)  by T-Fun{
+                         s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),k1 : ((int -> int) -> ('x63 -> (int -> int))),k2 : ((int -> int) -> ('x70 -> (int -> int))),x : int |- x + 1 : int by T-Plus{
+                              s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),k1 : ((int -> int) -> ('x63 -> (int -> int))),k2 : ((int -> int) -> ('x70 -> (int -> int))),x : int |- x : int by T-Var{};
+                              s : (('x61 -> (('x70 -> 'x69) -> 'x64)) -> (('x61 -> ('x70 -> 'x69)) -> ('x61 -> 'x64))),k1 : ((int -> int) -> ('x63 -> (int -> int))),k2 : ((int -> int) -> ('x70 -> (int -> int))),x : int |- 1 : int by T-Int{};
                          };
                     };
                };

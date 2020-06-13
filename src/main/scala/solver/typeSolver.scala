@@ -12,7 +12,7 @@ object typeSolver {
     val typeAnswer = getTypeAnswer(solved)
     println(solved.string(0))
     println(typeAnswer)
-    solved.substitute(typeAnswer).fillTypeVar().string(0)
+    solved.substitute(typeAnswer).string(0)
   }
   def typeExtract(string: String): String = {
     val exp = parser.parser.parseExp(tokenize(string))._1
