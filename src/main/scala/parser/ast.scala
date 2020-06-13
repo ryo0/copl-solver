@@ -172,7 +172,7 @@ object ast {
           val t2 = arg.getTypeWithoutAnswer(typeEnv)
           val tr1 = funName.typeSolve(typeEnv, t1)
           val tr2 = arg.typeSolve(typeEnv, t2)
-          TApp(typeEnv, funName, arg, tr1, tr2, eqAnswer)
+          TApp(typeEnv, funName, arg, tr1, tr2, t1.asInstanceOf[MLFunType].body)
         case LetRecExp(variable, RecFunExp(_, param, body), inExp) =>
           val xType = variable.getTypeWithoutAnswer(typeEnv)
           val yType = param.getTypeWithoutAnswer(typeEnv)

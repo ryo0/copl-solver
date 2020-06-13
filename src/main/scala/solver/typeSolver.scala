@@ -11,6 +11,7 @@ object typeSolver {
     val solved = exp.typeSolve(typeEnv, t)
     solved.string(0)
     val typeAnswer = getTypeAnswer(solved)
+    println(solved.string(0))
     println(typeAnswer)
     solved.substitute(typeAnswer).fillTypeVar().string(0)
   }

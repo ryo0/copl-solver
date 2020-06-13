@@ -4,7 +4,7 @@
                f : (bool -> int),g : (int -> bool) |-fun x -> (f (g x)) :  (int -> int)  by T-Fun{
                     f : (bool -> int),g : (int -> bool),x : int |- f (g x) :  int  by T-App{
                          f : (bool -> int),g : (int -> bool),x : int |- f : (bool -> int) by T-Var{};
-                         f : (bool -> int),g : (int -> bool),x : int |- g x :  int  by T-App{
+                         f : (bool -> int),g : (int -> bool),x : int |- g x :  bool  by T-App{
                               f : (bool -> int),g : (int -> bool),x : int |- g : (int -> bool) by T-Var{};
                               f : (bool -> int),g : (int -> bool),x : int |- x : int by T-Var{};
                          };
