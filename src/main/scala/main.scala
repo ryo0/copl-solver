@@ -129,14 +129,6 @@ object Main {
     )
     file818.close()
 
-    val file819 = new PrintWriter("TypingML4Result/19.txt")
-    file819.write(
-      typeSolveWithEnvAndType(
-        "|- let s = fun f -> fun g -> fun x -> f x (g x) in\n   let k1 = fun x -> fun y -> x in\n   let k2 = fun x -> fun y -> x in\n   s k1 k2 (fun x -> x + 1) : int -> int"
-      )
-    )
-    file819.close()
-
     val fileDemo2 = new PrintWriter("TypingML4Result/demo2.txt")
     fileDemo2.write(
       typeSolveWithEnvAndType(
@@ -144,6 +136,14 @@ object Main {
       )
     )
     fileDemo2.close()
+
+    val file819 = new PrintWriter("TypingML4Result/19.txt")
+    file819.write(
+      typeSolveWithEnvAndType(
+        "|- let s = fun f -> fun g -> fun x -> f x (g x) in\n   let k1 = fun x -> fun y -> x in\n   let k2 = fun x -> fun y -> x in\n   s k1 k2 (fun x -> x + 1) : int -> int"
+      )
+    )
+    file819.close()
 //
 //    val s = "let s = fun f -> fun g -> fun x -> f x (g x) in s "
 //    val t = tokenizer.tokenizer.tokenize(s)

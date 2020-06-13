@@ -83,9 +83,12 @@ class SolverTest extends FunSuite {
           (TypeVar("'x158"), MLFunType(MLIntType, MLIntType)),
           (TypeVar("x"), TypeVar("z")),
           (MLFunType(MLIntType, MLIntType), TypeVar("'x158")),
+          (TypeVar("'x144"), TypeVar("'x166")),
+          (TypeVar("'x166"), TypeVar("'x144")),
         )
       ).sortBy(a => a._1.string()) === List(
         (TypeVar("'x144"), MLFunType(MLIntType, MLIntType)),
+        (TypeVar("'x166"), MLFunType(MLIntType, MLIntType)),
         (TypeVar("'x158"), MLFunType(MLIntType, MLIntType)),
         (TypeVar("x"), MLBoolType),
         (MLBoolType, MLBoolType),
@@ -166,5 +169,8 @@ class SolverTest extends FunSuite {
         )
       ) === Some(MLBoolType)
     )
+  }
+  test("fixTypeAnswer") {
+    // TODO ここ、バグってるのでテスト書く
   }
 }
