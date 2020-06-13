@@ -66,6 +66,19 @@ object typeRule {
         }
       }
     }
+    def fillTypeVar(): MLType = {
+      this match {
+        case TypeVar(n) => {
+          MLIntType
+        }
+        case MLIntType  => MLIntType
+        case MLBoolType => MLBoolType
+        case MLFunType(arg, body) =>
+          MLFunType(arg.fillTypeVar(), body.fillTypeVar())
+        case MLListType(lst) => MLListType(lst.fillTypeVar())
+      }
+    }
+
     def substitute(typeAnswer: TypeAnswer): MLType = {
       this match {
         case TypeVar(n) => {
@@ -111,6 +124,10 @@ object typeRule {
 
     def substitute(typeAnswer: TypeAnswer): TypeEnv = {
       typeEnv.map(e => (e._1, e._2.substitute(typeAnswer)))
+    }
+
+    def fillTypeVar(): TypeEnv = {
+      typeEnv.map(e => (e._1, e._2.fillTypeVar()))
     }
   }
 
@@ -255,6 +272,88 @@ object typeRule {
             tr1.substitute(typeAnswer),
             tr2.substitute(typeAnswer),
             t.substitute(typeAnswer)
+          )
+        case _ =>
+          this
+      }
+    }
+    def fillTypeVar(): TypeRule = {
+      this match {
+        case TInt(typeEnv, i) =>
+          TInt(typeEnv.fillTypeVar(), i)
+        case TBool(typeEnv, b) =>
+          TBool(typeEnv.fillTypeVar(), b)
+        case TPlus(typeEnv, e1, e2, tr1, tr2) =>
+          TPlus(
+            typeEnv.fillTypeVar(),
+            e1,
+            e2,
+            tr1.fillTypeVar(),
+            tr2.fillTypeVar()
+          )
+        case TMinus(typeEnv, e1, e2, tr1, tr2) =>
+          TMinus(
+            typeEnv.fillTypeVar(),
+            e1,
+            e2,
+            tr1.fillTypeVar(),
+            tr2.fillTypeVar()
+          )
+        case TTimes(typeEnv, e1, e2, tr1, tr2) =>
+          TTimes(
+            typeEnv.fillTypeVar(),
+            e1,
+            e2,
+            tr1.fillTypeVar(),
+            tr2.fillTypeVar()
+          )
+        case TLt(typeEnv, e1, e2, tr1, tr2) =>
+          TLt(
+            typeEnv.fillTypeVar(),
+            e1,
+            e2,
+            tr1.fillTypeVar(),
+            tr2.fillTypeVar()
+          )
+        case TIf(typeEnv, e1, e2, e3, tr1, tr2, tr3, t) =>
+          TIf(
+            typeEnv.fillTypeVar(),
+            e1,
+            e2,
+            e3,
+            tr1.fillTypeVar(),
+            tr2.fillTypeVar(),
+            tr3.fillTypeVar(),
+            t.fillTypeVar()
+          )
+        case TVar(typeEnv, x, t) =>
+          TVar(typeEnv.fillTypeVar(), x, t.fillTypeVar())
+        case TLet(typeEnv, x, e1, e2, tr1, tr2, t) =>
+          TLet(
+            typeEnv.fillTypeVar(),
+            x,
+            e1,
+            e2,
+            tr1.fillTypeVar(),
+            tr2.fillTypeVar(),
+            t.fillTypeVar()
+          )
+        case TFun(typeEnv, x, e, tr1, t) =>
+          TFun(
+            typeEnv.fillTypeVar(),
+            x,
+            e,
+            tr1.fillTypeVar(),
+            t.fillTypeVar().asInstanceOf[MLFunType]
+          )
+        case TApp(typeEnv, e1, e2, tr1, tr2, t) =>
+          TApp(
+            typeEnv.fillTypeVar(),
+            e1,
+            e2,
+            tr1.fillTypeVar(),
+            tr2.fillTypeVar(),
+            t.fillTypeVar()
           )
         case _ =>
           this
