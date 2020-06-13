@@ -258,9 +258,13 @@ object typeRule {
         val argType = tr2.mlType
         val bodyTypeVar = funType.body
         val bodyType = t
-        List((argTypeVar, argType), (bodyTypeVar, bodyType)) ::: getTypeAnswerOfTypeVars(
-          tr1
-        ) ::: getTypeAnswerOfTypeVars(tr2)
+        println("TApp: ", argTypeVar, bodyTypeVar, argType, bodyType)
+        List(
+          (argTypeVar, argType),
+          (bodyTypeVar, bodyType),
+          (argType, argTypeVar),
+          (bodyType, bodyTypeVar)
+        ) ::: getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(tr2)
       case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2, t) =>
         getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(tr2)
       case TCons(typeEnv, e1, e2, tr1, tr2, t) =>

@@ -1,19 +1,19 @@
- |- let s = (fun f -> (fun g -> (fun x -> ((f x) (g x))))) in s : (('x174 -> ('x176 -> 'x177)) -> (('x174 -> 'x176) -> ('x174 -> 'x177))) by T-Let{
-      |-fun f -> (fun g -> (fun x -> ((f x) (g x)))) :  (('x180 -> ('x182 -> 'x183)) -> (('x180 -> 'x182) -> ('x180 -> 'x183)))  by T-Fun{
-          f : ('x180 -> ('x182 -> 'x183)) |-fun g -> (fun x -> ((f x) (g x))) :  (('x180 -> 'x182) -> ('x180 -> 'x183))  by T-Fun{
-               f : ('x180 -> ('x182 -> 'x183)),g : ('x180 -> 'x182) |-fun x -> ((f x) (g x)) :  ('x180 -> 'x183)  by T-Fun{
-                    f : ('x180 -> ('x182 -> 'x183)),g : ('x180 -> 'x182),x : 'x180 |- (f x) (g x) :  'x183  by T-App{
-                         f : ('x180 -> ('x182 -> 'x183)),g : ('x180 -> 'x182),x : 'x180 |- f x :  ('x182 -> 'x183)  by T-App{
-                              f : ('x180 -> ('x182 -> 'x183)),g : ('x180 -> 'x182),x : 'x180 |- f : ('x180 -> ('x182 -> 'x183)) by T-Var{};
-                              f : ('x180 -> ('x182 -> 'x183)),g : ('x180 -> 'x182),x : 'x180 |- x : 'x180 by T-Var{};
+ |- let s = (fun f -> (fun g -> (fun x -> ((f x) (g x))))) in s : ((int -> (int -> int)) -> ((int -> int) -> (int -> int))) by T-Let{
+      |-fun f -> (fun g -> (fun x -> ((f x) (g x)))) :  ((int -> (int -> int)) -> ((int -> int) -> (int -> int)))  by T-Fun{
+          f : (int -> (int -> int)) |-fun g -> (fun x -> ((f x) (g x))) :  ((int -> int) -> (int -> int))  by T-Fun{
+               f : (int -> (int -> int)),g : (int -> int) |-fun x -> ((f x) (g x)) :  (int -> int)  by T-Fun{
+                    f : (int -> (int -> int)),g : (int -> int),x : int |- (f x) (g x) :  int  by T-App{
+                         f : (int -> (int -> int)),g : (int -> int),x : int |- f x :  (int -> int)  by T-App{
+                              f : (int -> (int -> int)),g : (int -> int),x : int |- f : (int -> (int -> int)) by T-Var{};
+                              f : (int -> (int -> int)),g : (int -> int),x : int |- x : int by T-Var{};
                          };
-                         f : ('x180 -> ('x182 -> 'x183)),g : ('x180 -> 'x182),x : 'x180 |- g x :  'x182  by T-App{
-                              f : ('x180 -> ('x182 -> 'x183)),g : ('x180 -> 'x182),x : 'x180 |- g : ('x180 -> 'x182) by T-Var{};
-                              f : ('x180 -> ('x182 -> 'x183)),g : ('x180 -> 'x182),x : 'x180 |- x : 'x180 by T-Var{};
+                         f : (int -> (int -> int)),g : (int -> int),x : int |- g x :  int  by T-App{
+                              f : (int -> (int -> int)),g : (int -> int),x : int |- g : (int -> int) by T-Var{};
+                              f : (int -> (int -> int)),g : (int -> int),x : int |- x : int by T-Var{};
                          };
                     };
                };
           };
      };
-     s : (('x180 -> ('x182 -> 'x183)) -> (('x180 -> 'x182) -> ('x180 -> 'x183))) |- s : (('x174 -> ('x176 -> 'x177)) -> (('x174 -> 'x176) -> ('x174 -> 'x177))) by T-Var{};
+     s : ((int -> (int -> int)) -> ((int -> int) -> (int -> int))) |- s : ((int -> (int -> int)) -> ((int -> int) -> (int -> int))) by T-Var{};
 };
