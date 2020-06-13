@@ -299,6 +299,19 @@ class ParserTest extends FunSuite {
         List()
       )
     )
+    assert(
+      parseExp(tokenize("fun f -> fun g -> fun x -> f x (g x)"))._1 ==
+        FunExp(
+          Var("f"),
+          FunExp(
+            Var("g"),
+            FunExp(
+              Var("x"),
+              FunCall(FunCall(Var("f"), Var("x")), FunCall(Var("g"), Var("x")))
+            )
+          )
+        )
+    )
   }
   test("getTokensInParen") {
     assert(
