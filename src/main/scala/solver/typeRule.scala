@@ -161,9 +161,12 @@ object typeRule {
     typeAnswer.foreach { a =>
       if (keys.contains(a._1)) {
         if (!a._2.isInstanceOf[TypeVar]) {
-          result = result :+ (a._1, a._2)
+          result = result.filter(r => r._1 != a._1) :+ (a._1, a._2)
         }
       } else {
+        if (!result.map(r => r._1).contains(a._1)) {
+          result = result :+ (a._1, a._2)
+        }
         keys = keys + a._1
       }
     }
@@ -174,11 +177,11 @@ object typeRule {
     var result: TypeAnswer = List()
     typeAnswer.foreach {
       case (MLFunType(a1, b1), MLFunType(a2, b2)) =>
-        result :::= fixTypeAnswer(List((a1, a2), (b1, b2)))
+        result = fixTypeAnswer(List((a1, a2), (b1, b2))) ::: result
       case (MLListType(lst1), MLListType(lst2)) =>
-        result :::= fixTypeAnswer(List((lst1, lst2)))
+        result = fixTypeAnswer(List((lst1, lst2))) ::: result
       case (first1, first2) =>
-        result :::= List((first1, first2))
+        result = List((first1, first2)) ::: result
       case _ =>
         ()
     }
