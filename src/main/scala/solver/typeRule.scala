@@ -172,14 +172,17 @@ object typeRule {
   }
 
   def normalize(answer: TypeAnswer): TypeAnswer = {
-    val a = removeDuplicationOfTypeAnswer(answer)
-    a match {
-      case (TypeVar(n), TypeVar(m)) :: rest =>
-        (TypeVar(n), getAnswerRec(m, answer).get) :: normalize(rest)
-      case first :: rest =>
-        first :: normalize(rest)
-      case _ =>
-        List()
+    val ans = removeDuplicationOfTypeAnswer(answer)
+    ans.map {
+      case (TypeVar(n), other) =>
+        getAnswerRec(n, ans) match {
+          case Some(r) =>
+            (TypeVar(n), r)
+          case None =>
+            (TypeVar(n), other)
+        }
+      case (a, b) =>
+        (a, b)
     }
   }
 
