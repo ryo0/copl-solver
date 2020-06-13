@@ -55,13 +55,13 @@ object Main {
     )
     file88.close()
 
-//    val file89 = new PrintWriter("TypingML4Result/9.txt")
-//    file89.write(typeSolveWithEnvAndType("|- 4 :: [] : int list"))
-//    file89.close()
-//
-//    val file810 = new PrintWriter("TypingML4Result/10.txt")
-//    file810.write(typeSolveWithEnvAndType("|- true :: false :: [] : bool list"))
-//    file810.close()
+    val file89 = new PrintWriter("TypingML4Result/9.txt")
+    file89.write(typeSolveWithEnvAndType("|- 4 :: [] : int list"))
+    file89.close()
+
+    val file810 = new PrintWriter("TypingML4Result/10.txt")
+    file810.write(typeSolveWithEnvAndType("|- true :: false :: [] : bool list"))
+    file810.close()
 
     val file811 = new PrintWriter("TypingML4Result/11.txt")
     file811.write(
@@ -82,22 +82,22 @@ object Main {
       )
     )
     file813.close()
-//
-//    val file814 = new PrintWriter("TypingML4Result/14.txt")
-//    file814.write(
-//      typeSolveWithEnvAndType(
-//        "|- let k = fun x -> fun y -> x in k (1::[]) 3 : int list"
-//      )
-//    )
-//    file814.close()
-//
-//    val file815 = new PrintWriter("TypingML4Result/15.txt")
-//    file815.write(
-//      typeSolveWithEnvAndType(
-//        "|- let k = fun x -> fun y -> x in k true (fun x -> x + 1) : bool"
-//      )
-//    )
-//    file815.close()
+
+    val file814 = new PrintWriter("TypingML4Result/14.txt")
+    file814.write(
+      typeSolveWithEnvAndType(
+        "|- let k = fun x -> fun y -> x in k (1::[]) 3 : int list"
+      )
+    )
+    file814.close()
+
+    val file815 = new PrintWriter("TypingML4Result/15.txt")
+    file815.write(
+      typeSolveWithEnvAndType(
+        "|- let k = fun x -> fun y -> x in k true (fun x -> x + 1) : bool"
+      )
+    )
+    file815.close()
 
     val file = new PrintWriter("TypingML4Result/demo.txt")
     file.write(
@@ -105,26 +105,38 @@ object Main {
     )
     file.close()
 
-//    val file816 = new PrintWriter("TypingML4Result/16.txt")
-//    file816.write(
-//      typeSolveWithEnvAndType(
-//        "let compose = fun f -> fun g -> fun x -> f (g x) in let p = fun x -> if x then 3 else 4 in let q = fun x -> x < 4 in compose p q"
-//      )
-//    )
-//    file816.close()
-    //
-    //  val file817 = new PrintWriter("TypingML4Result/4.txt")
-    //  file817.write(typeSolveWithEnvAndType("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-    //  file817.close()
-    //
-    //  val file818 = new PrintWriter("TypingML4Result/4.txt")
-    //  file818.write(typeSolveWithEnvAndType("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-    //  file818.close()
-    //
-    //  val file819 = new PrintWriter("TypingML4Result/4.txt")
-    //  file819.write(typeSolveWithEnvAndType("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-    //  file819.close()
-    //
+    val file816 = new PrintWriter("TypingML4Result/16.txt")
+    file816.write(
+      typeSolveWithEnvAndType(
+        "|- let compose = fun f -> fun g -> fun x -> f (g x) in\n   let p = fun x -> x * x in\n   let q = fun x -> x + 4 in\n   compose p q : int -> int"
+      )
+    )
+    file816.close()
+
+    val file817 = new PrintWriter("TypingML4Result/17.txt")
+    file817.write(
+      typeSolveWithEnvAndType(
+        "|- let compose = fun f -> fun g -> fun x -> f (g x) in\n   let p = fun x -> if x then 3 else 4 in\n   let q = fun x -> x < 4 in\n   compose p q : int -> int"
+      )
+    )
+    file817.close()
+
+    val file818 = new PrintWriter("TypingML4Result/18.txt")
+    file818.write(
+      typeSolveWithEnvAndType(
+        "|- let s = fun f -> fun g -> fun x -> f x (g x) in\n   let k1 = fun x -> fun y -> x in\n   let k2 = fun x -> fun y -> x in\n   s k1 k2 : int -> int"
+      )
+    )
+    file818.close()
+
+    val file819 = new PrintWriter("TypingML4Result/19.txt")
+    file819.write(
+      typeSolveWithEnvAndType(
+        "|- let s = fun f -> fun g -> fun x -> f x (g x) in\n   let k1 = fun x -> fun y -> x in\n   let k2 = fun x -> fun y -> x in\n   s k1 k2 (fun x -> x + 1) : int -> int"
+      )
+    )
+    file819.close()
+
     //  val file820 = new PrintWriter("TypingML4Result/4.txt")
     //  file820.write(typeSolveWithEnvAndType("let x = 3 < 2 in let y = 5 in if x then y else 2"))
     //  file820.close()

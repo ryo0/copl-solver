@@ -1,0 +1,39 @@
+ |- let compose = (fun f -> (fun g -> (fun x -> (f (g x))))) in let p = (fun x -> if x then 3 else 4) in let q = (fun x -> (x < 4)) in ((compose p) q) : (int -> int) by T-Let{
+      |-fun f -> (fun g -> (fun x -> (f (g x)))) :  ((int -> int) -> ((int -> int) -> (int -> int)))  by T-Fun{
+          f : (int -> int) |-fun g -> (fun x -> (f (g x))) :  ((int -> int) -> (int -> int))  by T-Fun{
+               f : (int -> int),g : (int -> int) |-fun x -> (f (g x)) :  (int -> int)  by T-Fun{
+                    f : (int -> int),g : (int -> int),x : int |- f (g x) :  int  by T-App{
+                         f : (int -> int),g : (int -> int),x : int |- f : (int -> int) by T-Var{};
+                         f : (int -> int),g : (int -> int),x : int |- g x :  int  by T-App{
+                              f : (int -> int),g : (int -> int),x : int |- g : (int -> int) by T-Var{};
+                              f : (int -> int),g : (int -> int),x : int |- x : int by T-Var{};
+                         };
+                    };
+               };
+          };
+     };
+     compose : ((int -> int) -> ((int -> int) -> (int -> int))) |- let p = (fun x -> if x then 3 else 4) in let q = (fun x -> (x < 4)) in ((compose p) q) : (int -> int) by T-Let{
+          compose : ((int -> int) -> ((int -> int) -> (int -> int))) |-fun x -> if x then 3 else 4 :  (bool -> int)  by T-Fun{
+               compose : ((int -> int) -> ((int -> int) -> (int -> int))),x : bool |- if x then 3 else 4: int by T-If{
+                    compose : ((int -> int) -> ((int -> int) -> (int -> int))),x : bool |- x : bool by T-Var{};
+                    compose : ((int -> int) -> ((int -> int) -> (int -> int))),x : bool |- 3 : int by T-Int{};
+                    compose : ((int -> int) -> ((int -> int) -> (int -> int))),x : bool |- 4 : int by T-Int{};
+               };
+          };
+          compose : ((int -> int) -> ((int -> int) -> (int -> int))),p : (bool -> int) |- let q = (fun x -> (x < 4)) in ((compose p) q) : (int -> int) by T-Let{
+               compose : ((int -> int) -> ((int -> int) -> (int -> int))),p : (bool -> int) |-fun x -> (x < 4) :  (int -> bool)  by T-Fun{
+                    compose : ((int -> int) -> ((int -> int) -> (int -> int))),p : (bool -> int),x : int |- x < 4 : bool by T-Lt{
+                         compose : ((int -> int) -> ((int -> int) -> (int -> int))),p : (bool -> int),x : int |- x : int by T-Var{};
+                         compose : ((int -> int) -> ((int -> int) -> (int -> int))),p : (bool -> int),x : int |- 4 : int by T-Int{};
+                    };
+               };
+               compose : ((int -> int) -> ((int -> int) -> (int -> int))),p : (bool -> int),q : (int -> bool) |- (compose p) q :  (int -> int)  by T-App{
+                    compose : ((int -> int) -> ((int -> int) -> (int -> int))),p : (bool -> int),q : (int -> bool) |- compose p :  ((int -> int) -> (int -> int))  by T-App{
+                         compose : ((int -> int) -> ((int -> int) -> (int -> int))),p : (bool -> int),q : (int -> bool) |- compose : ((int -> int) -> ((int -> int) -> (int -> int))) by T-Var{};
+                         compose : ((int -> int) -> ((int -> int) -> (int -> int))),p : (bool -> int),q : (int -> bool) |- p : (bool -> int) by T-Var{};
+                    };
+                    compose : ((int -> int) -> ((int -> int) -> (int -> int))),p : (bool -> int),q : (int -> bool) |- q : (int -> bool) by T-Var{};
+               };
+          };
+     };
+};

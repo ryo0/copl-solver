@@ -170,6 +170,16 @@ object typeRule {
         Map(argTypeVar -> argType) ++ getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(
           tr2
         )
+      case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2, t) =>
+        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
+      case TCons(typeEnv, e1, e2, tr1, tr2, t) =>
+        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
+      case TNil(typeEnv, t) =>
+        Map()
+      case TMatch(typeEnv, e1, e2, x, y, e3, tr1, tr2, tr3, t) =>
+        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2) ++ getTypeAnswerOfTypeVars(
+          tr3
+        )
     }
   }
 
@@ -273,8 +283,50 @@ object typeRule {
             tr2.substitute(typeAnswer),
             t.substitute(typeAnswer)
           )
-        case _ =>
-          this
+        case TApp(typeEnv, e1, e2, tr1, tr2, t) =>
+          TApp(
+            typeEnv.substitute(typeAnswer),
+            e1,
+            e2,
+            tr1.substitute(typeAnswer),
+            tr2.substitute(typeAnswer),
+            t.substitute(typeAnswer)
+          )
+        case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2, t) =>
+          TLetRec(
+            typeEnv.substitute(typeAnswer),
+            x,
+            y,
+            e1,
+            e2,
+            tr1.substitute(typeAnswer),
+            tr2.substitute(typeAnswer),
+            t.substitute(typeAnswer)
+          )
+        case TCons(typeEnv, e1, e2, tr1, tr2, t) =>
+          TCons(
+            typeEnv.substitute(typeAnswer),
+            e1,
+            e2,
+            tr1.substitute(typeAnswer),
+            tr2.substitute(typeAnswer),
+            t.substitute(typeAnswer)
+          )
+        case TNil(typeEnv, t) =>
+          TNil(typeEnv.substitute(typeAnswer), t.substitute(typeAnswer))
+        case TMatch(typeEnv, e1, e2, x, y, e3, tr1, tr2, tr3, t) =>
+          TMatch(
+            typeEnv.substitute(typeAnswer),
+            e1,
+            e2,
+            x,
+            y,
+            e3,
+            tr1.substitute(typeAnswer),
+            tr2.substitute(typeAnswer),
+            tr3.substitute(typeAnswer),
+            t.substitute(typeAnswer)
+          )
       }
     }
     def fillTypeVar(): TypeRule = {
