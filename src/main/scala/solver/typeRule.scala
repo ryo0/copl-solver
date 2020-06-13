@@ -2,6 +2,8 @@ package solver
 
 import parser.ast._
 
+import scala.collection.Iterable
+
 object typeRule {
   type Equations = List[Equation]
   case class Equation(left: MLType, right: MLType)
@@ -153,6 +155,21 @@ object typeRule {
     None
   }
 
+  def removeDuplicationOfTypeAnswer(typeAnswer: TypeAnswer): TypeAnswer = {
+    var result: List[(MLType, MLType)] = List()
+    var keys: Set[MLType] = Set()
+    typeAnswer.foreach { a =>
+      if (keys.contains(a._1)) {
+        if (!a._2.isInstanceOf[TypeVar]) {
+          result = result :+ (a._1, a._2)
+        }
+      } else {
+        keys = keys + a._1
+      }
+    }
+    result
+  }
+
   def fixTypeAnswer(typeAnswer: TypeAnswer): TypeAnswer = {
     var result: TypeAnswer = List()
     typeAnswer.foreach {
@@ -166,6 +183,12 @@ object typeRule {
         ()
     }
     result
+  }
+
+  def getTypeAnswer(typeRule: TypeRule): TypeAnswer = {
+    removeDuplicationOfTypeAnswer(
+      fixTypeAnswer(getTypeAnswerOfTypeVars(typeRule))
+    )
   }
 
   def getTypeAnswerOfTypeVars(typeRule: TypeRule): TypeAnswer = {
