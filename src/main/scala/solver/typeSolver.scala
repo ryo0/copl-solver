@@ -10,6 +10,7 @@ object typeSolver {
     val (t, _) = parseType(rest2)
     val solved = exp.typeSolve(typeEnv, t)
     val typeAnswer = getTypeAnswer(solved)
+    println(typeAnswer)
     solved.substitute(typeAnswer).fillTypeVar().string(0)
   }
 

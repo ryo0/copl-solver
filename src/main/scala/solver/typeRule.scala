@@ -246,19 +246,18 @@ object typeRule {
       case TVar(typeEnv, x, t) =>
         List()
       case TLet(typeEnv, x, e1, e2, tr1, tr2, t) =>
-        (tr2.mlType, t) :: getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(
+        (tr2.mlType, t) :: (t, tr2.mlType) :: getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(
           tr2
         )
       case TFun(typeEnv, x, e, tr1, t) =>
         val myType = t.asInstanceOf[MLFunType]
-        getTypeAnswerOfTypeVars(tr1) :+ (tr1.mlType, myType.body)
+        getTypeAnswerOfTypeVars(tr1) :+ (tr1.mlType, myType.body) :+ (myType.body, tr1.mlType)
       case TApp(typeEnv, e1, e2, tr1, tr2, t) =>
         val funType = tr1.mlType.asInstanceOf[MLFunType]
         val argTypeVar = funType.arg
         val argType = tr2.mlType
         val bodyTypeVar = funType.body
         val bodyType = t
-        println("TApp: ", argTypeVar, bodyTypeVar, argType, bodyType)
         List(
           (argTypeVar, argType),
           (bodyTypeVar, bodyType),
