@@ -59,13 +59,40 @@ class SolverTest extends FunSuite {
             (TypeVar("c"), TypeVar("x"))
           )
         )
-      ) ==
+      ).sortBy(a => a._1.string()) ==
         List(
           (TypeVar("x"), MLBoolType),
           (MLBoolType, MLBoolType),
           (TypeVar("a"), MLIntType),
           (TypeVar("c"), MLBoolType)
+        ).sortBy(a => a._1.string())
+    )
+    assert(
+      normalize(
+        List(
+          (TypeVar("x"), TypeVar("y")),
+          (TypeVar("a"), MLIntType),
+          (TypeVar("'x144"), TypeVar("'x158")),
+          (MLBoolType, MLBoolType),
+          (TypeVar("c"), TypeVar("x")),
+          (TypeVar("'x158"), TypeVar("'x144")),
+          (TypeVar("'x158"), TypeVar("'x158")),
+          (TypeVar("x"), MLBoolType),
+          (TypeVar("x"), TypeVar("z")),
+          (TypeVar("'x144"), TypeVar("'x144")),
+          (TypeVar("'x158"), MLFunType(MLIntType, MLIntType)),
+          (TypeVar("x"), TypeVar("z")),
+          (MLFunType(MLIntType, MLIntType), TypeVar("'x158")),
         )
+      ).sortBy(a => a._1.string()) === List(
+        (TypeVar("'x144"), MLFunType(MLIntType, MLIntType)),
+        (TypeVar("'x158"), MLFunType(MLIntType, MLIntType)),
+        (TypeVar("x"), MLBoolType),
+        (MLBoolType, MLBoolType),
+        (TypeVar("a"), MLIntType),
+        (TypeVar("c"), MLBoolType),
+        (MLFunType(MLIntType, MLIntType), TypeVar("'x158"))
+      ).sortBy(a => a._1.string())
     )
   }
   test("getAnswerRec") {
@@ -94,6 +121,37 @@ class SolverTest extends FunSuite {
           (TypeVar("c"), TypeVar("x"))
         )
       ) === Some(MLIntType)
+    )
+    assert(
+      getAnswerRec(
+        "'x144",
+        List(
+          (TypeVar("'x144"), TypeVar("'x158")),
+          (TypeVar("'x158"), TypeVar("'x144")),
+          (TypeVar("'x144"), TypeVar("'x144")),
+          (TypeVar("'x158"), MLFunType(MLIntType, MLIntType)),
+        )
+      ) === Some(MLFunType(MLIntType, MLIntType))
+    )
+    assert(
+      getAnswerRec(
+        "'x144",
+        List(
+          (TypeVar("x"), TypeVar("y")),
+          (TypeVar("a"), MLIntType),
+          (TypeVar("'x144"), TypeVar("'x158")),
+          (MLBoolType, MLBoolType),
+          (TypeVar("c"), TypeVar("x")),
+          (TypeVar("'x158"), TypeVar("'x144")),
+          (TypeVar("'x158"), TypeVar("'x158")),
+          (TypeVar("'x144"), TypeVar("'x144")),
+          (TypeVar("x"), MLBoolType),
+          (TypeVar("x"), TypeVar("z")),
+          (TypeVar("'x158"), MLFunType(MLIntType, MLIntType)),
+          (TypeVar("x"), TypeVar("z")),
+          (MLFunType(MLIntType, MLIntType), TypeVar("'x158")),
+        )
+      ) === Some(MLFunType(MLIntType, MLIntType))
     )
     assert(
       getAnswerRec(
