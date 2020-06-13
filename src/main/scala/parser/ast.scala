@@ -161,15 +161,7 @@ object ast {
             valueExp.typeSolve(typeEnv, valueExp.getTypeWithoutAnswer(typeEnv))
           val tr2 =
             inExp.typeSolve((variable.name, tr1.mlType) :: typeEnv, eqAnswer)
-          TLet(
-            typeEnv,
-            variable,
-            valueExp,
-            inExp,
-            tr1,
-            tr2,
-            this.getType(typeEnv, eqAnswer)
-          )
+          TLet(typeEnv, variable, valueExp, inExp, tr1, tr2, eqAnswer)
         case FunExp(param, body) =>
           val a = eqAnswer.asInstanceOf[MLFunType]
           val solvedBody =
@@ -180,7 +172,7 @@ object ast {
           val t2 = arg.getTypeWithoutAnswer(typeEnv)
           val tr1 = funName.typeSolve(typeEnv, t1)
           val tr2 = arg.typeSolve(typeEnv, t2)
-          TApp(typeEnv, funName, arg, tr1, tr2, t1.asInstanceOf[MLFunType].body)
+          TApp(typeEnv, funName, arg, tr1, tr2, eqAnswer)
         case LetRecExp(variable, RecFunExp(_, param, body), inExp) =>
           val xType = variable.getTypeWithoutAnswer(typeEnv)
           val yType = param.getTypeWithoutAnswer(typeEnv)

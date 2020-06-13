@@ -5,7 +5,21 @@ import parser.ast._
 object typeRule {
   type Equations = List[Equation]
   case class Equation(left: MLType, right: MLType)
-  type TypeAnswer = Map[MLType, MLType]
+  type TypeAnswer = List[(MLType, MLType)]
+
+  def getTypeFromTypeAnswer(key: String,
+                            typeAnswer: TypeAnswer): Option[MLType] = {
+    for (e <- typeAnswer) {
+      e._1 match {
+        case typeVar: TypeVar =>
+          if (key == typeVar.name) {
+            return Some(e._2)
+          }
+        case _ =>
+      }
+    }
+    None
+  }
 
   implicit class Unification(E: Equations) {
     def substitute(typeAnswer: TypeAnswer): Equations = {
@@ -20,7 +34,7 @@ object typeRule {
     def unify(): TypeAnswer = {
       E.distinct match {
         case List() =>
-          Map()
+          List()
         case Equation(MLFunType(t11, t12), MLFunType(t21, t22)) :: eqs =>
           (Equation(t11, t21) :: Equation(t12, t22) :: eqs).unify()
         case Equation(MLListType(t1), MLListType(t2)) :: eqs =>
@@ -31,20 +45,19 @@ object typeRule {
           } else {
             (left, right) match {
               case (TypeVar(n), right) =>
-                val ta: TypeAnswer = Map(TypeVar(n) -> right)
+                val ta: TypeAnswer = List((TypeVar(n), right))
                 val s = eqs.substitute(ta).unify()
-                s + (TypeVar(n) -> right.substitute(s))
+                s :+ (TypeVar(n), right.substitute(s))
               case (left, TypeVar(n)) =>
-                val ta: TypeAnswer = Map(TypeVar(n) -> left)
+                val ta: TypeAnswer = List((TypeVar(n), left))
                 val s = eqs.substitute(ta).unify()
-                s + (TypeVar(n) -> left.substitute(s))
+                s :+ (TypeVar(n) -> left.substitute(s))
             }
           }
       }
     }
   }
   def typeVarToString(name: String, typeEnv: TypeEnv): String = {
-    println(typeEnv)
     val result = getTypeFromTypeEnv(name, typeEnv)
     result match {
       case Some(r) =>
@@ -82,7 +95,7 @@ object typeRule {
     def substitute(typeAnswer: TypeAnswer): MLType = {
       this match {
         case TypeVar(n) => {
-          val result = typeAnswer.get(TypeVar(n))
+          val result = getTypeFromTypeAnswer(n, typeAnswer)
           result match {
             case Some(r) =>
               r
@@ -140,12 +153,27 @@ object typeRule {
     None
   }
 
+  def fixTypeAnswer(typeAnswer: TypeAnswer): TypeAnswer = {
+    var result: TypeAnswer = List()
+    typeAnswer.foreach {
+      case (MLFunType(a1, b1), MLFunType(a2, b2)) =>
+        result :::= fixTypeAnswer(List((a1, a2), (b1, b2)))
+      case (MLListType(lst1), MLListType(lst2)) =>
+        result :::= fixTypeAnswer(List((lst1, lst2)))
+      case (first1, first2) =>
+        result :::= List((first1, first2))
+      case _ =>
+        ()
+    }
+    result
+  }
+
   def getTypeAnswerOfTypeVars(typeRule: TypeRule): TypeAnswer = {
     typeRule match {
       case TInt(typeEnv, i) =>
-        Map()
+        List()
       case TBool(typeEnv, b) =>
-        Map()
+        List()
       case TPlus(typeEnv, e1, e2, tr1, tr2) =>
         getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
       case TMinus(typeEnv, e1, e2, tr1, tr2) =>
@@ -159,25 +187,28 @@ object typeRule {
           tr3
         )
       case TVar(typeEnv, x, t) =>
-        Map()
+        List()
       case TLet(typeEnv, x, e1, e2, tr1, tr2, t) =>
         getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
       case TFun(typeEnv, x, e, tr1, t) =>
-        getTypeAnswerOfTypeVars(tr1)
+        val myType = t.asInstanceOf[MLFunType]
+        getTypeAnswerOfTypeVars(tr1) :+ (tr1.mlType, myType.body)
       case TApp(typeEnv, e1, e2, tr1, tr2, t) =>
         val argTypeVar = tr1.mlType.asInstanceOf[MLFunType].arg
         val argType = tr2.mlType
-        Map(argTypeVar -> argType) ++ getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(
-          tr2
-        )
+        val bodyTypeVar = tr1.mlType.asInstanceOf[MLFunType].body
+        val bodyType = t
+        List((argTypeVar, argType), (bodyTypeVar, bodyType)) ::: getTypeAnswerOfTypeVars(
+          tr1
+        ) ::: getTypeAnswerOfTypeVars(tr2)
       case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2, t) =>
-        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
+        getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(tr2)
       case TCons(typeEnv, e1, e2, tr1, tr2, t) =>
-        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2)
+        getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(tr2)
       case TNil(typeEnv, t) =>
-        Map()
+        List()
       case TMatch(typeEnv, e1, e2, x, y, e3, tr1, tr2, tr3, t) =>
-        getTypeAnswerOfTypeVars(tr1) ++ getTypeAnswerOfTypeVars(tr2) ++ getTypeAnswerOfTypeVars(
+        getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(tr2) ::: getTypeAnswerOfTypeVars(
           tr3
         )
     }

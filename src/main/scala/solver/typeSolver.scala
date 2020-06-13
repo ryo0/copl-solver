@@ -9,13 +9,14 @@ object typeSolver {
     val (exp, rest2) = parseExp(rest1)
     val (t, _) = parseType(rest2)
     val solved = exp.typeSolve(typeEnv, t)
-    val typeAnswer = getTypeAnswerOfTypeVars(solved)
-    solved.substitute(typeAnswer).fillTypeVar().string(0)
+    solved.string(0)
+    val typeAnswer = fixTypeAnswer(getTypeAnswerOfTypeVars(solved))
+    println(typeAnswer)
+    solved.substitute(typeAnswer).string(0)
   }
   def typeExtract(string: String): String = {
     val exp = parser.parser.parseExp(tokenize(string))._1
     val result = exp.typeExtract(List())
-    println(result._1.unify())
     result._1.toString() + result._2.toString
   }
 
