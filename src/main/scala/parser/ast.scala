@@ -144,24 +144,16 @@ object ast {
           val tr1 = condExp.typeSolve(typeEnv, MLBoolType)
           val tr2 = thenExp.typeSolve(typeEnv, eqAnswer)
           val tr3 = elseExp.typeSolve(typeEnv, eqAnswer)
-          TIf(
-            typeEnv,
-            condExp,
-            thenExp,
-            elseExp,
-            tr1,
-            tr2,
-            tr3,
-            this.getType(typeEnv, eqAnswer)
-          )
+          TIf(typeEnv, condExp, thenExp, elseExp, tr1, tr2, tr3, eqAnswer)
         case Var(n) =>
-          TVar(typeEnv, Var(n), this.getType(typeEnv, eqAnswer))
+          TVar(typeEnv, Var(n), eqAnswer)
         case LetExp(variable, valueExp, inExp) =>
+          val t = this.getType(typeEnv, eqAnswer)
           val tr1 =
             valueExp.typeSolve(typeEnv, valueExp.getTypeWithoutAnswer(typeEnv))
           val tr2 =
-            inExp.typeSolve((variable.name, tr1.mlType) :: typeEnv, eqAnswer)
-          TLet(typeEnv, variable, valueExp, inExp, tr1, tr2, eqAnswer)
+            inExp.typeSolve((variable.name, tr1.mlType) :: typeEnv, t)
+          TLet(typeEnv, variable, valueExp, inExp, tr1, tr2, t)
         case FunExp(param, body) =>
           val a = eqAnswer.asInstanceOf[MLFunType]
           val solvedBody =
@@ -181,33 +173,16 @@ object ast {
             eqAnswer
           )
           val tr2 = inExp.typeSolve((variable.name, xType) :: typeEnv, eqAnswer)
-          TLetRec(
-            typeEnv,
-            variable,
-            param,
-            body,
-            inExp,
-            tr1,
-            tr2,
-            this.getType(typeEnv, eqAnswer)
-          )
+          TLetRec(typeEnv, variable, param, body, inExp, tr1, tr2, eqAnswer)
         case EList(left, right) =>
-          val t = this.getType(typeEnv, eqAnswer)
           val a = eqAnswer.asInstanceOf[MLListType]
           val tr1 = left.typeSolve(typeEnv, a.lst)
           right match {
             case EmptyList =>
-              TCons(typeEnv, left, right, tr1, TNil(typeEnv, t), t)
+              TCons(typeEnv, left, right, tr1, TNil(typeEnv, a), a)
             case _ =>
               val tr2 = right.typeSolve(typeEnv, a)
-              TCons(
-                typeEnv,
-                left,
-                right,
-                tr1,
-                tr2,
-                this.getType(typeEnv, eqAnswer)
-              )
+              TCons(typeEnv, left, right, tr1, tr2, a)
           }
         case Match(e1: Var, patterns: List[Pattern]) =>
           patterns match {
@@ -230,7 +205,7 @@ object ast {
                 tr1,
                 tr2,
                 tr3,
-                this.getType(typeEnv, eqAnswer)
+                eqAnswer
               )
             case _ =>
               throw new Exception("構文エラー")

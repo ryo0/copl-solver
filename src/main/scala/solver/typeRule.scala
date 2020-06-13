@@ -2,8 +2,6 @@ package solver
 
 import parser.ast._
 
-import scala.collection.Iterable
-
 object typeRule {
   type Equations = List[Equation]
   case class Equation(left: MLType, right: MLType)
@@ -173,6 +171,38 @@ object typeRule {
     result
   }
 
+  def normalize(answer: TypeAnswer): TypeAnswer = {
+    val a = removeDuplicationOfTypeAnswer(answer)
+    a match {
+      case (TypeVar(n), TypeVar(m)) :: rest =>
+        (TypeVar(n), getAnswerRec(m, answer).get) :: normalize(rest)
+      case first :: rest =>
+        first :: normalize(rest)
+      case _ =>
+        List()
+    }
+  }
+
+  def removeFromAnswer(n: String, m: String, answer: TypeAnswer): TypeAnswer = {
+    answer.filter(a => !(a._1 == TypeVar(n) && a._2 == TypeVar(m)))
+  }
+
+  def getAnswerRec(n: String, answer: TypeAnswer): Option[MLType] = {
+    getTypeFromTypeAnswer(n, answer) match {
+      case Some(TypeVar(m)) =>
+        getAnswerRec(m, removeFromAnswer(n, m, answer)) match {
+          case Some(r) =>
+            Some(r)
+          case None =>
+            getAnswerRec(n, removeFromAnswer(n, m, answer))
+        }
+      case Some(r) =>
+        Some(r)
+      case None =>
+        None
+    }
+  }
+
   def fixTypeAnswer(typeAnswer: TypeAnswer): TypeAnswer = {
     var result: TypeAnswer = List()
     typeAnswer.foreach {
@@ -189,9 +219,7 @@ object typeRule {
   }
 
   def getTypeAnswer(typeRule: TypeRule): TypeAnswer = {
-    removeDuplicationOfTypeAnswer(
-      fixTypeAnswer(getTypeAnswerOfTypeVars(typeRule))
-    )
+    normalize(fixTypeAnswer(getTypeAnswerOfTypeVars(typeRule)))
   }
 
   def getTypeAnswerOfTypeVars(typeRule: TypeRule): TypeAnswer = {
@@ -222,16 +250,14 @@ object typeRule {
         val myType = t.asInstanceOf[MLFunType]
         getTypeAnswerOfTypeVars(tr1) :+ (tr1.mlType, myType.body)
       case TApp(typeEnv, e1, e2, tr1, tr2, t) =>
-        val argTypeVar = tr1.mlType.asInstanceOf[MLFunType].arg
+        val funType = tr1.mlType.asInstanceOf[MLFunType]
+        val argTypeVar = funType.arg
         val argType = tr2.mlType
-        val bodyTypeVar = tr1.mlType.asInstanceOf[MLFunType].body
+        val bodyTypeVar = funType.body
         val bodyType = t
-        List(
-          (argTypeVar, argType),
-          (bodyTypeVar, bodyType),
-          (argType, argTypeVar),
-          (bodyType, bodyTypeVar)
-        ) ::: getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(tr2)
+        List((argTypeVar, argType), (bodyTypeVar, bodyType)) ::: getTypeAnswerOfTypeVars(
+          tr1
+        ) ::: getTypeAnswerOfTypeVars(tr2)
       case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2, t) =>
         getTypeAnswerOfTypeVars(tr1) ::: getTypeAnswerOfTypeVars(tr2)
       case TCons(typeEnv, e1, e2, tr1, tr2, t) =>

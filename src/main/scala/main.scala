@@ -129,13 +129,26 @@ object Main {
     )
     file818.close()
 
-    val file819 = new PrintWriter("TypingML4Result/19.txt")
-    file819.write(
-      typeSolveWithEnvAndType(
-        "|- let s = fun f -> fun g -> fun x -> f x (g x) in\n   let k1 = fun x -> fun y -> x in\n   let k2 = fun x -> fun y -> x in\n   s k1 k2 (fun x -> x + 1) : int -> int"
-      )
-    )
-    file819.close()
+//    val file819 = new PrintWriter("TypingML4Result/19.txt")
+//    file819.write(
+//      typeSolveWithEnvAndType(
+//        "|- let s = fun f -> fun g -> fun x -> f x (g x) in\n   let k1 = fun x -> fun y -> x in\n   let k2 = fun x -> fun y -> x in\n   s k1 k2 (fun x -> x + 1) : int -> int"
+//      )
+//    )
+//    file819.close()
+//
+//    val fileDemo2 = new PrintWriter("TypingML4Result/demo2.txt")
+//    fileDemo2.write(
+//      typeSolveWithEnvAndType(
+//        "|- let s = fun f -> fun g -> fun x -> f x (g x) in s : ('a -> 'b -> 'c) -> ('a -> 'b) -> 'a -> 'c "
+//      )
+//    )
+//    fileDemo2.close()
+//
+//    val s = "let s = fun f -> fun g -> fun x -> f x (g x) in s "
+//    val t = tokenizer.tokenizer.tokenize(s)
+//    val p = parser.parser.parseExp(t)._1
+//    println(p.getTypeWithoutAnswer(List()).string())
 
     //  val file820 = new PrintWriter("TypingML4Result/4.txt")
     //  file820.write(typeSolveWithEnvAndType("let x = 3 < 2 in let y = 5 in if x then y else 2"))

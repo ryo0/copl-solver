@@ -34,14 +34,79 @@ class SolverTest extends FunSuite {
           (TypeVar("x"), MLBoolType),
           (TypeVar("x"), TypeVar("z")),
           (TypeVar("a"), MLIntType),
-          (MLBoolType, MLBoolType)
+          (MLBoolType, MLBoolType),
+          (TypeVar("c"), TypeVar("x"))
         )
       ) ==
         List(
           (TypeVar("x"), MLBoolType),
           (MLBoolType, MLBoolType),
-          (TypeVar("a"), MLIntType)
+          (TypeVar("a"), MLIntType),
+          (TypeVar("c"), MLBoolType)
         )
+    )
+  }
+  test("normalize") {
+    assert(
+      normalize(
+        fixTypeAnswer(
+          List(
+            (TypeVar("x"), TypeVar("y")),
+            (TypeVar("x"), MLBoolType),
+            (TypeVar("x"), TypeVar("z")),
+            (TypeVar("a"), MLIntType),
+            (MLBoolType, MLBoolType),
+            (TypeVar("c"), TypeVar("x"))
+          )
+        )
+      ) ==
+        List(
+          (TypeVar("x"), MLBoolType),
+          (MLBoolType, MLBoolType),
+          (TypeVar("a"), MLIntType),
+          (TypeVar("c"), MLBoolType)
+        )
+    )
+  }
+  test("getAnswerRec") {
+    assert(
+      getAnswerRec(
+        "x",
+        List(
+          (TypeVar("x"), TypeVar("y")),
+          (TypeVar("x"), MLBoolType),
+          (TypeVar("x"), TypeVar("z")),
+          (TypeVar("a"), MLIntType),
+          (MLBoolType, MLBoolType),
+          (TypeVar("c"), TypeVar("x"))
+        )
+      ) === Some(MLBoolType)
+    )
+    assert(
+      getAnswerRec(
+        "a",
+        List(
+          (TypeVar("x"), TypeVar("y")),
+          (TypeVar("x"), MLBoolType),
+          (TypeVar("x"), TypeVar("z")),
+          (TypeVar("a"), MLIntType),
+          (MLBoolType, MLBoolType),
+          (TypeVar("c"), TypeVar("x"))
+        )
+      ) === Some(MLIntType)
+    )
+    assert(
+      getAnswerRec(
+        "c",
+        List(
+          (TypeVar("x"), TypeVar("y")),
+          (TypeVar("x"), MLBoolType),
+          (TypeVar("x"), TypeVar("z")),
+          (TypeVar("a"), MLIntType),
+          (MLBoolType, MLBoolType),
+          (TypeVar("c"), TypeVar("x"))
+        )
+      ) === Some(MLBoolType)
     )
   }
 }
