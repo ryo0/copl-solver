@@ -172,10 +172,9 @@ object typeRule {
   }
 
   def normalize(answer: TypeAnswer): TypeAnswer = {
-    val ans = removeDuplicationOfTypeAnswer(answer)
-    ans.map {
+    removeDuplicationOfTypeAnswer(answer.map {
       case (TypeVar(n), other) =>
-        getAnswerRec(n, ans) match {
+        getAnswerRec(n, answer) match {
           case Some(r) =>
             (TypeVar(n), r)
           case None =>
@@ -183,7 +182,7 @@ object typeRule {
         }
       case (a, b) =>
         (a, b)
-    }
+    })
   }
 
   def removeFromAnswer(n: String, m: String, answer: TypeAnswer): TypeAnswer = {

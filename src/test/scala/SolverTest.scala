@@ -63,56 +63,56 @@ class SolverTest extends FunSuite {
     )
   }
   test("normalize") {
-//    assert(
-//      normalize(
-//        fixTypeAnswer(
-//          List(
-//            (TypeVar("x"), TypeVar("y")),
-//            (TypeVar("x"), MLBoolType),
-//            (TypeVar("x"), TypeVar("z")),
-//            (TypeVar("a"), MLIntType),
-//            (MLBoolType, MLBoolType),
-//            (TypeVar("c"), TypeVar("x"))
-//          )
-//        )
-//      ).sortBy(a => a._1.string()) ==
-//        List(
-//          (TypeVar("x"), MLBoolType),
-//          (MLBoolType, MLBoolType),
-//          (TypeVar("a"), MLIntType),
-//          (TypeVar("c"), MLBoolType)
-//        ).sortBy(a => a._1.string())
-//    )
-//    assert(
-//      normalize(
-//        List(
-//          (TypeVar("x"), TypeVar("y")),
-//          (TypeVar("a"), MLIntType),
-//          (TypeVar("'x144"), TypeVar("'x")),
-//          (MLBoolType, MLBoolType),
-//          (TypeVar("c"), TypeVar("x")),
-//          (TypeVar("'x"), TypeVar("'x144")),
-//          (TypeVar("'x"), TypeVar("'x")),
-//          (TypeVar("x"), MLBoolType),
-//          (TypeVar("x"), TypeVar("z")),
-//          (TypeVar("'x144"), TypeVar("'x144")),
-//          (TypeVar("'x"), MLFunType(MLIntType, MLIntType)),
-//          (TypeVar("x"), TypeVar("z")),
-//          (MLFunType(MLIntType, MLIntType), TypeVar("'x")),
-//          (TypeVar("'x144"), TypeVar("'x166")),
-//          (TypeVar("'x166"), TypeVar("'x144")),
-//        )
-//      ).sortBy(a => a._1.string()) === List(
-//        (TypeVar("'x144"), MLFunType(MLIntType, MLIntType)),
-//        (TypeVar("'x166"), MLFunType(MLIntType, MLIntType)),
-//        (TypeVar("'x"), MLFunType(MLIntType, MLIntType)),
-//        (TypeVar("x"), MLBoolType),
-//        (MLBoolType, MLBoolType),
-//        (TypeVar("a"), MLIntType),
-//        (TypeVar("c"), MLBoolType),
-//        (MLFunType(MLIntType, MLIntType), TypeVar("'x"))
-//      ).sortBy(a => a._1.string())
-//    )
+    assert(
+      normalize(
+        fixTypeAnswer(
+          List(
+            (TypeVar("x"), TypeVar("y")),
+            (TypeVar("x"), MLBoolType),
+            (TypeVar("x"), TypeVar("z")),
+            (TypeVar("a"), MLIntType),
+            (MLBoolType, MLBoolType),
+            (TypeVar("c"), TypeVar("x"))
+          )
+        )
+      ).sortBy(a => a._1.string()) ==
+        List(
+          (TypeVar("x"), MLBoolType),
+          (MLBoolType, MLBoolType),
+          (TypeVar("a"), MLIntType),
+          (TypeVar("c"), MLBoolType)
+        ).sortBy(a => a._1.string())
+    )
+    assert(
+      normalize(
+        List(
+          (TypeVar("x"), TypeVar("y")),
+          (TypeVar("a"), MLIntType),
+          (TypeVar("'x144"), TypeVar("'x")),
+          (MLBoolType, MLBoolType),
+          (TypeVar("c"), TypeVar("x")),
+          (TypeVar("'x"), TypeVar("'x144")),
+          (TypeVar("'x"), TypeVar("'x")),
+          (TypeVar("x"), MLBoolType),
+          (TypeVar("x"), TypeVar("z")),
+          (TypeVar("'x144"), TypeVar("'x144")),
+          (TypeVar("'x"), MLFunType(MLIntType, MLIntType)),
+          (TypeVar("x"), TypeVar("z")),
+          (MLFunType(MLIntType, MLIntType), TypeVar("'x")),
+          (TypeVar("'x144"), TypeVar("'x166")),
+          (TypeVar("'x166"), TypeVar("'x144")),
+        )
+      ).sortBy(a => a._1.string()) === List(
+        (TypeVar("'x144"), MLFunType(MLIntType, MLIntType)),
+        (TypeVar("'x166"), MLFunType(MLIntType, MLIntType)),
+        (TypeVar("'x"), MLFunType(MLIntType, MLIntType)),
+        (TypeVar("x"), MLBoolType),
+        (MLBoolType, MLBoolType),
+        (TypeVar("a"), MLIntType),
+        (TypeVar("c"), MLBoolType),
+        (MLFunType(MLIntType, MLIntType), TypeVar("'x"))
+      ).sortBy(a => a._1.string())
+    )
     assert {
       normalize(
         List(
