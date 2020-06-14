@@ -300,12 +300,6 @@ object typeRule {
         val argType = tr2.mlType
         val bodyTypeVar = funType.body
         val bodyType = t
-        println(
-          (argTypeVar, argType),
-          (bodyTypeVar, bodyType),
-          (argType, argTypeVar),
-          (bodyType, bodyTypeVar)
-        )
         List(
           (argTypeVar, argType),
           (bodyTypeVar, bodyType),
