@@ -55,6 +55,7 @@ object ast {
           getTypeFromTypeEnv(n, typeEnv) match {
             case Some(r) => (List(), r)
             case _ =>
+              println(n, typeEnv)
               throw new Exception("envにkeyがない")
           }
         case InfixExp(e1, op, e2) =>
@@ -97,6 +98,13 @@ object ast {
           val (eq2, t2) = inExp.typeExtract((variable.name, a1) :: typeEnv)
           val eq3 = Equation(a1, MLFunType(a2, t1)) :: eq1 ::: eq2
           (eq3, t2)
+        case RecFunExp(variable, param, body) =>
+          val a1 = newTypeVar()
+          val a2 = newTypeVar()
+          val (eq1, t1) =
+            body.typeExtract((variable.name, a1) :: (param.name, a2) :: typeEnv)
+          val eq2 = Equation(a1, MLFunType(a2, t1)) :: eq1
+          (eq2, a1)
         case EmptyList =>
           val a = newTypeVar()
           (List(), MLListType(a))
@@ -165,12 +173,14 @@ object ast {
           val tr1 = funName.typeSolve(typeEnv, t1)
           val tr2 = arg.typeSolve(typeEnv, t2)
           TApp(typeEnv, funName, arg, tr1, tr2, t1.asInstanceOf[MLFunType].body)
-        case LetRecExp(variable, RecFunExp(_, param, body), inExp) =>
-          val xType = variable.getTypeWithoutAnswer(typeEnv)
-          val yType = param.getTypeWithoutAnswer(typeEnv)
+        case LetRecExp(variable, RecFunExp(v, param, body), inExp) =>
+          val xType = RecFunExp(v, param, body)
+            .getTypeWithoutAnswer(typeEnv)
+            .asInstanceOf[MLFunType]
+          val yType = xType.arg
           val tr1 = body.typeSolve(
-            (variable.name, xType) :: (param.name, yType) :: typeEnv,
-            eqAnswer
+            (param.name, yType) :: (variable.name, xType) :: typeEnv,
+            xType.body
           )
           val tr2 = inExp.typeSolve((variable.name, xType) :: typeEnv, eqAnswer)
           TLetRec(typeEnv, variable, param, body, inExp, tr1, tr2, eqAnswer)
