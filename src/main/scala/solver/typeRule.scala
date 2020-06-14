@@ -191,18 +191,61 @@ object typeRule {
   }
 
   def getAnswerRec(n: String, answer: TypeAnswer): Option[MLType] = {
+//    input例
+//    n = 158
+//    answer = List(
+//      (TypeVar("x158"), TypeVar("x180")),
+//      (TypeVar("a"), MLIntType),
+//      (TypeVar("x180"), TypeVar("x158")),
+//      (MLBoolType, MLBoolType),
+//      (TypeVar("x172"), TypeVar("x158")),
+//      (TypeVar("x158"), TypeVar("x172")),
+//      (TypeVar("x158"), TypeVar("x158")),
+//      (TypeVar("x"), MLBoolType),
+//      (TypeVar("x158"), TypeVar("x158")),
+//      (TypeVar("x144"), TypeVar("x144")),
+//      (TypeVar("x172"), MLFunType(MLIntType, MLIntType)),
+//      (TypeVar("x"), TypeVar("z")),
+//      (MLFunType(MLIntType, MLIntType), TypeVar("'x")),
+//      (TypeVar("x144"), TypeVar("x166")),
+//      (TypeVar("x166"), TypeVar("x144")))
+//     output = MLFunType(MLIntType, MLIntType)
+//    158 -> 180を取得
+//    再帰呼び出し
+//    180 -> 158を取得
+//    158, 158なので1つ消して180でリトライ
+//    180に158以外が出てくるか→
+//    TypeVarかつ158以外が出てきたよ→今度はそいつをキーにしてリトライ
+//    TypeVarじゃないのが出てきたよ→それが答え
+//    158 -> 158
+//    158, 158なので消してリトライ
+//    158 -> 172
+//    172キーにしてリトライして158以外が出てくるか→
+//    TypeVarかつ158以外が出てきたよ→今度はそいつをキーにしてリトライ
+//    TypeVarじゃないのが出てきたよ→それが答え
+//    158 -> None -> 全体Noneで終わり
     getTypeFromTypeAnswer(n, answer) match {
       case Some(TypeVar(m)) =>
-        getAnswerRec(m, removeFromAnswer(n, m, answer)) match {
-          case Some(r) =>
-            Some(r)
-          case None =>
-            getAnswerRec(n, removeFromAnswer(n, m, answer))
+        val ans2 = removeFromAnswer(n, m, answer)
+        if (n == m) {
+          getAnswerRec(n, ans2)
+        } else {
+          getAnswerRec(m, ans2) match {
+            case Some(TypeVar(l)) =>
+              val ans3 = removeFromAnswer(m, l, ans2)
+              if (n == l) {
+                getAnswerRec(m, ans3)
+              } else {
+                getAnswerRec(l, ans3)
+              }
+            case Some(r) =>
+              Some(r)
+            case None =>
+              getAnswerRec(n, ans2)
+          }
         }
-      case Some(r) =>
-        Some(r)
-      case None =>
-        None
+      case other =>
+        other
     }
   }
 
@@ -222,6 +265,9 @@ object typeRule {
   }
 
   def getTypeAnswer(typeRule: TypeRule): TypeAnswer = {
+    println("unfixed:", getTypeAnswerOfTypeVars(typeRule))
+
+    println("fixed:", fixTypeAnswer(getTypeAnswerOfTypeVars(typeRule)))
     println(
       "normalized:",
       normalize(fixTypeAnswer(getTypeAnswerOfTypeVars(typeRule)))
