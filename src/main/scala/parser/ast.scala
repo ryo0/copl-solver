@@ -439,7 +439,12 @@ object ast {
         case EmptyList =>
           s"[]"
         case Pattern(left, right) =>
-          s"| ${left.string} -> ${right.string} "
+          val leftS = left.string
+          if (leftS.head == '(') {
+            s"| ${left.string.dropRight(1).drop(1)} -> ${right.string} "
+          } else {
+            s"| ${left.string} -> ${right.string} "
+          }
         case Match(v, patterns) =>
           s"match ${v.string} with " + patterns
             .map(p => p.string)

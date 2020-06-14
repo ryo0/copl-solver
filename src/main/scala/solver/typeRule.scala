@@ -523,6 +523,17 @@ object typeRule {
             tr2.fillTypeVar(),
             t.fillTypeVar()
           )
+        case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2, t) =>
+          TLetRec(
+            typeEnv.fillTypeVar(),
+            x,
+            y,
+            e1,
+            e2,
+            tr1.fillTypeVar(),
+            tr2.fillTypeVar(),
+            t.fillTypeVar()
+          )
         case TFun(typeEnv, x, e, tr1, t) =>
           TFun(
             typeEnv.fillTypeVar(),
@@ -540,8 +551,30 @@ object typeRule {
             tr2.fillTypeVar(),
             t.fillTypeVar()
           )
-        case _ =>
-          this
+        case TCons(typeEnv, e1, e2, tr1, tr2, t) =>
+          TCons(
+            typeEnv.fillTypeVar(),
+            e1,
+            e2,
+            tr1.fillTypeVar(),
+            tr2.fillTypeVar(),
+            t.fillTypeVar()
+          )
+        case TNil(typeEnv, t) =>
+          TNil(typeEnv.fillTypeVar(), t.fillTypeVar())
+        case TMatch(typeEnv, e1, e2, x, y, e3, tr1, tr2, tr3, t) =>
+          TMatch(
+            typeEnv.fillTypeVar(),
+            e1,
+            e2,
+            x,
+            y,
+            e3,
+            tr1.fillTypeVar(),
+            tr2.fillTypeVar(),
+            tr3.fillTypeVar(),
+            t.fillTypeVar()
+          )
       }
     }
 
