@@ -82,7 +82,7 @@ object typeRule {
     def fillTypeVar(): MLType = {
       this match {
         case TypeVar(n) => {
-          MLIntType
+          MLBoolType
         }
         case MLIntType  => MLIntType
         case MLBoolType => MLBoolType

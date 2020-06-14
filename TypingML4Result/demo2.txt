@@ -1,19 +1,19 @@
- |- let s = (fun f -> (fun g -> (fun x -> ((f x) (g x))))) in s : ((int -> (int -> int)) -> ((int -> int) -> (int -> int))) by T-Let{
-      |-fun f -> (fun g -> (fun x -> ((f x) (g x)))) :  ((int -> (int -> int)) -> ((int -> int) -> (int -> int)))  by T-Fun{
-          f : (int -> (int -> int)) |-fun g -> (fun x -> ((f x) (g x))) :  ((int -> int) -> (int -> int))  by T-Fun{
-               f : (int -> (int -> int)),g : (int -> int) |-fun x -> ((f x) (g x)) :  (int -> int)  by T-Fun{
-                    f : (int -> (int -> int)),g : (int -> int),x : int |- (f x) (g x) :  int  by T-App{
-                         f : (int -> (int -> int)),g : (int -> int),x : int |- f x :  (int -> int)  by T-App{
-                              f : (int -> (int -> int)),g : (int -> int),x : int |- f : (int -> (int -> int)) by T-Var{};
-                              f : (int -> (int -> int)),g : (int -> int),x : int |- x : int by T-Var{};
+ |- let s = (fun f -> (fun g -> (fun x -> ((f x) (g x))))) in s : ((bool -> (bool -> bool)) -> ((bool -> bool) -> (bool -> bool))) by T-Let{
+      |-fun f -> (fun g -> (fun x -> ((f x) (g x)))) :  ((bool -> (bool -> bool)) -> ((bool -> bool) -> (bool -> bool)))  by T-Fun{
+          f : (bool -> (bool -> bool)) |-fun g -> (fun x -> ((f x) (g x))) :  ((bool -> bool) -> (bool -> bool))  by T-Fun{
+               f : (bool -> (bool -> bool)),g : (bool -> bool) |-fun x -> ((f x) (g x)) :  (bool -> bool)  by T-Fun{
+                    f : (bool -> (bool -> bool)),g : (bool -> bool),x : bool |- (f x) (g x) :  bool  by T-App{
+                         f : (bool -> (bool -> bool)),g : (bool -> bool),x : bool |- f x :  (bool -> bool)  by T-App{
+                              f : (bool -> (bool -> bool)),g : (bool -> bool),x : bool |- f : (bool -> (bool -> bool)) by T-Var{};
+                              f : (bool -> (bool -> bool)),g : (bool -> bool),x : bool |- x : bool by T-Var{};
                          };
-                         f : (int -> (int -> int)),g : (int -> int),x : int |- g x :  int  by T-App{
-                              f : (int -> (int -> int)),g : (int -> int),x : int |- g : (int -> int) by T-Var{};
-                              f : (int -> (int -> int)),g : (int -> int),x : int |- x : int by T-Var{};
+                         f : (bool -> (bool -> bool)),g : (bool -> bool),x : bool |- g x :  bool  by T-App{
+                              f : (bool -> (bool -> bool)),g : (bool -> bool),x : bool |- g : (bool -> bool) by T-Var{};
+                              f : (bool -> (bool -> bool)),g : (bool -> bool),x : bool |- x : bool by T-Var{};
                          };
                     };
                };
           };
      };
-     s : ((int -> (int -> int)) -> ((int -> int) -> (int -> int))) |- s : ((int -> (int -> int)) -> ((int -> int) -> (int -> int))) by T-Var{};
+     s : ((bool -> (bool -> bool)) -> ((bool -> bool) -> (bool -> bool))) |- s : ((bool -> (bool -> bool)) -> ((bool -> bool) -> (bool -> bool))) by T-Var{};
 };
