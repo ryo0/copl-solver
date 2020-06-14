@@ -223,6 +223,8 @@ object ast {
             case _ =>
               throw new Exception("構文エラー")
           }
+        case EmptyList =>
+          TNil(typeEnv, eqAnswer)
       }
     }
     def solve(env: Env): Rule = {

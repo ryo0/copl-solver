@@ -183,20 +183,36 @@ object Main {
     )
     file823.close()
 
-    //  val file824 = new PrintWriter("TypingML4Result/4.txt")
-    //  file824.write(typeSolveWithEnvAndType("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-    //  file824.close()
-    //
-    //  val file825 = new PrintWriter("TypingML4Result/4.txt")
-    //  file825.write(typeSolveWithEnvAndType("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-    //  file825.close()
-    //
-    //  val file826 = new PrintWriter("TypingML4Result/4.txt")
-    //  file826.write(typeSolveWithEnvAndType("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-    //  file826.close()
-    //
-    //  val file827 = new PrintWriter("TypingML4Result/4.txt")
-    //  file827.write(typeSolveWithEnvAndType("let x = 3 < 2 in let y = 5 in if x then y else 2"))
-    //  file827.close()
+    val file824 = new PrintWriter("TypingML4Result/24.txt")
+    file824.write(
+      typeSolveWithEnvAndType(
+        "|- let rec length = fun l -> match l with [] -> 0 | x :: y -> 1 + length y in\n    length ((fun x -> x) :: (fun y -> y + 3) :: []) : int"
+      )
+    )
+    file824.close()
+
+    val file825 = new PrintWriter("TypingML4Result/25.txt")
+    file825.write(
+      typeSolveWithEnvAndType(
+        "|- let rec append = fun l1 -> fun l2 -> \n     match l1 with [] -> l2 | x :: y -> x :: append y l2 in\n     append : int list -> int list -> int list"
+      )
+    )
+    file825.close()
+
+    val file826 = new PrintWriter("TypingML4Result/26.txt")
+    file826.write(
+      typeSolveWithEnvAndType(
+        "|- let rec append = fun l1 -> fun l2 -> \n     match l1 with [] -> l2 | x :: y -> x :: append y l2 in\n     append (true :: []) (false :: []) : bool list"
+      )
+    )
+    file826.close()
+
+    val file827 = new PrintWriter("TypingML4Result/27.txt")
+    file827.write(
+      typeSolveWithEnvAndType(
+        "|- let rec map = fun f -> fun l ->\n     match l with [] -> [] | x :: y -> f x :: map f y in\n     map (fun x -> x < 3) (4 :: 5 :: 1 :: []) : bool list"
+      )
+    )
+    file827.close()
   }
 }
