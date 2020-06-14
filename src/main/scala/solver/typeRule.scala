@@ -751,7 +751,7 @@ object typeRule {
             s"$indent};"
         case TMatch(typeEnv, e1, e2, x, y, e3, tr1, tr2, tr3, t) =>
           s"${typeEnv.string} |- match ${e1.string} with [] -> ${e2.string} | ${x.string} :: ${y.string} -> ${e3.string} :  ${t
-            .string(typeEnv)}  by T-Cons{\n" +
+            .string(typeEnv)}  by T-Match{\n" +
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indentPlus1${tr3.string(nest + 1)}\n" +

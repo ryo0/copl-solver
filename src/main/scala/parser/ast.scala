@@ -202,7 +202,10 @@ object ast {
               val tr2 = e2.typeSolve(typeEnv, e1Type)
               val tr3 =
                 e3.typeSolve(
-                  (x, tr1.mlType) :: (y, tr1.mlType) :: typeEnv,
+                  (y, tr1.mlType) :: (
+                    x,
+                    tr1.mlType.asInstanceOf[MLListType].lst
+                  ) :: typeEnv,
                   eqAnswer
                 )
               TMatch(
