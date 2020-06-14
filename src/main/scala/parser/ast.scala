@@ -55,7 +55,6 @@ object ast {
           getTypeFromTypeEnv(n, typeEnv) match {
             case Some(r) => (List(), r)
             case _ =>
-              println(n, typeEnv)
               throw new Exception("envにkeyがない")
           }
         case InfixExp(e1, op, e2) =>
@@ -167,10 +166,10 @@ object ast {
           val tr2 = arg.typeSolve(typeEnv, t2)
           TApp(typeEnv, funName, arg, tr1, tr2, t1.asInstanceOf[MLFunType].body)
         case LetRecExp(variable, RecFunExp(_, param, body), inExp) =>
-          val xType = MLFunType(newTypeVar(), newTypeVar())
-          val yType = xType.arg
+          val xType = variable.getTypeWithoutAnswer(typeEnv)
+          val yType = param.getTypeWithoutAnswer(typeEnv)
           val tr1 = body.typeSolve(
-            (param.name, yType) :: (variable.name, xType) :: typeEnv,
+            (variable.name, xType) :: (param.name, yType) :: typeEnv,
             eqAnswer
           )
           val tr2 = inExp.typeSolve((variable.name, xType) :: typeEnv, eqAnswer)

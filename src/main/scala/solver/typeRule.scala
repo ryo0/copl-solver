@@ -300,6 +300,12 @@ object typeRule {
         val argType = tr2.mlType
         val bodyTypeVar = funType.body
         val bodyType = t
+        println(
+          (argTypeVar, argType),
+          (bodyTypeVar, bodyType),
+          (argType, argTypeVar),
+          (bodyType, bodyTypeVar)
+        )
         List(
           (argTypeVar, argType),
           (bodyTypeVar, bodyType),
@@ -307,8 +313,7 @@ object typeRule {
           (bodyType, bodyTypeVar)
         ) ::: makeTypeAnswerOfTypeVars(tr1) ::: makeTypeAnswerOfTypeVars(tr2)
       case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2, t) =>
-        (t, tr2.mlType) :: (tr2.mlType, t) ::
-          makeTypeAnswerOfTypeVars(tr1) ::: makeTypeAnswerOfTypeVars(tr2)
+        makeTypeAnswerOfTypeVars(tr1) ::: makeTypeAnswerOfTypeVars(tr2)
       case TCons(typeEnv, e1, e2, tr1, tr2, t) =>
         makeTypeAnswerOfTypeVars(tr1) ::: makeTypeAnswerOfTypeVars(tr2)
       case TNil(typeEnv, t) =>
