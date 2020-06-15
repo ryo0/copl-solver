@@ -199,7 +199,7 @@ object ast {
             case Pattern(EmptyList, e2) :: Pattern(EList(Var(x), Var(y)), e3) :: List() =>
               val e1Type = e1.getTypeWithoutAnswer(typeEnv)
               val tr1 = e1.typeSolve(typeEnv, e1Type)
-              val tr2 = e2.typeSolve(typeEnv, e1Type)
+              val tr2 = e2.typeSolve(typeEnv, eqAnswer)
               val tr3 =
                 e3.typeSolve(
                   (y, tr1.mlType) :: (

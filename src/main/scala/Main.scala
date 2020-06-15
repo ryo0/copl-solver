@@ -145,12 +145,6 @@ object Main {
     )
     file819.close()
 
-//
-//    val s = "let s = fun f -> fun g -> fun x -> f x (g x) in s "
-//    val t = tokenizer.tokenizer.tokenize(s)
-//    val p = parser.parser.parseExp(t)._1
-//    println(p.getTypeWithoutAnswer(List()).string())
-
     val file820 = new PrintWriter("TypingML4Result/20.txt")
     file820.write(
       typeSolveWithEnvAndType(

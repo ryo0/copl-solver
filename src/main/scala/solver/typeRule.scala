@@ -308,7 +308,6 @@ object typeRule {
           (bodyType, bodyTypeVar)
         ) ::: makeTypeAnswerOfTypeVars(tr1) ::: makeTypeAnswerOfTypeVars(tr2)
       case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2, t) =>
-        println("TLetRec", t, tr2.mlType)
         (t, tr2.mlType) :: (tr2.mlType, t) ::
           makeTypeAnswerOfTypeVars(tr1) ::: makeTypeAnswerOfTypeVars(tr2)
       case TCons(typeEnv, e1, e2, tr1, tr2, t) =>
@@ -316,7 +315,6 @@ object typeRule {
       case TNil(typeEnv, t) =>
         List()
       case TMatch(typeEnv, e1, e2, x, y, e3, tr1, tr2, tr3, t) =>
-        println("TMatch", t, tr2.mlType, tr3.mlType, tr3)
         (tr3.mlType, t) :: (t, tr3.mlType) ::
           makeTypeAnswerOfTypeVars(tr1) ::: makeTypeAnswerOfTypeVars(tr2) ::: makeTypeAnswerOfTypeVars(
           tr3

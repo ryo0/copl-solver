@@ -2,7 +2,7 @@
      map : ((int -> bool) -> (int list -> bool list)),f : (int -> bool) |-fun l -> match l with  [] -> [] | x :: y -> ((f x) :: ((map f) y))  :  (int list -> bool list)  by T-Fun{
           map : ((int -> bool) -> (int list -> bool list)),f : (int -> bool),l : int list |- match l with [] -> [] | x :: y -> ((f x) :: ((map f) y)) :  bool list  by T-Match{
                map : ((int -> bool) -> (int list -> bool list)),f : (int -> bool),l : int list |- l : int list by T-Var{};
-               map : ((int -> bool) -> (int list -> bool list)),f : (int -> bool),l : int list |- [] :  int list  by T-Nil{};
+               map : ((int -> bool) -> (int list -> bool list)),f : (int -> bool),l : int list |- [] :  bool list  by T-Nil{};
                map : ((int -> bool) -> (int list -> bool list)),f : (int -> bool),l : int list,x : int,y : int list |- (f x) :: ((map f) y) :  bool list  by T-Cons{
                     map : ((int -> bool) -> (int list -> bool list)),f : (int -> bool),l : int list,x : int,y : int list |- f x :  bool  by T-App{
                          map : ((int -> bool) -> (int list -> bool list)),f : (int -> bool),l : int list,x : int,y : int list |- f : (int -> bool) by T-Var{};
