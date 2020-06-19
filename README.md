@@ -4,23 +4,5 @@
 この本ではOCamlサブセットのコードを規則に従って評価していく、という問題がついており、評価が正しいかをチェックできるオンラインジャッジサイトが付いています。  
 その問題というのが凶悪で、時間がかかりすぎて自力で解けないようなものが特に後半に出てくるので、公式で自動で答えを出すプログラムを作ることが推奨されています。  
 それがこのリポジトリです。  
-2020/05/14現在は3章のEvalML1, 4章のEvalML2, 5章のEvalML3, 7章のEvalML4, EvalML5に対応しています。  
-
-TypingML4に関しては、現在作業中です。以下のように自動では答えが出せない問題もあるようです。  
-```
-|- (fun x -> fun y -> x) 1 (fun x -> x) : int by T-App {
-  |- (fun x -> fun y -> x) 1 : ('_a4 -> '_a4) -> int by T-App {
-    |- fun x -> fun y -> x : int -> ('_a4 -> '_a4) -> int by T-Abs {
-      x : int |- fun y -> x : ('_a4 -> '_a4) -> int by T-Abs {
-        x : int, y : '_a4 -> '_a4 |- x : int by T-Var {};
-      };
-    };
-    |- 1 : int by T-Int {};
-  };
-  |- fun x -> x : '_a4 -> '_a4 by T-Abs {
-    x : '_a4 |- x : '_a4 by T-Var {};
-  };
-};
-```
-https://roodni.hatenablog.com/entry/2020/05/02/192939  
+2020/06/15現在は3章のEvalML1, 4章のEvalML2, 5章のEvalML3, 7章のEvalML4, EvalML5, 8章のTypingML4に対応しています。  
  
