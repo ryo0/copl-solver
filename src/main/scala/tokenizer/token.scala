@@ -67,4 +67,6 @@ object token {
   object CommaToken extends Token
 
   object ListSymbolToken extends Token
+
+  object SchemaSymbolToken extends Token
 }

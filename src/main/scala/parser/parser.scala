@@ -10,6 +10,7 @@ import solver.typeRule.{
   MLIntType,
   MLListType,
   MLType,
+  Schema,
   TypeEnv,
   TypeVar
 }
@@ -58,6 +59,9 @@ object parser {
           parseTypeSub(rest, Some(MLIntType))
         case BoolSymbolToken :: rest =>
           parseTypeSub(rest, Some(MLBoolType))
+        case VarToken(n) :: SchemaSymbolToken :: rest =>
+          val (t, rest2) = parseTypeSub(rest, None)
+          parseTypeSub(rest2, Some(Schema(TypeVar(n), t)))
         case VarToken(n) :: rest =>
           parseTypeSub(rest, Some(TypeVar(n)))
         case ListSymbolToken :: rest =>

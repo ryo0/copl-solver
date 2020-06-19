@@ -17,7 +17,8 @@ object tokenizer {
       '|' -> OrToken,
       '_' -> WildCardToken,
       ':' -> TypeSeparatorToken,
-      ',' -> CommaToken
+      ',' -> CommaToken,
+      '.' -> SchemaSymbolToken
     )
   val tokenMap2Heads = List('-', ':', '[', '|')
   val tokenMap2: Map[String, Token] =

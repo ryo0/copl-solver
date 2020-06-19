@@ -77,6 +77,8 @@ object typeRule {
         case TypeVar(name) => {
           typeVarToString(name, typeEnv)
         }
+        case Schema(t, body) =>
+          s"${t.string()}.${body.string()}"
       }
     }
     def fillTypeVar(): MLType = {
@@ -108,6 +110,8 @@ object typeRule {
         case MLFunType(arg, body) =>
           MLFunType(arg.substitute(typeAnswer), body.substitute(typeAnswer))
         case MLListType(lst) => MLListType(lst.substitute(typeAnswer))
+        case Schema(t, body) =>
+          body.substitute(typeAnswer)
       }
     }
 
@@ -126,6 +130,7 @@ object typeRule {
   case class MLFunType(arg: MLType, body: MLType) extends MLType
   case class MLListType(lst: MLType) extends MLType
   case class TypeVar(name: String) extends MLType
+  case class Schema(tVar: TypeVar, t: MLType) extends MLType
   type TypeEnv = List[(String, MLType)]
   implicit class TypeEnvString(typeEnv: TypeEnv) {
     def string: String = {
@@ -136,7 +141,14 @@ object typeRule {
     }
 
     def substitute(typeAnswer: TypeAnswer): TypeEnv = {
-      typeEnv.map(e => (e._1, e._2.substitute(typeAnswer)))
+      typeEnv.map(e => {
+        e._2 match {
+          case Schema(t, b) =>
+            (e._1, e._2)
+          case _ =>
+            (e._1, e._2.substitute(typeAnswer))
+        }
+      })
     }
 
     def fillTypeVar(): TypeEnv = {
@@ -296,7 +308,12 @@ object typeRule {
         val myType = t.asInstanceOf[MLFunType]
         makeTypeAnswerOfTypeVars(tr1) :+ (tr1.mlType, myType.body) :+ (myType.body, tr1.mlType)
       case TApp(typeEnv, e1, e2, tr1, tr2, t) =>
-        val funType = tr1.mlType.asInstanceOf[MLFunType]
+        val funType = tr1.mlType match {
+          case Schema(t, body) =>
+            body.asInstanceOf[MLFunType]
+          case _ =>
+            tr1.mlType.asInstanceOf[MLFunType]
+        }
         val argTypeVar = funType.arg
         val argType = tr2.mlType
         val bodyTypeVar = funType.body
@@ -727,7 +744,7 @@ object typeRule {
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indent};"
         case TFun(typeEnv, x, e, tr1, t) =>
-          s"${typeEnv.string} |-fun ${x.string} -> ${e.string} :  ${t.string(typeEnv)}  by T-Fun{\n" +
+          s"${typeEnv.string} |- fun ${x.string} -> ${e.string} :  ${t.string(typeEnv)}  by T-Abs{\n" +
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indent};"
         case TApp(typeEnv, e1, e2, tr1, tr2, t) =>

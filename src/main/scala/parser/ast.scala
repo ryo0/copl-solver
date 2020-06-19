@@ -163,7 +163,12 @@ object ast {
             inExp.typeSolve((variable.name, tr1.mlType) :: typeEnv, t)
           TLet(typeEnv, variable, valueExp, inExp, tr1, tr2, t)
         case FunExp(param, body) =>
-          val a = eqAnswer.asInstanceOf[MLFunType]
+          val a = eqAnswer match {
+            case Schema(t, body) =>
+              body.asInstanceOf[MLFunType]
+            case _ =>
+              eqAnswer.asInstanceOf[MLFunType]
+          }
           val solvedBody =
             body.typeSolve((param.name, a.arg) :: typeEnv, a.body)
           TFun(typeEnv, param, body, solvedBody, a)
@@ -172,15 +177,26 @@ object ast {
           val t2 = arg.getTypeWithoutAnswer(typeEnv)
           val tr1 = funName.typeSolve(typeEnv, t1)
           val tr2 = arg.typeSolve(typeEnv, t2)
-          TApp(typeEnv, funName, arg, tr1, tr2, t1.asInstanceOf[MLFunType].body)
+          val _t1 = t1 match {
+            case Schema(t, body) =>
+              body.asInstanceOf[MLFunType]
+            case _ =>
+              t1.asInstanceOf[MLFunType]
+          }
+          TApp(typeEnv, funName, arg, tr1, tr2, _t1.body)
         case LetRecExp(variable, RecFunExp(v, param, body), inExp) =>
           val xType = RecFunExp(v, param, body)
             .getTypeWithoutAnswer(typeEnv)
-            .asInstanceOf[MLFunType]
-          val yType = xType.arg
+          val x = xType match {
+            case Schema(t, body) =>
+              body.asInstanceOf[MLFunType]
+            case _ =>
+              xType.asInstanceOf[MLFunType]
+          }
+          val yType = x.arg
           val tr1 = body.typeSolve(
             (param.name, yType) :: (variable.name, xType) :: typeEnv,
-            xType.body
+            x.body
           )
           val tr2 = inExp.typeSolve((variable.name, xType) :: typeEnv, eqAnswer)
           TLetRec(typeEnv, variable, param, body, inExp, tr1, tr2, eqAnswer)
