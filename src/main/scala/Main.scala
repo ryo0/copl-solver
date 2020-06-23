@@ -19,23 +19,23 @@ object Main {
     )
     file83.close()
 
-    //    val file84 = new PrintWriter("PolyTypingML4Result/4.txt")
-    //    file84.write(
-    //      typeSolveWithEnvAndType(
-    //        "|- let x = 3 < 2 in let y = 5 in if x then y else 2 : int"
-    //      )
-    //    )
-    //    file84.close()
-    //
-    //    val file85 = new PrintWriter("PolyTypingML4Result/5.txt")
-    //    file85.write(typeSolveWithEnvAndType("|- fun x -> x + 1 : int -> int"))
-    //    file85.close()
-    //
-    //    val file86 = new PrintWriter("PolyTypingML4Result/6.txt")
-    //    file86.write(
-    //      typeSolveWithEnvAndType("|- let f = fun x -> x + 1 in f 4 : int")
-    //    )
-    //    file86.close()
+    val file84 = new PrintWriter("PolyTypingML4Result/4.txt")
+    file84.write(
+      typeSolveWithEnvAndType("f: 'a.'a->'a |- f (fun x -> x + 3) : int -> int")
+    )
+    file84.close()
+
+    val file85 = new PrintWriter("PolyTypingML4Result/5.txt")
+    file85.write(
+      typeSolveWithEnvAndType("|- let id = fun x -> x in id id : bool -> bool")
+    )
+    file85.close()
+
+    val file86 = new PrintWriter("PolyTypingML4Result/6.txt")
+    file86.write(
+      typeSolveWithEnvAndType("f: 'a 'b.'a->'b->'a |- f 3 true + f 2 4 : int")
+    )
+    file86.close()
     //
     //    val file87 = new PrintWriter("PolyTypingML4Result/7.txt")
     //    file87.write(
