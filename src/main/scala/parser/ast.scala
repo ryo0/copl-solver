@@ -111,22 +111,27 @@ object ast {
               ) :: s1 ::: s2).unify()
           }
           (s3, a.substitute(s3))
-      }
-//        case LetRecExp(variable, RecFunExp(_, param, body), inExp) =>
-//          val a1 = newTypeVar()
-//          val a2 = newTypeVar()
-//          val (eq1, t1) =
-//            body.typeExtract((variable.name, a1) :: (param.name, a2) :: typeEnv)
-//          val (eq2, t2) = inExp.typeExtract((variable.name, a1) :: typeEnv)
-//          val eq3 = Equation(a1, MLFunType(a2, t1)) :: eq1 ::: eq2
-//          (eq3, t2)
-//        case RecFunExp(variable, param, body) =>
-//          val a1 = newTypeVar()
-//          val a2 = newTypeVar()
-//          val (eq1, t1) =
-//            body.typeExtract((variable.name, a1) :: (param.name, a2) :: typeEnv)
-//          val eq2 = Equation(a1, MLFunType(a2, t1)) :: eq1
-//          (eq2, a1)
+        case LetRecExp(variable, RecFunExp(_, param, body), inExp) =>
+          val a1 = newTypeVar()
+          val a2 = newTypeVar()
+          val (s1, t1) =
+            body.typeInfer(
+              (variable.name, a1) :: (param.name, a2) :: typeEnv,
+              None
+            )
+          val (s2, t2) = inExp.typeInfer((variable.name, a1) :: typeEnv, ans)
+          val s3 = ((a1, MLFunType(a2, t1)) :: s1 ::: s2).unify()
+          (s3, t2)
+        case RecFunExp(variable, param, body) =>
+          val a1 = newTypeVar()
+          val a2 = newTypeVar()
+          val (s1, t1) =
+            body.typeInfer(
+              (variable.name, a1) :: (param.name, a2) :: typeEnv,
+              None
+            )
+          val s2 = (a1, MLFunType(a2, t1)) :: s1
+          (s2, a1.substitute(s2))
 //        case EmptyList =>
 //          val a = newTypeVar()
 //          (List(), MLListType(a))
@@ -146,7 +151,7 @@ object ast {
 //            right2.typeExtract((x, a) :: (y, MLListType(a)) :: typeEnv)
 //          val eq4 = Equation(t1, MLListType(a)) :: Equation(t2, t3) :: eq1 ::: eq2 ::: eq3
 //          (eq4, t2)
-//      }
+      }
     }
     def typeExtract(typeEnv: TypeEnv): (Equations, MLType) = {
       this match {

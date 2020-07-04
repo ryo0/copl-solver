@@ -129,37 +129,37 @@ object Main {
     )
     file818.close()
 
-//    val fileDemo2 = new PrintWriter("TypingML4Result/demo2.txt")
-//    fileDemo2.write(
-//      typeSolveWithEnvAndType(
-//        "|- let s = fun f -> fun g -> fun x -> f x (g x) in s : ('a -> 'b -> 'c) -> ('a -> 'b) -> 'a -> 'c "
-//      )
-//    )
-//    fileDemo2.close()
-//
-//    val file819 = new PrintWriter("TypingML4Result/19.txt")
-//    file819.write(
-//      typeSolveWithEnvAndType(
-//        "|- let s = fun f -> fun g -> fun x -> f x (g x) in\n   let k1 = fun x -> fun y -> x in\n   let k2 = fun x -> fun y -> x in\n   s k1 k2 (fun x -> x + 1) : int -> int"
-//      )
-//    )
-//    file819.close()
+    val fileDemo2 = new PrintWriter("TypingML4Result/demo2.txt")
+    fileDemo2.write(
+      typeSolveWithEnvAndType(
+        "|- let s = fun f -> fun g -> fun x -> f x (g x) in s : ('a -> 'b -> 'c) -> ('a -> 'b) -> 'a -> 'c "
+      )
+    )
+    fileDemo2.close()
 
-//    val file820 = new PrintWriter("TypingML4Result/20.txt")
-//    file820.write(
-//      typeSolveWithEnvAndType(
-//        "|- let rec fact = fun n ->\n     if n < 2 then 1 else n * fact (n - 1) in\n     fact 3 : int"
-//      )
-//    )
-//    file820.close()
-//
-//    val file821 = new PrintWriter("TypingML4Result/21.txt")
-//    file821.write(
-//      typeSolveWithEnvAndType(
-//        "|- let rec sum = fun f -> fun n ->\n     if n < 1 then 0 else f n + sum f (n - 1) in \n   sum (fun x -> x * x) 2 : int"
-//      )
-//    )
-//    file821.close()
+    val file819 = new PrintWriter("TypingML4Result/19.txt")
+    file819.write(
+      typeSolveWithEnvAndType(
+        "|- let s = fun f -> fun g -> fun x -> f x (g x) in\n   let k1 = fun x -> fun y -> x in\n   let k2 = fun x -> fun y -> x in\n   s k1 k2 (fun x -> x + 1) : int -> int"
+      )
+    )
+    file819.close()
+
+    val file820 = new PrintWriter("TypingML4Result/20.txt")
+    file820.write(
+      typeSolveWithEnvAndType(
+        "|- let rec fact = fun n ->\n     if n < 2 then 1 else n * fact (n - 1) in\n     fact 3 : int"
+      )
+    )
+    file820.close()
+
+    val file821 = new PrintWriter("TypingML4Result/21.txt")
+    file821.write(
+      typeSolveWithEnvAndType(
+        "|- let rec sum = fun f -> fun n ->\n     if n < 1 then 0 else f n + sum f (n - 1) in \n   sum (fun x -> x * x) 2 : int"
+      )
+    )
+    file821.close()
 
 //    val file822 = new PrintWriter("TypingML4Result/22.txt")
 //    file822.write(
