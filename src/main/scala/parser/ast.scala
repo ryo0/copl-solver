@@ -38,7 +38,6 @@ object ast {
       this.typeInfer(typeEnv, None)._2
     }
     def getType(typeEnv: TypeEnv = List(), myEqAnswer: MLType): MLType = {
-      println(myEqAnswer)
       this.typeInfer(typeEnv, Some(myEqAnswer))._2
     }
     def typeInfer(
@@ -121,7 +120,7 @@ object ast {
             )
           val (s2, t2) = inExp.typeInfer((variable.name, a1) :: typeEnv, ans)
           val s3 = ((a1, MLFunType(a2, t1)) :: s1 ::: s2).unify()
-          (s3, t2)
+          (s3, t2.substitute(s3))
         case RecFunExp(variable, param, body) =>
           val a1 = newTypeVar()
           val a2 = newTypeVar()
@@ -132,25 +131,31 @@ object ast {
             )
           val s2 = (a1, MLFunType(a2, t1)) :: s1
           (s2, a1.substitute(s2))
-//        case EmptyList =>
-//          val a = newTypeVar()
-//          (List(), MLListType(a))
-//        case EList(left, right) =>
-//          val (eq1, t1) = left.typeExtract(typeEnv)
-//          val (eq2, t2) = right.typeExtract(typeEnv)
-//          val eq3 = Equation(t2, MLListType(t1)) :: (eq1 ::: eq2)
-//          (eq3, t2)
-//        case Match(
-//        e1: Var,
-//        Pattern(EmptyList, right1) :: Pattern(EList(Var(x), Var(y)), right2) :: List()
-//        ) =>
-//          val (eq1, t1) = e1.typeExtract(typeEnv)
-//          val (eq2, t2) = right1.typeExtract(typeEnv)
-//          val a = newTypeVar()
-//          val (eq3, t3) =
-//            right2.typeExtract((x, a) :: (y, MLListType(a)) :: typeEnv)
-//          val eq4 = Equation(t1, MLListType(a)) :: Equation(t2, t3) :: eq1 ::: eq2 ::: eq3
-//          (eq4, t2)
+        case EmptyList =>
+          val a = newTypeVar()
+          (List(), MLListType(a))
+        case EList(left, right) =>
+          val (s1, t1) = left.typeInfer(typeEnv, None)
+          val (s2, t2) = right.typeInfer(typeEnv, ans)
+          val s3 = ((t2, MLListType(t1)) :: (s1 ::: s2)).unify()
+          (s3, t2.substitute(s3))
+        case Match(
+              e1: Var,
+              Pattern(EmptyList, right1) :: Pattern(
+                EList(Var(x), Var(y)),
+                right2
+              ) :: List()
+            ) =>
+          val (s1, t1) = e1.typeInfer(typeEnv, None)
+          val (s2, t2) = right1.typeInfer(typeEnv, ans)
+          val a = newTypeVar()
+          val (s3, t3) =
+            right2.typeInfer((x, a) :: (y, MLListType(a)) :: typeEnv, ans)
+          val s4 = ((t1, MLListType(a)) :: (
+            t2,
+            t3
+          ) :: s1 ::: s2 ::: s3).unify()
+          (s4, t2.substitute(s4))
       }
     }
     def typeExtract(typeEnv: TypeEnv): (Equations, MLType) = {
