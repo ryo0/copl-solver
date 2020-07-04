@@ -7,8 +7,10 @@ object typeRule {
   case class Equation(left: MLType, right: MLType)
   type TypeAnswer = List[(MLType, MLType)]
 
-  def getTypeFromTypeAnswer(key: String,
-                            typeAnswer: TypeAnswer): Option[MLType] = {
+  def getTypeFromTypeAnswer(
+      key: String,
+      typeAnswer: TypeAnswer
+  ): Option[MLType] = {
     for (e <- typeAnswer) {
       e._1 match {
         case typeVar: TypeVar =>
@@ -21,11 +23,20 @@ object typeRule {
     None
   }
 
+  implicit class Unification2(E: TypeAnswer) {
+    def unify(): TypeAnswer = {
+      E.map(e => Equation(e._1, e._2)).unify()
+    }
+  }
+
   implicit class Unification(E: Equations) {
     def substitute(typeAnswer: TypeAnswer): Equations = {
       E match {
         case Equation(left, right) :: rest =>
-          Equation(left.substitute(typeAnswer), right.substitute(typeAnswer)) :: rest
+          Equation(
+            left.substitute(typeAnswer),
+            right.substitute(typeAnswer)
+          ) :: rest
             .substitute(typeAnswer)
         case List() =>
           List()
@@ -294,19 +305,25 @@ object typeRule {
       case TLt(typeEnv, e1, e2, tr1, tr2) =>
         makeTypeAnswerOfTypeVars(tr1) ::: makeTypeAnswerOfTypeVars(tr2)
       case TIf(typeEnv, e1, e2, e3, tr1, tr2, tr3, t) =>
-        makeTypeAnswerOfTypeVars(tr1) ::: makeTypeAnswerOfTypeVars(tr2) ::: makeTypeAnswerOfTypeVars(
+        makeTypeAnswerOfTypeVars(tr1) ::: makeTypeAnswerOfTypeVars(
+          tr2
+        ) ::: makeTypeAnswerOfTypeVars(
           tr3
         )
       case TVar(typeEnv, x, t) =>
         val t2 = getTypeFromTypeEnv(x.name, typeEnv).get
         (t2, t) :: (t, t2) :: List()
       case TLet(typeEnv, x, e1, e2, tr1, tr2, t) =>
-        (tr2.mlType, t) :: (t, tr2.mlType) :: makeTypeAnswerOfTypeVars(tr1) ::: makeTypeAnswerOfTypeVars(
+        (tr2.mlType, t) :: (t, tr2.mlType) :: makeTypeAnswerOfTypeVars(
+          tr1
+        ) ::: makeTypeAnswerOfTypeVars(
           tr2
         )
       case TFun(typeEnv, x, e, tr1, t) =>
         val myType = t.asInstanceOf[MLFunType]
-        makeTypeAnswerOfTypeVars(tr1) :+ (tr1.mlType, myType.body) :+ (myType.body, tr1.mlType)
+        makeTypeAnswerOfTypeVars(
+          tr1
+        ) :+ (tr1.mlType, myType.body) :+ (myType.body, tr1.mlType)
       case TApp(typeEnv, e1, e2, tr1, tr2, t) =>
         val funType = tr1.mlType match {
           case Schema(t, body) =>
@@ -333,7 +350,9 @@ object typeRule {
         List()
       case TMatch(typeEnv, e1, e2, x, y, e3, tr1, tr2, tr3, t) =>
         (tr3.mlType, t) :: (t, tr3.mlType) ::
-          makeTypeAnswerOfTypeVars(tr1) ::: makeTypeAnswerOfTypeVars(tr2) ::: makeTypeAnswerOfTypeVars(
+          makeTypeAnswerOfTypeVars(tr1) ::: makeTypeAnswerOfTypeVars(
+          tr2
+        ) ::: makeTypeAnswerOfTypeVars(
           tr3
         )
     }
@@ -598,101 +617,112 @@ object typeRule {
 
   case class TBool(typeEnv: TypeEnv, b: BoolVal) extends TypeRule
 
-  case class TIf(typeEnv: TypeEnv,
-                 e1: Exp,
-                 e2: Exp,
-                 e3: Exp,
-                 tr1: TypeRule,
-                 tr2: TypeRule,
-                 tr3: TypeRule,
-                 t: MLType)
-      extends TypeRule
+  case class TIf(
+      typeEnv: TypeEnv,
+      e1: Exp,
+      e2: Exp,
+      e3: Exp,
+      tr1: TypeRule,
+      tr2: TypeRule,
+      tr3: TypeRule,
+      t: MLType
+  ) extends TypeRule
 
-  case class TPlus(typeEnv: TypeEnv,
-                   e1: Exp,
-                   e2: Exp,
-                   tr1: TypeRule,
-                   tr2: TypeRule)
-      extends TypeRule
+  case class TPlus(
+      typeEnv: TypeEnv,
+      e1: Exp,
+      e2: Exp,
+      tr1: TypeRule,
+      tr2: TypeRule
+  ) extends TypeRule
 
-  case class TMinus(typeEnv: TypeEnv,
-                    e1: Exp,
-                    e2: Exp,
-                    tr1: TypeRule,
-                    tr2: TypeRule)
-      extends TypeRule
+  case class TMinus(
+      typeEnv: TypeEnv,
+      e1: Exp,
+      e2: Exp,
+      tr1: TypeRule,
+      tr2: TypeRule
+  ) extends TypeRule
 
-  case class TTimes(typeEnv: TypeEnv,
-                    e1: Exp,
-                    e2: Exp,
-                    tr1: TypeRule,
-                    tr2: TypeRule)
-      extends TypeRule
+  case class TTimes(
+      typeEnv: TypeEnv,
+      e1: Exp,
+      e2: Exp,
+      tr1: TypeRule,
+      tr2: TypeRule
+  ) extends TypeRule
 
-  case class TLt(typeEnv: TypeEnv,
-                 e1: Exp,
-                 e2: Exp,
-                 tr1: TypeRule,
-                 tr2: TypeRule)
-      extends TypeRule
+  case class TLt(
+      typeEnv: TypeEnv,
+      e1: Exp,
+      e2: Exp,
+      tr1: TypeRule,
+      tr2: TypeRule
+  ) extends TypeRule
 
   case class TVar(typeEnv: TypeEnv, x: Var, t: MLType) extends TypeRule
 
-  case class TLet(typeEnv: TypeEnv,
-                  x: Var,
-                  e1: Exp,
-                  e2: Exp,
-                  tr1: TypeRule,
-                  tr2: TypeRule,
-                  t: MLType)
-      extends TypeRule
+  case class TLet(
+      typeEnv: TypeEnv,
+      x: Var,
+      e1: Exp,
+      e2: Exp,
+      tr1: TypeRule,
+      tr2: TypeRule,
+      t: MLType
+  ) extends TypeRule
 
   case class TFun(typeEnv: TypeEnv, x: Var, e: Exp, tr1: TypeRule, t: MLFunType)
       extends TypeRule
 
-  case class TApp(typeEnv: TypeEnv,
-                  e1: Exp,
-                  e2: Exp,
-                  tr1: TypeRule,
-                  tr2: TypeRule,
-                  t: MLType)
-      extends TypeRule
+  case class TApp(
+      typeEnv: TypeEnv,
+      e1: Exp,
+      e2: Exp,
+      tr1: TypeRule,
+      tr2: TypeRule,
+      t: MLType
+  ) extends TypeRule
 
-  case class TLetRec(typeEnv: TypeEnv,
-                     x: Var,
-                     y: Var,
-                     e1: Exp,
-                     e2: Exp,
-                     tr1: TypeRule,
-                     tr2: TypeRule,
-                     t: MLType)
-      extends TypeRule
+  case class TLetRec(
+      typeEnv: TypeEnv,
+      x: Var,
+      y: Var,
+      e1: Exp,
+      e2: Exp,
+      tr1: TypeRule,
+      tr2: TypeRule,
+      t: MLType
+  ) extends TypeRule
 
   case class TNil(typeEnv: TypeEnv, t: MLType) extends TypeRule
 
-  case class TCons(typeEnv: TypeEnv,
-                   e1: Exp,
-                   e2: Exp,
-                   tr1: TypeRule,
-                   tr2: TypeRule,
-                   t: MLType)
-      extends TypeRule
+  case class TCons(
+      typeEnv: TypeEnv,
+      e1: Exp,
+      e2: Exp,
+      tr1: TypeRule,
+      tr2: TypeRule,
+      t: MLType
+  ) extends TypeRule
 
-  case class TMatch(typeEnv: TypeEnv,
-                    e1: Exp,
-                    e2: Exp,
-                    x: Var,
-                    y: Var,
-                    e3: Exp,
-                    tr1: TypeRule,
-                    tr2: TypeRule,
-                    tr3: TypeRule,
-                    t: MLType)
-      extends TypeRule
+  case class TMatch(
+      typeEnv: TypeEnv,
+      e1: Exp,
+      e2: Exp,
+      x: Var,
+      y: Var,
+      e3: Exp,
+      tr1: TypeRule,
+      tr2: TypeRule,
+      tr3: TypeRule,
+      t: MLType
+  ) extends TypeRule
 
   implicit class NestString(str: String) {
     def mul(nest: Int): String = {
-      if (nest == 0) { "" } else if (nest == 1) {
+      if (nest == 0) { "" }
+      else if (nest == 1) {
         str
       } else {
         str + str.mul(nest - 1)

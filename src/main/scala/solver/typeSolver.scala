@@ -8,6 +8,7 @@ object typeSolver {
     val (typeEnv, rest1) = parseTypeEnv(tokens)
     val (exp, rest2) = parseExp(rest1)
     val (t, _) = parseType(rest2)
+    println(exp.string, exp.typeInfer(typeEnv)._2.string())
     val solved = exp.typeSolve(typeEnv, t)
     val typeAnswer = getTypeAnswer(solved)
     solved.substitute(typeAnswer).fillTypeVar().string(0)

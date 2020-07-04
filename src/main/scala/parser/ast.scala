@@ -35,15 +35,93 @@ object ast {
   object Cons extends Op
   sealed class Exp {
     def getTypeWithoutAnswer(typeEnv: TypeEnv = List()): MLType = {
-      val e = this.typeExtract(typeEnv)
-      val typeAnswerMap = e._1.unify()
-      e._2.substitute(typeAnswerMap)
+      this.typeInfer(typeEnv)._2
     }
     def getType(typeEnv: TypeEnv = List(), myEqAnswer: MLType): MLType = {
-      val e = this.typeExtract(typeEnv)
-      val typeAnswerMap =
-        (Equation(myEqAnswer, e._2) :: e._1).unify()
-      e._2.substitute(typeAnswerMap)
+      this.typeInfer(typeEnv)._2
+    }
+    def typeInfer(typeEnv: TypeEnv): (TypeAnswer, MLType) = {
+      this match {
+        case IntVal(n) =>
+          (List(), MLIntType)
+        case BoolVal(b) =>
+          (List(), MLBoolType)
+        case Var(n) =>
+          getTypeFromTypeEnv(n, typeEnv) match {
+            case Some(r) => (List(), r)
+            case _ =>
+              println(n, typeEnv)
+              throw new Exception("envにkeyがない")
+          }
+        case InfixExp(e1, op, e2) =>
+          val (s1, t1) = e1.typeInfer(typeEnv)
+          val (s2, t2) = e2.typeInfer(typeEnv)
+          val s3 = (s1 ::: s2) :+
+            (t1, MLIntType) :+ (t2, MLIntType)
+          op match {
+            case LessThan =>
+              (s3, MLBoolType)
+            case _ =>
+              (s3, MLIntType)
+          }
+        case IfExp(condExp, thenExp, elseExp) =>
+          val (s1, t1) = condExp.typeInfer(typeEnv)
+          val (s2, t2) = thenExp.typeInfer(typeEnv)
+          val (s3, t3) = elseExp.typeInfer(typeEnv)
+          val s4 = (s1 ::: s2 ::: s3) :+
+            (t1, MLBoolType) :+ (t2, t3) :+ (t3, t2)
+          (s4, t2.substitute(s4))
+        case LetExp(variable, valueExp, inExp) =>
+          val (s1, t1) = valueExp.typeInfer(typeEnv)
+          val (s2, t2) = inExp.typeInfer((variable.name, t1) :: typeEnv)
+          val s3 = (s1 ::: s2).unify()
+          (s3, t2.substitute(s3))
+        case FunExp(param, body) =>
+          val a = newTypeVar()
+          val (s, t0) = body.typeInfer((param.name, a) :: typeEnv)
+          (s, MLFunType(a.substitute(s), t0))
+        case FunCall(funName, arg) =>
+          val (s1, t1) = funName.typeInfer(typeEnv)
+          val (s2, t2) = arg.typeInfer(typeEnv)
+          val a = newTypeVar()
+          val s3 = ((t1, MLFunType(t2, a)) :: s1 ::: s2).unify()
+          (s3, a.substitute(s3))
+      }
+//        case LetRecExp(variable, RecFunExp(_, param, body), inExp) =>
+//          val a1 = newTypeVar()
+//          val a2 = newTypeVar()
+//          val (eq1, t1) =
+//            body.typeExtract((variable.name, a1) :: (param.name, a2) :: typeEnv)
+//          val (eq2, t2) = inExp.typeExtract((variable.name, a1) :: typeEnv)
+//          val eq3 = Equation(a1, MLFunType(a2, t1)) :: eq1 ::: eq2
+//          (eq3, t2)
+//        case RecFunExp(variable, param, body) =>
+//          val a1 = newTypeVar()
+//          val a2 = newTypeVar()
+//          val (eq1, t1) =
+//            body.typeExtract((variable.name, a1) :: (param.name, a2) :: typeEnv)
+//          val eq2 = Equation(a1, MLFunType(a2, t1)) :: eq1
+//          (eq2, a1)
+//        case EmptyList =>
+//          val a = newTypeVar()
+//          (List(), MLListType(a))
+//        case EList(left, right) =>
+//          val (eq1, t1) = left.typeExtract(typeEnv)
+//          val (eq2, t2) = right.typeExtract(typeEnv)
+//          val eq3 = Equation(t2, MLListType(t1)) :: (eq1 ::: eq2)
+//          (eq3, t2)
+//        case Match(
+//        e1: Var,
+//        Pattern(EmptyList, right1) :: Pattern(EList(Var(x), Var(y)), right2) :: List()
+//        ) =>
+//          val (eq1, t1) = e1.typeExtract(typeEnv)
+//          val (eq2, t2) = right1.typeExtract(typeEnv)
+//          val a = newTypeVar()
+//          val (eq3, t3) =
+//            right2.typeExtract((x, a) :: (y, MLListType(a)) :: typeEnv)
+//          val eq4 = Equation(t1, MLListType(a)) :: Equation(t2, t3) :: eq1 ::: eq2 ::: eq3
+//          (eq4, t2)
+//      }
     }
     def typeExtract(typeEnv: TypeEnv): (Equations, MLType) = {
       this match {
@@ -114,15 +192,21 @@ object ast {
           val eq3 = Equation(t2, MLListType(t1)) :: (eq1 ::: eq2)
           (eq3, t2)
         case Match(
-            e1: Var,
-            Pattern(EmptyList, right1) :: Pattern(EList(Var(x), Var(y)), right2) :: List()
+              e1: Var,
+              Pattern(EmptyList, right1) :: Pattern(
+                EList(Var(x), Var(y)),
+                right2
+              ) :: List()
             ) =>
           val (eq1, t1) = e1.typeExtract(typeEnv)
           val (eq2, t2) = right1.typeExtract(typeEnv)
           val a = newTypeVar()
           val (eq3, t3) =
             right2.typeExtract((x, a) :: (y, MLListType(a)) :: typeEnv)
-          val eq4 = Equation(t1, MLListType(a)) :: Equation(t2, t3) :: eq1 ::: eq2 ::: eq3
+          val eq4 = Equation(t1, MLListType(a)) :: Equation(
+            t2,
+            t3
+          ) :: eq1 ::: eq2 ::: eq3
           (eq4, t2)
       }
     }
@@ -212,7 +296,10 @@ object ast {
           }
         case Match(e1: Var, patterns: List[Pattern]) =>
           patterns match {
-            case Pattern(EmptyList, e2) :: Pattern(EList(Var(x), Var(y)), e3) :: List() =>
+            case Pattern(EmptyList, e2) :: Pattern(
+                  EList(Var(x), Var(y)),
+                  e3
+                ) :: List() =>
               val e1Type = e1.getTypeWithoutAnswer(typeEnv)
               val tr1 = e1.typeSolve(typeEnv, e1Type)
               val tr2 = e2.typeSolve(typeEnv, eqAnswer)
