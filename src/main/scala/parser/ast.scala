@@ -115,12 +115,11 @@ object ast {
           val a2 = newTypeVar()
           val (s1, t1) =
             body.typeInfer(
-              (variable.name, MLFunType(a1, a2)) :: (param.name, a1) :: typeEnv,
+              (variable.name, a1) :: (param.name, a2) :: typeEnv,
               None
             )
-          val (s2, t2) =
-            inExp.typeInfer((variable.name, MLFunType(a1, a2)) :: typeEnv, ans)
-          val s3 = ((t1, a2) :: s1 ::: s2).unify()
+          val (s2, t2) = inExp.typeInfer((variable.name, a1) :: typeEnv, ans)
+          val s3 = ((a1, MLFunType(a2, t1)) :: s1 ::: s2).unify()
           (s3, t2.substitute(s3))
         case RecFunExp(variable, param, body) =>
           val a1 = newTypeVar()
