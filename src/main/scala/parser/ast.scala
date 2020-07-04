@@ -34,11 +34,11 @@ object ast {
 
   object Cons extends Op
   sealed class Exp {
-    def getTypeWithoutAnswer(typeEnv: TypeEnv = List()): MLType = {
-      this.typeInfer(typeEnv, None)._2
-    }
-    def getType(typeEnv: TypeEnv = List(), myEqAnswer: MLType): MLType = {
-      this.typeInfer(typeEnv, Some(myEqAnswer))._2
+    def getType(
+        typeEnv: TypeEnv = List(),
+        myEqAnswer: Option[MLType]
+    ): MLType = {
+      this.typeInfer(typeEnv, myEqAnswer)._2
     }
     def typeInfer(
         typeEnv: TypeEnv,
@@ -275,9 +275,9 @@ object ast {
         case Var(n) =>
           TVar(typeEnv, Var(n), eqAnswer)
         case LetExp(variable, valueExp, inExp) =>
-          val t = this.getType(typeEnv, eqAnswer)
+          val t = this.getType(typeEnv, Some(eqAnswer))
           val tr1 =
-            valueExp.typeSolve(typeEnv, valueExp.getTypeWithoutAnswer(typeEnv))
+            valueExp.typeSolve(typeEnv, valueExp.getType(typeEnv, None))
           val tr2 =
             inExp.typeSolve((variable.name, tr1.mlType) :: typeEnv, t)
           TLet(typeEnv, variable, valueExp, inExp, tr1, tr2, t)
@@ -292,8 +292,8 @@ object ast {
             body.typeSolve((param.name, a.arg) :: typeEnv, a.body)
           TFun(typeEnv, param, body, solvedBody, a)
         case FunCall(funName, arg) =>
-          val t1 = funName.getTypeWithoutAnswer(typeEnv)
-          val t2 = arg.getTypeWithoutAnswer(typeEnv)
+          val t1 = funName.getType(typeEnv, None)
+          val t2 = arg.getType(typeEnv, None)
           val tr1 = funName.typeSolve(typeEnv, t1)
           val tr2 = arg.typeSolve(typeEnv, t2)
           val _t1 = t1 match {
@@ -305,7 +305,7 @@ object ast {
           TApp(typeEnv, funName, arg, tr1, tr2, _t1.body)
         case LetRecExp(variable, RecFunExp(v, param, body), inExp) =>
           val xType = RecFunExp(v, param, body)
-            .getTypeWithoutAnswer(typeEnv)
+            .getType(typeEnv, None)
           val x = xType match {
             case Schema(t, body) =>
               body.asInstanceOf[MLFunType]
@@ -335,7 +335,7 @@ object ast {
                   EList(Var(x), Var(y)),
                   e3
                 ) :: List() =>
-              val e1Type = e1.getTypeWithoutAnswer(typeEnv)
+              val e1Type = e1.getType(typeEnv, None)
               val tr1 = e1.typeSolve(typeEnv, e1Type)
               val tr2 = e2.typeSolve(typeEnv, eqAnswer)
               val tr3 =
