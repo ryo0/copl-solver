@@ -35,12 +35,16 @@ object ast {
   object Cons extends Op
   sealed class Exp {
     def getTypeWithoutAnswer(typeEnv: TypeEnv = List()): MLType = {
-      this.typeInfer(typeEnv)._2
+      this.typeInfer(typeEnv, None)._2
     }
     def getType(typeEnv: TypeEnv = List(), myEqAnswer: MLType): MLType = {
-      this.typeInfer(typeEnv)._2
+      println(myEqAnswer)
+      this.typeInfer(typeEnv, Some(myEqAnswer))._2
     }
-    def typeInfer(typeEnv: TypeEnv): (TypeAnswer, MLType) = {
+    def typeInfer(
+        typeEnv: TypeEnv,
+        ans: Option[MLType]
+    ): (TypeAnswer, MLType) = {
       this match {
         case IntVal(n) =>
           (List(), MLIntType)
@@ -54,8 +58,8 @@ object ast {
               throw new Exception("envにkeyがない")
           }
         case InfixExp(e1, op, e2) =>
-          val (s1, t1) = e1.typeInfer(typeEnv)
-          val (s2, t2) = e2.typeInfer(typeEnv)
+          val (s1, t1) = e1.typeInfer(typeEnv, None)
+          val (s2, t2) = e2.typeInfer(typeEnv, None)
           val s3 = (s1 ::: s2) :+
             (t1, MLIntType) :+ (t2, MLIntType)
           op match {
@@ -65,26 +69,47 @@ object ast {
               (s3, MLIntType)
           }
         case IfExp(condExp, thenExp, elseExp) =>
-          val (s1, t1) = condExp.typeInfer(typeEnv)
-          val (s2, t2) = thenExp.typeInfer(typeEnv)
-          val (s3, t3) = elseExp.typeInfer(typeEnv)
+          val (s1, t1) = condExp.typeInfer(typeEnv, None)
+          val (s2, t2) = thenExp.typeInfer(typeEnv, None)
+          val (s3, t3) = elseExp.typeInfer(typeEnv, None)
           val s4 = (s1 ::: s2 ::: s3) :+
-            (t1, MLBoolType) :+ (t2, t3) :+ (t3, t2)
+            (t1, MLBoolType) :+ (t2, t3)
           (s4, t2.substitute(s4))
         case LetExp(variable, valueExp, inExp) =>
-          val (s1, t1) = valueExp.typeInfer(typeEnv)
-          val (s2, t2) = inExp.typeInfer((variable.name, t1) :: typeEnv)
-          val s3 = (s1 ::: s2).unify()
+          val (s1, t1) = valueExp.typeInfer(typeEnv, None)
+          val (s2, t2) = inExp.typeInfer((variable.name, t1) :: typeEnv, ans)
+          val s3 = {
+            ans match {
+              case Some(answer) =>
+                ((t2, answer) :: s1 ::: s2).unify()
+              case None =>
+                (s1 ::: s2).unify()
+            }
+          }
           (s3, t2.substitute(s3))
         case FunExp(param, body) =>
           val a = newTypeVar()
-          val (s, t0) = body.typeInfer((param.name, a) :: typeEnv)
+          val bodyTypeAns = ans match {
+            case Some(answer) =>
+              Some(answer.asInstanceOf[MLFunType].body)
+            case None =>
+              None
+          }
+          val (s, t0) = body.typeInfer((param.name, a) :: typeEnv, bodyTypeAns)
           (s, MLFunType(a.substitute(s), t0))
         case FunCall(funName, arg) =>
-          val (s1, t1) = funName.typeInfer(typeEnv)
-          val (s2, t2) = arg.typeInfer(typeEnv)
+          val (s1, t1) = funName.typeInfer(typeEnv, None)
+          val (s2, t2) = arg.typeInfer(typeEnv, None)
           val a = newTypeVar()
-          val s3 = ((t1, MLFunType(t2, a)) :: s1 ::: s2).unify()
+          val s3 = ans match {
+            case None =>
+              ((t1, MLFunType(t2, a)) :: s1 ::: s2).unify()
+            case Some(answer) =>
+              ((a, answer) :: (
+                t1,
+                MLFunType(t2, a)
+              ) :: s1 ::: s2).unify()
+          }
           (s3, a.substitute(s3))
       }
 //        case LetRecExp(variable, RecFunExp(_, param, body), inExp) =>
