@@ -89,7 +89,7 @@ object typeRule {
           typeVarToString(name, typeEnv)
         }
         case Schema(t, body) =>
-          s"${t.string()}.${body.string()}"
+          s"${t.vars.map(t => t.string()).mkString(" ")}.${body.string()}"
       }
     }
     def fillTypeVar(): MLType = {
@@ -116,6 +116,8 @@ object typeRule {
               TypeVar(n)
           }
         }
+//        case TypeVars(vars) =>
+//          TypeVars(vars.map(v => v.substitute(typeAnswer)))
         case MLIntType  => MLIntType
         case MLBoolType => MLBoolType
         case MLFunType(arg, body) =>
@@ -141,7 +143,8 @@ object typeRule {
   case class MLFunType(arg: MLType, body: MLType) extends MLType
   case class MLListType(lst: MLType) extends MLType
   case class TypeVar(name: String) extends MLType
-  case class Schema(tVar: TypeVar, t: MLType) extends MLType
+  case class TypeVars(vars: List[TypeVar]) extends MLType
+  case class Schema(tVars: TypeVars, t: MLType) extends MLType
   type TypeEnv = List[(String, MLType)]
   implicit class TypeEnvString(typeEnv: TypeEnv) {
     def string: String = {

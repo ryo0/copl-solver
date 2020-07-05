@@ -240,11 +240,13 @@ class ParserTest extends FunSuite {
       ), List())
     )
     assert(
-      parseExp(tokenize("f (4::[]) + f [] + f (1 :: 2 :: 3 :: [])")) === (InfixExp(
+      parseExp(
+        tokenize("f (4::[]) + f [] + f (1 :: 2 :: 3 :: [])")
+      ) === (InfixExp(
         InfixExp(
           FunCall(Var("f"), EList(IntVal(4), EmptyList)),
           Plus,
-          FunCall(Var("f"), EmptyList),
+          FunCall(Var("f"), EmptyList)
         ),
         Plus,
         FunCall(
@@ -254,7 +256,9 @@ class ParserTest extends FunSuite {
       ), List())
     )
     assert(
-      parseExp(tokenize("let k = fun x -> fun y -> x in k 3 true"))._1 === LetExp(
+      parseExp(
+        tokenize("let k = fun x -> fun y -> x in k 3 true")
+      )._1 === LetExp(
         Var("k"),
         FunExp(Var("x"), FunExp(Var("y"), Var("x"))),
         FunCall(FunCall(Var("k"), IntVal(3)), BoolVal(true))
@@ -282,7 +286,9 @@ class ParserTest extends FunSuite {
     )
 
     assert(
-      parseExp(tokenize("apply ((fun x -> x * x) :: (fun y -> y + 3) :: []) 4")) === (
+      parseExp(
+        tokenize("apply ((fun x -> x * x) :: (fun y -> y + 3) :: []) 4")
+      ) === (
         FunCall(
           FunCall(
             Var("apply"),
@@ -366,7 +372,9 @@ class ParserTest extends FunSuite {
       )
     )
     assert(
-      parseExp(tokenize("match l1 with [] -> l2 | x :: y -> x :: append y l2"))._1 === Match(
+      parseExp(
+        tokenize("match l1 with [] -> l2 | x :: y -> x :: append y l2")
+      )._1 === Match(
         Var("l1"),
         List(
           Pattern(EmptyList, Var("l2")),
@@ -415,6 +423,11 @@ class ParserTest extends FunSuite {
       parseTypeEnv(
         tokenize("x : bool, y : int |- if x then y + 1 else y - 1 : int")
       )._1.string === "x : bool,y : int"
+    )
+    assert(
+      parseTypeEnv(
+        tokenize("f: 'a 'b.'a->'b->'a |- f 3 true + f 2 4 : int")
+      )._1.string === "f : 'a 'b.('a -> ('b -> 'a))"
     )
   }
 }

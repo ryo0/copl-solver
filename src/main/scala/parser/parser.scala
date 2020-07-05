@@ -12,7 +12,8 @@ import solver.typeRule.{
   MLType,
   Schema,
   TypeEnv,
-  TypeVar
+  TypeVar,
+  TypeVars
 }
 
 object parser {
@@ -27,8 +28,10 @@ object parser {
   )
   def parseTypeEnv(tokens: List[Token]): (TypeEnv, List[Token]) = {
     @scala.annotation.tailrec
-    def parseTypeEnvSub(tokens: List[Token],
-                        env: TypeEnv): (TypeEnv, List[Token]) = {
+    def parseTypeEnvSub(
+        tokens: List[Token],
+        env: TypeEnv
+    ): (TypeEnv, List[Token]) = {
       tokens match {
         case VarToken(n) :: TypeSeparatorToken :: rest =>
           val (t, rest2) = parseType(rest)
@@ -43,8 +46,10 @@ object parser {
   }
 
   def parseType(tokens: List[Token]): (MLType, List[Token]) = {
-    def parseTypeSub(tokens: List[Token],
-                     acmT: Option[MLType]): (MLType, List[Token]) = {
+    def parseTypeSub(
+        tokens: List[Token],
+        acmT: Option[MLType]
+    ): (MLType, List[Token]) = {
       tokens match {
         case List() =>
           acmT match {
@@ -61,9 +66,26 @@ object parser {
           parseTypeSub(rest, Some(MLBoolType))
         case VarToken(n) :: SchemaSymbolToken :: rest =>
           val (t, rest2) = parseTypeSub(rest, None)
-          parseTypeSub(rest2, Some(Schema(TypeVar(n), t)))
+          acmT match {
+            case Some(TypeVars(vars)) =>
+              parseTypeSub(rest2, Some(Schema(TypeVars(TypeVar(n) :: vars), t)))
+            case None =>
+              parseTypeSub(rest2, Some(Schema(TypeVars(List(TypeVar(n))), t)))
+            case Some(TypeVar(m)) =>
+              parseTypeSub(
+                rest2,
+                Some(Schema(TypeVars(List(TypeVar(m), TypeVar(n))), t))
+              )
+          }
         case VarToken(n) :: rest =>
-          parseTypeSub(rest, Some(TypeVar(n)))
+          acmT match {
+            case Some(TypeVars(vars)) =>
+              parseTypeSub(rest, Some(TypeVars(TypeVar(n) :: vars)))
+            case None =>
+              parseTypeSub(rest, Some(TypeVar(n)))
+            case _ =>
+              parseTypeSub(rest, acmT)
+          }
         case ListSymbolToken :: rest =>
           acmT match {
             case Some(t) =>
@@ -102,6 +124,7 @@ object parser {
     }
     parseTypeSub(tokens, None)
   }
+
   def parseExp(tokens: List[Token]): (Exp, List[Token]) = {
     tokens match {
       case IfToken :: _ =>
@@ -132,8 +155,10 @@ object parser {
 
   def parsePatterns(tokens: List[Token]): (List[Pattern], List[Token]) = {
     @scala.annotation.tailrec
-    def parsePatternsSub(tokens: List[Token],
-                         ps: List[Pattern]): (List[Pattern], List[Token]) = {
+    def parsePatternsSub(
+        tokens: List[Token],
+        ps: List[Pattern]
+    ): (List[Pattern], List[Token]) = {
       val (pattern, rest) = parsePattern(tokens)
       rest match {
         case OrToken :: rest2 =>
@@ -158,9 +183,11 @@ object parser {
 
   def getTokensInParen(tokens: List[Token]): (List[Token], List[Token]) = {
     @scala.annotation.tailrec
-    def getParenExpSub(counter: Int,
-                       acm: List[Token],
-                       tokens: List[Token]): (List[Token], List[Token]) = {
+    def getParenExpSub(
+        counter: Int,
+        acm: List[Token],
+        tokens: List[Token]
+    ): (List[Token], List[Token]) = {
       if (counter == 0 && acm.nonEmpty) {
         return (acm, tokens)
       }
@@ -213,8 +240,10 @@ object parser {
   }
 
   def parseParams(tokens: List[Token]): (List[Var], List[Token]) = {
-    def parseParamsSub(tokens: List[Token],
-                       acm: List[Var]): (List[Var], List[Token]) = {
+    def parseParamsSub(
+        tokens: List[Token],
+        acm: List[Var]
+    ): (List[Var], List[Token]) = {
       tokens match {
         case ArrowToken :: rest =>
           (acm, rest)

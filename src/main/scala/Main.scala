@@ -1,7 +1,5 @@
-import solver.typeSolver.typeExtract
 import solver.typeSolver.typeSolveWithEnvAndType
 import java.io.PrintWriter
-import solver.typeRule.{MLBoolType, MLIntType}
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -223,13 +221,13 @@ object Main {
     )
     file93.close()
 
-    val file94 = new PrintWriter("PolyTypingML4Result/4.txt")
-    file94.write(
-      typeSolveWithEnvAndType("|- let id = fun x -> x in id id : bool -> bool")
-    )
-    file94.close()
-////
-//    val file96 = new PrintWriter("PolyTypingML4Result/6.txt")
+//    val file94 = new PrintWriter("PolyTypingML4Result/4.txt")
+//    file94.write(
+//      typeSolveWithEnvAndType("|- let id = fun x -> x in id id : bool -> bool")
+//    )
+//    file94.close()
+//
+//    val file96 = new PrintWriter("PolyTypingML4Result/5.txt")
 //    file96.write(
 //      typeSolveWithEnvAndType("f: 'a 'b.'a->'b->'a |- f 3 true + f 2 4 : int")
 //    )
