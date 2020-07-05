@@ -1,0 +1,16 @@
+f : 'a 'b.('a -> ('b -> 'a)) |- ((f 3) true) + ((f 2) 4) : int by T-Plus{
+     f : 'a 'b.('a -> ('b -> 'a)) |- (f 3) true :  int  by T-App{
+          f : 'a 'b.('a -> ('b -> 'a)) |- f 3 :  (bool -> int)  by T-App{
+               f : 'a 'b.('a -> ('b -> 'a)) |- f : (int -> (bool -> int)) by T-Var{};
+               f : 'a 'b.('a -> ('b -> 'a)) |- 3 : int by T-Int{};
+          };
+          f : 'a 'b.('a -> ('b -> 'a)) |- true : bool by T-Bool{};
+     };
+     f : 'a 'b.('a -> ('b -> 'a)) |- (f 2) 4 :  int  by T-App{
+          f : 'a 'b.('a -> ('b -> 'a)) |- f 2 :  (int -> int)  by T-App{
+               f : 'a 'b.('a -> ('b -> 'a)) |- f : (int -> (int -> int)) by T-Var{};
+               f : 'a 'b.('a -> ('b -> 'a)) |- 2 : int by T-Int{};
+          };
+          f : 'a 'b.('a -> ('b -> 'a)) |- 4 : int by T-Int{};
+     };
+};

@@ -227,12 +227,12 @@ object Main {
 //    )
 //    file94.close()
 //
-//    val file96 = new PrintWriter("PolyTypingML4Result/5.txt")
-//    file96.write(
-//      typeSolveWithEnvAndType("f: 'a 'b.'a->'b->'a |- f 3 true + f 2 4 : int")
-//    )
-//    file96.close()
-    //
+    val file96 = new PrintWriter("PolyTypingML4Result/5.txt")
+    file96.write(
+      typeSolveWithEnvAndType("f: 'a 'b.'a->'b->'a |- f 3 true + f 2 4 : int")
+    )
+    file96.close()
+
     //    val file87 = new PrintWriter("PolyTypingML4Result/7.txt")
     //    file87.write(
     //      typeSolveWithEnvAndType("|- fun f -> f 0 + f 1 : (int -> int) -> int")

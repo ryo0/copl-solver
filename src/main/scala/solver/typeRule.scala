@@ -58,11 +58,21 @@ object typeRule {
               case (TypeVar(n), right) =>
                 val ta: TypeAnswer = List((TypeVar(n), right))
                 val s = eqs.substitute(ta).unify()
-                s :+ (TypeVar(n), right.substitute(s))
+                s :+ (TypeVar(n) -> right.substitute(s))
               case (left, TypeVar(n)) =>
                 val ta: TypeAnswer = List((TypeVar(n), left))
                 val s = eqs.substitute(ta).unify()
                 s :+ (TypeVar(n) -> left.substitute(s))
+              case (Schema(_, t), right) =>
+                println("t, right", t, right)
+                val s = (Equation(t, right) :: eqs).unify()
+                println(s)
+                s :+ (t -> right.substitute(s))
+              case (left, Schema(_, t)) =>
+                println("t, left", t, left)
+
+                val s = (Equation(t, left) :: eqs).unify()
+                s :+ (t -> left.substitute(s))
             }
           }
       }

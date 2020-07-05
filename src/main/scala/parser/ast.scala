@@ -300,6 +300,7 @@ object ast {
             case Schema(t, body) =>
               body.asInstanceOf[MLFunType]
             case _ =>
+              println(t1)
               t1.asInstanceOf[MLFunType]
           }
           TApp(typeEnv, funName, arg, tr1, tr2, _t1.body)
