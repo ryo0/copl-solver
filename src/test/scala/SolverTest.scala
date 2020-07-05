@@ -1,11 +1,11 @@
 import org.scalatest.FunSuite
 import parser.ast.Exp
-import parser.parser.parseExp
-import solver.typeRule
+import parser.parser.{parseExp, parseTypeEnv}
+import solver.typeRule.TypeEnv
 import solver.typeRule._
 import tokenizer.tokenizer.tokenize
 class SolverTest extends FunSuite {
-  test("checkMatchin") {
+  test("checkMatching") {
     assert(
       parseExp(tokenize("(x :: _) :: l'"))._1
         .checkMatching(parseExp(tokenize("(3 :: []) :: []"))._1)
@@ -100,7 +100,7 @@ class SolverTest extends FunSuite {
           (TypeVar("x"), TypeVar("z")),
           (MLFunType(MLIntType, MLIntType), TypeVar("'x")),
           (TypeVar("'x144"), TypeVar("'x166")),
-          (TypeVar("'x166"), TypeVar("'x144")),
+          (TypeVar("'x166"), TypeVar("'x144"))
         )
       ).sortBy(a => a._1.string()) === List(
         (TypeVar("'x144"), MLFunType(MLIntType, MLIntType)),
@@ -130,7 +130,7 @@ class SolverTest extends FunSuite {
           (TypeVar("x"), TypeVar("z")),
           (MLFunType(MLIntType, MLIntType), TypeVar("'x")),
           (TypeVar("x144"), TypeVar("x166")),
-          (TypeVar("x166"), TypeVar("x144")),
+          (TypeVar("x166"), TypeVar("x144"))
         )
       ) == List()
     }
@@ -169,7 +169,7 @@ class SolverTest extends FunSuite {
           (TypeVar("'x144"), TypeVar("'x")),
           (TypeVar("'x"), TypeVar("'x144")),
           (TypeVar("'x144"), TypeVar("'x144")),
-          (TypeVar("'x"), MLFunType(MLIntType, MLIntType)),
+          (TypeVar("'x"), MLFunType(MLIntType, MLIntType))
         )
       ) === Some(MLFunType(MLIntType, MLIntType))
     )
@@ -189,7 +189,7 @@ class SolverTest extends FunSuite {
           (TypeVar("x"), TypeVar("z")),
           (TypeVar("'x"), MLFunType(MLIntType, MLIntType)),
           (TypeVar("x"), TypeVar("z")),
-          (MLFunType(MLIntType, MLIntType), TypeVar("'x")),
+          (MLFunType(MLIntType, MLIntType), TypeVar("'x"))
         )
       ) === Some(MLFunType(MLIntType, MLIntType))
     )
@@ -224,7 +224,7 @@ class SolverTest extends FunSuite {
           (TypeVar("x"), TypeVar("z")),
           (MLFunType(MLIntType, MLIntType), TypeVar("'x")),
           (TypeVar("x144"), TypeVar("x166")),
-          (TypeVar("x166"), TypeVar("x144")),
+          (TypeVar("x166"), TypeVar("x144"))
         )
       ) === Some(MLFunType(MLIntType, MLIntType))
     }
@@ -242,9 +242,40 @@ class SolverTest extends FunSuite {
           (TypeVar("z"), TypeVar("w")),
           (TypeVar("w"), TypeVar("x")),
           (TypeVar("w"), TypeVar("y")),
-          (TypeVar("w"), TypeVar("z")),
+          (TypeVar("w"), TypeVar("z"))
         )
       ) === Some(MLBoolType)
+    )
+  }
+
+  test("ftv") {
+    assert(
+      MLFunType(TypeVar("a"), MLListType(TypeVar("b"))).ftv === List(
+        TypeVar("a"),
+        TypeVar("b")
+      )
+    )
+    assert(
+      MLFunType(TypeVar("a"), MLListType(TypeVar("b"))).ftv.sortBy(a =>
+        a.name
+      ) === List(
+        TypeVar("a"),
+        TypeVar("b")
+      ).sortBy(a => a.name)
+    )
+    assert(
+      Schema(
+        TypeVars(List(TypeVar("a"))),
+        MLFunType(TypeVar("a"), MLListType(TypeVar("b")))
+      ).ftv === List(
+        TypeVar("b")
+      )
+    )
+    assert(
+      parseTypeEnv(
+        tokenize("x: 'a.'a -> 'b list, y: 'c -> 'c |-")
+      )._1.ftv.sortBy(a => a.name) === List(TypeVar("'b"), TypeVar("'c"))
+        .sortBy(a => a.name)
     )
   }
 }

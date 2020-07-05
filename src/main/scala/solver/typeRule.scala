@@ -83,13 +83,13 @@ object typeRule {
         case MLIntType  => List()
         case MLBoolType => List()
         case MLFunType(arg, body) =>
-          arg.ftv ::: body.ftv
+          (arg.ftv ::: body.ftv).distinct
         case MLListType(lst) => lst.ftv
         case TypeVar(name) => {
           List(TypeVar(name))
         }
         case Schema(t, body) =>
-          body.ftv.filter(v => !t.vars.contains(v))
+          body.ftv.filter(v => !t.vars.contains(v)).distinct
       }
     }
     def string(typeEnv: TypeEnv = List()): String = {
@@ -184,7 +184,7 @@ object typeRule {
     }
 
     def ftv: List[TypeVar] = {
-      typeEnv.flatMap(e => e._2.ftv)
+      typeEnv.flatMap(e => e._2.ftv).distinct
     }
   }
 
