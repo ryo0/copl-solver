@@ -774,7 +774,7 @@ object typeRule {
             s"$indentPlus1${tr2.string(nest + 1)}\n" +
             s"$indent};"
         case TFun(typeEnv, x, e, tr1, t) =>
-          s"${typeEnv.string} |-fun ${x.string} -> ${e.string} :  ${t.string(typeEnv)}  by T-Fun{\n" +
+          s"${typeEnv.string} |- fun ${x.string} -> ${e.string} :  ${t.string(typeEnv)}  by T-Abs{\n" +
             s"$indentPlus1${tr1.string(nest + 1)}\n" +
             s"$indent};"
         case TApp(typeEnv, e1, e2, tr1, tr2, t) =>

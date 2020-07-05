@@ -11,7 +11,7 @@ object typeSolver {
     println(exp.string, exp.typeInfer(typeEnv, Some(t))._2.string())
     val solved = exp.typeSolve(typeEnv, t)
     val typeAnswer = getTypeAnswer(solved)
-    solved.substitute(typeAnswer).fillTypeVar().string(0)
+    solved.substitute(typeAnswer).string(0)
   }
 
   def typeExtract(string: String): String = {

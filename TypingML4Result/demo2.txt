@@ -1,19 +1,19 @@
- |- let s = (fun f -> (fun g -> (fun x -> ((f x) (g x))))) in s : ((bool -> (bool -> bool)) -> ((bool -> bool) -> (bool -> bool))) by T-Let{
-      |-fun f -> (fun g -> (fun x -> ((f x) (g x)))) :  ((bool -> (bool -> bool)) -> ((bool -> bool) -> (bool -> bool)))  by T-Fun{
-          f : (bool -> (bool -> bool)) |-fun g -> (fun x -> ((f x) (g x))) :  ((bool -> bool) -> (bool -> bool))  by T-Fun{
-               f : (bool -> (bool -> bool)),g : (bool -> bool) |-fun x -> ((f x) (g x)) :  (bool -> bool)  by T-Fun{
-                    f : (bool -> (bool -> bool)),g : (bool -> bool),x : bool |- (f x) (g x) :  bool  by T-App{
-                         f : (bool -> (bool -> bool)),g : (bool -> bool),x : bool |- f x :  (bool -> bool)  by T-App{
-                              f : (bool -> (bool -> bool)),g : (bool -> bool),x : bool |- f : (bool -> (bool -> bool)) by T-Var{};
-                              f : (bool -> (bool -> bool)),g : (bool -> bool),x : bool |- x : bool by T-Var{};
+ |- let s = (fun f -> (fun g -> (fun x -> ((f x) (g x))))) in s : (('x201 -> ('x203 -> 'x204)) -> (('x201 -> 'x203) -> ('x201 -> 'x204))) by T-Let{
+      |- fun f -> (fun g -> (fun x -> ((f x) (g x)))) :  (('x207 -> ('x209 -> 'x210)) -> (('x207 -> 'x209) -> ('x207 -> 'x210)))  by T-Abs{
+          f : ('x207 -> ('x209 -> 'x210)) |- fun g -> (fun x -> ((f x) (g x))) :  (('x207 -> 'x209) -> ('x207 -> 'x210))  by T-Abs{
+               f : ('x207 -> ('x209 -> 'x210)),g : ('x207 -> 'x209) |- fun x -> ((f x) (g x)) :  ('x207 -> 'x210)  by T-Abs{
+                    f : ('x207 -> ('x209 -> 'x210)),g : ('x207 -> 'x209),x : 'x207 |- (f x) (g x) :  'x210  by T-App{
+                         f : ('x207 -> ('x209 -> 'x210)),g : ('x207 -> 'x209),x : 'x207 |- f x :  ('x209 -> 'x210)  by T-App{
+                              f : ('x207 -> ('x209 -> 'x210)),g : ('x207 -> 'x209),x : 'x207 |- f : ('x207 -> ('x209 -> 'x210)) by T-Var{};
+                              f : ('x207 -> ('x209 -> 'x210)),g : ('x207 -> 'x209),x : 'x207 |- x : 'x207 by T-Var{};
                          };
-                         f : (bool -> (bool -> bool)),g : (bool -> bool),x : bool |- g x :  bool  by T-App{
-                              f : (bool -> (bool -> bool)),g : (bool -> bool),x : bool |- g : (bool -> bool) by T-Var{};
-                              f : (bool -> (bool -> bool)),g : (bool -> bool),x : bool |- x : bool by T-Var{};
+                         f : ('x207 -> ('x209 -> 'x210)),g : ('x207 -> 'x209),x : 'x207 |- g x :  'x209  by T-App{
+                              f : ('x207 -> ('x209 -> 'x210)),g : ('x207 -> 'x209),x : 'x207 |- g : ('x207 -> 'x209) by T-Var{};
+                              f : ('x207 -> ('x209 -> 'x210)),g : ('x207 -> 'x209),x : 'x207 |- x : 'x207 by T-Var{};
                          };
                     };
                };
           };
      };
-     s : ((bool -> (bool -> bool)) -> ((bool -> bool) -> (bool -> bool))) |- s : ((bool -> (bool -> bool)) -> ((bool -> bool) -> (bool -> bool))) by T-Var{};
+     s : (('x207 -> ('x209 -> 'x210)) -> (('x207 -> 'x209) -> ('x207 -> 'x210))) |- s : (('x201 -> ('x203 -> 'x204)) -> (('x201 -> 'x203) -> ('x201 -> 'x204))) by T-Var{};
 };

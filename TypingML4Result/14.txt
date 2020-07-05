@@ -1,6 +1,6 @@
  |- let k = (fun x -> (fun y -> x)) in ((k (1 :: [])) 3) : int list by T-Let{
-      |-fun x -> (fun y -> x) :  (int list -> (int -> int list))  by T-Fun{
-          x : int list |-fun y -> x :  (int -> int list)  by T-Fun{
+      |- fun x -> (fun y -> x) :  (int list -> (int -> int list))  by T-Abs{
+          x : int list |- fun y -> x :  (int -> int list)  by T-Abs{
                x : int list,y : int |- x : int list by T-Var{};
           };
      };

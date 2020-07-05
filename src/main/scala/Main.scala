@@ -209,37 +209,31 @@ object Main {
     )
     file827.close()
 
-//    val file81 = new PrintWriter("PolyTypingML4Result/1.txt")
-//    file81.write(typeSolveWithEnvAndType("|- fun x -> x : 'a -> 'a"))
-//    file81.close()
-//
-//    val file82 = new PrintWriter("PolyTypingML4Result/2.txt")
-//    file82.write(typeSolveWithEnvAndType("f: 'a.'a->'a |- f 3 : int"))
-//    file82.close()
-//
-//    val file83 = new PrintWriter("PolyTypingML4Result/3.txt")
-//    file83.write(
-//      typeSolveWithEnvAndType("f: 'a.'a->'a |- f (fun x -> x + 3) : int -> int")
-//    )
-//    file83.close()
-//
-//    val file84 = new PrintWriter("PolyTypingML4Result/4.txt")
-//    file84.write(
-//      typeSolveWithEnvAndType("f: 'a.'a->'a |- f (fun x -> x + 3) : int -> int")
-//    )
-//    file84.close()
-//
-//    val file85 = new PrintWriter("PolyTypingML4Result/5.txt")
-//    file85.write(
-//      typeSolveWithEnvAndType("|- let id = fun x -> x in id id : bool -> bool")
-//    )
-//    file85.close()
-//
-//    val file86 = new PrintWriter("PolyTypingML4Result/6.txt")
-//    file86.write(
+    val file91 = new PrintWriter("PolyTypingML4Result/1.txt")
+    file91.write(typeSolveWithEnvAndType("|- fun x -> x : 'a -> 'a"))
+    file91.close()
+
+    val file92 = new PrintWriter("PolyTypingML4Result/2.txt")
+    file92.write(typeSolveWithEnvAndType("f: 'a.'a->'a |- f 3 : int"))
+    file92.close()
+
+    val file93 = new PrintWriter("PolyTypingML4Result/3.txt")
+    file93.write(
+      typeSolveWithEnvAndType("f: 'a.'a->'a |- f (fun x -> x + 3) : int -> int")
+    )
+    file93.close()
+
+    val file94 = new PrintWriter("PolyTypingML4Result/4.txt")
+    file94.write(
+      typeSolveWithEnvAndType("|- let id = fun x -> x in id id : bool -> bool")
+    )
+    file94.close()
+////
+//    val file96 = new PrintWriter("PolyTypingML4Result/6.txt")
+//    file96.write(
 //      typeSolveWithEnvAndType("f: 'a 'b.'a->'b->'a |- f 3 true + f 2 4 : int")
 //    )
-//    file86.close()
+//    file96.close()
     //
     //    val file87 = new PrintWriter("PolyTypingML4Result/7.txt")
     //    file87.write(

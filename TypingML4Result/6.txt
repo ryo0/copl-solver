@@ -1,5 +1,5 @@
  |- let f = (fun x -> (x + 1)) in (f 4) : int by T-Let{
-      |-fun x -> (x + 1) :  (int -> int)  by T-Fun{
+      |- fun x -> (x + 1) :  (int -> int)  by T-Abs{
           x : int |- x + 1 : int by T-Plus{
                x : int |- x : int by T-Var{};
                x : int |- 1 : int by T-Int{};

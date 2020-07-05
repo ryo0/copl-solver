@@ -1,13 +1,13 @@
  |- ((fun x -> (fun y -> x)) 1) (fun x -> x) :  int  by T-App{
-      |- (fun x -> (fun y -> x)) 1 :  ((bool -> bool) -> int)  by T-App{
-           |-fun x -> (fun y -> x) :  (int -> ((bool -> bool) -> int))  by T-Fun{
-               x : int |-fun y -> x :  ((bool -> bool) -> int)  by T-Fun{
-                    x : int,y : (bool -> bool) |- x : int by T-Var{};
+      |- (fun x -> (fun y -> x)) 1 :  (('x75 -> 'x75) -> int)  by T-App{
+           |- fun x -> (fun y -> x) :  (int -> (('x75 -> 'x75) -> int))  by T-Abs{
+               x : int |- fun y -> x :  (('x75 -> 'x75) -> int)  by T-Abs{
+                    x : int,y : ('x75 -> 'x75) |- x : int by T-Var{};
                };
           };
            |- 1 : int by T-Int{};
      };
-      |-fun x -> x :  (bool -> bool)  by T-Fun{
-          x : bool |- x : bool by T-Var{};
+      |- fun x -> x :  ('x75 -> 'x75)  by T-Abs{
+          x : 'x75 |- x : 'x75 by T-Var{};
      };
 };

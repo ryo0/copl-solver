@@ -1,6 +1,6 @@
  |- let max = (fun x -> (fun y -> if (x < y) then y else x)) in ((max 3) 5) : int by T-Let{
-      |-fun x -> (fun y -> if (x < y) then y else x) :  (int -> (int -> int))  by T-Fun{
-          x : int |-fun y -> if (x < y) then y else x :  (int -> int)  by T-Fun{
+      |- fun x -> (fun y -> if (x < y) then y else x) :  (int -> (int -> int))  by T-Abs{
+          x : int |- fun y -> if (x < y) then y else x :  (int -> int)  by T-Abs{
                x : int,y : int |- if (x < y) then y else x: int by T-If{
                     x : int,y : int |- x < y : bool by T-Lt{
                          x : int,y : int |- x : int by T-Var{};

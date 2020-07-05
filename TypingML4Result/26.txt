@@ -1,5 +1,5 @@
  |- let rec append = fun l1 -> (fun l2 -> match l1 with  [] -> l2 | x :: y -> (x :: ((append y) l2)) ) in ((append (true :: [])) (false :: [])) :  bool list  by T-LetRec{
-     append : (bool list -> (bool list -> bool list)),l1 : bool list |-fun l2 -> match l1 with  [] -> l2 | x :: y -> (x :: ((append y) l2))  :  (bool list -> bool list)  by T-Fun{
+     append : (bool list -> (bool list -> bool list)),l1 : bool list |- fun l2 -> match l1 with  [] -> l2 | x :: y -> (x :: ((append y) l2))  :  (bool list -> bool list)  by T-Abs{
           append : (bool list -> (bool list -> bool list)),l1 : bool list,l2 : bool list |- match l1 with [] -> l2 | x :: y -> (x :: ((append y) l2)) :  bool list  by T-Match{
                append : (bool list -> (bool list -> bool list)),l1 : bool list,l2 : bool list |- l1 : bool list by T-Var{};
                append : (bool list -> (bool list -> bool list)),l1 : bool list,l2 : bool list |- l2 : bool list by T-Var{};

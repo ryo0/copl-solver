@@ -1,6 +1,6 @@
  |- let k = (fun x -> (fun y -> x)) in ((k 3) true) : int by T-Let{
-      |-fun x -> (fun y -> x) :  (int -> (bool -> int))  by T-Fun{
-          x : int |-fun y -> x :  (bool -> int)  by T-Fun{
+      |- fun x -> (fun y -> x) :  (int -> (bool -> int))  by T-Abs{
+          x : int |- fun y -> x :  (bool -> int)  by T-Abs{
                x : int,y : bool |- x : int by T-Var{};
           };
      };
