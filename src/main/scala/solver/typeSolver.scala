@@ -10,9 +10,8 @@ object typeSolver {
     val (t, _) = parseType(rest2)
     println(exp.string, exp.typeInfer(typeEnv, Some(t))._2.string())
     val solved = exp.typeSolve(typeEnv, t)
-    val typeAnswer = getTypeAnswer(solved)
-    println("typeAnswer", typeAnswer)
-    solved.substitute(typeAnswer).string(0)
+
+    solved.pickAnswerAndSubstitute(List()).string(0)
   }
 
   def typeExtract(string: String): String = {

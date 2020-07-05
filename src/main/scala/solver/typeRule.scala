@@ -414,7 +414,8 @@ object typeRule {
           t
       }
     }
-    def substitute(typeAnswer: TypeAnswer): TypeRule = {
+    def pickAnswerAndSubstitute(ans: TypeAnswer): TypeRule = {
+      val typeAnswer = getTypeAnswer(this) ::: ans
       this match {
         case TInt(typeEnv, i) =>
           TInt(typeEnv.substitute(typeAnswer), i)
@@ -425,32 +426,32 @@ object typeRule {
             typeEnv.substitute(typeAnswer),
             e1,
             e2,
-            tr1.substitute(typeAnswer),
-            tr2.substitute(typeAnswer)
+            tr1.pickAnswerAndSubstitute(typeAnswer),
+            tr2.pickAnswerAndSubstitute(typeAnswer)
           )
         case TMinus(typeEnv, e1, e2, tr1, tr2) =>
           TMinus(
             typeEnv.substitute(typeAnswer),
             e1,
             e2,
-            tr1.substitute(typeAnswer),
-            tr2.substitute(typeAnswer)
+            tr1.pickAnswerAndSubstitute(typeAnswer),
+            tr2.pickAnswerAndSubstitute(typeAnswer)
           )
         case TTimes(typeEnv, e1, e2, tr1, tr2) =>
           TTimes(
             typeEnv.substitute(typeAnswer),
             e1,
             e2,
-            tr1.substitute(typeAnswer),
-            tr2.substitute(typeAnswer)
+            tr1.pickAnswerAndSubstitute(typeAnswer),
+            tr2.pickAnswerAndSubstitute(typeAnswer)
           )
         case TLt(typeEnv, e1, e2, tr1, tr2) =>
           TLt(
             typeEnv.substitute(typeAnswer),
             e1,
             e2,
-            tr1.substitute(typeAnswer),
-            tr2.substitute(typeAnswer)
+            tr1.pickAnswerAndSubstitute(typeAnswer),
+            tr2.pickAnswerAndSubstitute(typeAnswer)
           )
         case TIf(typeEnv, e1, e2, e3, tr1, tr2, tr3, t) =>
           TIf(
@@ -458,9 +459,9 @@ object typeRule {
             e1,
             e2,
             e3,
-            tr1.substitute(typeAnswer),
-            tr2.substitute(typeAnswer),
-            tr3.substitute(typeAnswer),
+            tr1.pickAnswerAndSubstitute(typeAnswer),
+            tr2.pickAnswerAndSubstitute(typeAnswer),
+            tr3.pickAnswerAndSubstitute(typeAnswer),
             t.substitute(typeAnswer)
           )
         case TVar(typeEnv, x, t) =>
@@ -471,8 +472,8 @@ object typeRule {
             x,
             e1,
             e2,
-            tr1.substitute(typeAnswer),
-            tr2.substitute(typeAnswer),
+            tr1.pickAnswerAndSubstitute(typeAnswer),
+            tr2.pickAnswerAndSubstitute(typeAnswer),
             t.substitute(typeAnswer)
           )
         case TFun(typeEnv, x, e, tr1, t) =>
@@ -480,7 +481,7 @@ object typeRule {
             typeEnv.substitute(typeAnswer),
             x,
             e,
-            tr1.substitute(typeAnswer),
+            tr1.pickAnswerAndSubstitute(typeAnswer),
             t.substitute(typeAnswer).asInstanceOf[MLFunType]
           )
         case TApp(typeEnv, e1, e2, tr1, tr2, t) =>
@@ -488,8 +489,8 @@ object typeRule {
             typeEnv.substitute(typeAnswer),
             e1,
             e2,
-            tr1.substitute(typeAnswer),
-            tr2.substitute(typeAnswer),
+            tr1.pickAnswerAndSubstitute(typeAnswer),
+            tr2.pickAnswerAndSubstitute(typeAnswer),
             t.substitute(typeAnswer)
           )
         case TLetRec(typeEnv, x, y, e1, e2, tr1, tr2, t) =>
@@ -499,8 +500,8 @@ object typeRule {
             y,
             e1,
             e2,
-            tr1.substitute(typeAnswer),
-            tr2.substitute(typeAnswer),
+            tr1.pickAnswerAndSubstitute(typeAnswer),
+            tr2.pickAnswerAndSubstitute(typeAnswer),
             t.substitute(typeAnswer)
           )
         case TCons(typeEnv, e1, e2, tr1, tr2, t) =>
@@ -508,8 +509,8 @@ object typeRule {
             typeEnv.substitute(typeAnswer),
             e1,
             e2,
-            tr1.substitute(typeAnswer),
-            tr2.substitute(typeAnswer),
+            tr1.pickAnswerAndSubstitute(typeAnswer),
+            tr2.pickAnswerAndSubstitute(typeAnswer),
             t.substitute(typeAnswer)
           )
         case TNil(typeEnv, t) =>
@@ -522,9 +523,9 @@ object typeRule {
             x,
             y,
             e3,
-            tr1.substitute(typeAnswer),
-            tr2.substitute(typeAnswer),
-            tr3.substitute(typeAnswer),
+            tr1.pickAnswerAndSubstitute(typeAnswer),
+            tr2.pickAnswerAndSubstitute(typeAnswer),
+            tr3.pickAnswerAndSubstitute(typeAnswer),
             t.substitute(typeAnswer)
           )
       }
