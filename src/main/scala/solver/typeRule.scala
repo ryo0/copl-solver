@@ -78,6 +78,20 @@ object typeRule {
     }
   }
   sealed class MLType {
+    def ftv: List[TypeVar] = {
+      this match {
+        case MLIntType  => List()
+        case MLBoolType => List()
+        case MLFunType(arg, body) =>
+          arg.ftv ::: body.ftv
+        case MLListType(lst) => lst.ftv
+        case TypeVar(name) => {
+          List(TypeVar(name))
+        }
+        case Schema(t, body) =>
+          body.ftv.filter(v => !t.vars.contains(v))
+      }
+    }
     def string(typeEnv: TypeEnv = List()): String = {
       this match {
         case MLIntType  => "int"
@@ -167,6 +181,10 @@ object typeRule {
 
     def fillTypeVar(): TypeEnv = {
       typeEnv.map(e => (e._1, e._2.fillTypeVar()))
+    }
+
+    def ftv: List[TypeVar] = {
+      typeEnv.flatMap(e => e._2.ftv)
     }
   }
 
