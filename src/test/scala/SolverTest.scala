@@ -277,5 +277,16 @@ class SolverTest extends FunSuite {
       )._1.ftv.sortBy(a => a.name) === List(TypeVar("'b"), TypeVar("'c"))
         .sortBy(a => a.name)
     )
+
+    assert(
+      parseTypeEnv(
+        tokenize("x: 'a.'a -> 'b list -> 'd, y: 'c 'd.'c -> 'c -> 'x -> 'y |-")
+      )._1.ftv.sortBy(a => a.name) === List(
+        TypeVar("'b"),
+        TypeVar("'d"),
+        TypeVar("'x"),
+        TypeVar("'y")
+      ).sortBy(a => a.name)
+    )
   }
 }

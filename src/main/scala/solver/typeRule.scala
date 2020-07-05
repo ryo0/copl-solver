@@ -77,6 +77,9 @@ object typeRule {
         name
     }
   }
+  def diff(a: List[TypeVar], b: List[TypeVar]): List[TypeVar] = {
+    a.filter(v => !b.contains(v)).distinct
+  }
   sealed class MLType {
     def ftv: List[TypeVar] = {
       this match {
@@ -89,7 +92,7 @@ object typeRule {
           List(TypeVar(name))
         }
         case Schema(t, body) =>
-          body.ftv.filter(v => !t.vars.contains(v)).distinct
+          diff(body.ftv, t.vars)
       }
     }
     def string(typeEnv: TypeEnv = List()): String = {
