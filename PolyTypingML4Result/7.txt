@@ -1,0 +1,48 @@
+ |- let compose = (fun f -> (fun g -> (fun x -> (f (g x))))) in let f = (fun x -> if x then 3 else 4) in let g = (fun x -> (x < 4)) in (((compose f) ((compose g) f)) true) : int by T-Let{
+      |- fun f -> (fun g -> (fun x -> (f (g x)))) :  (('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671)))  by T-Abs{
+          f : ('x670 -> 'x671) |- fun g -> (fun x -> (f (g x))) :  (('x669 -> 'x670) -> ('x669 -> 'x671))  by T-Abs{
+               f : ('x670 -> 'x671),g : ('x669 -> 'x670) |- fun x -> (f (g x)) :  ('x669 -> 'x671)  by T-Abs{
+                    f : ('x670 -> 'x671),g : ('x669 -> 'x670),x : 'x669 |- f (g x) :  'x671  by T-App{
+                         f : ('x670 -> 'x671),g : ('x669 -> 'x670),x : 'x669 |- f : ('x670 -> 'x671) by T-Var{};
+                         f : ('x670 -> 'x671),g : ('x669 -> 'x670),x : 'x669 |- g x :  'x670  by T-App{
+                              f : ('x670 -> 'x671),g : ('x669 -> 'x670),x : 'x669 |- g : ('x669 -> 'x670) by T-Var{};
+                              f : ('x670 -> 'x671),g : ('x669 -> 'x670),x : 'x669 |- x : 'x669 by T-Var{};
+                         };
+                    };
+               };
+          };
+     };
+     compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))) |- let f = (fun x -> if x then 3 else 4) in let g = (fun x -> (x < 4)) in (((compose f) ((compose g) f)) true) : int by T-Let{
+          compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))) |- fun x -> if x then 3 else 4 :  (bool -> int)  by T-Abs{
+               compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),x : bool |- if x then 3 else 4: int by T-If{
+                    compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),x : bool |- x : bool by T-Var{};
+                    compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),x : bool |- 3 : int by T-Int{};
+                    compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),x : bool |- 4 : int by T-Int{};
+               };
+          };
+          compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int) |- let g = (fun x -> (x < 4)) in (((compose f) ((compose g) f)) true) : int by T-Let{
+               compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int) |- fun x -> (x < 4) :  (int -> bool)  by T-Abs{
+                    compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int),x : int |- x < 4 : bool by T-Lt{
+                         compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int),x : int |- x : int by T-Var{};
+                         compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int),x : int |- 4 : int by T-Int{};
+                    };
+               };
+               compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int),g : (int -> bool) |- ((compose f) ((compose g) f)) true :  int  by T-App{
+                    compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int),g : (int -> bool) |- (compose f) ((compose g) f) :  (bool -> int)  by T-App{
+                         compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int),g : (int -> bool) |- compose f :  ((bool -> bool) -> (bool -> int))  by T-App{
+                              compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int),g : (int -> bool) |- compose : ((bool -> int) -> ((bool -> bool) -> (bool -> int))) by T-Var{};
+                              compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int),g : (int -> bool) |- f : (bool -> int) by T-Var{};
+                         };
+                         compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int),g : (int -> bool) |- (compose g) f :  (bool -> bool)  by T-App{
+                              compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int),g : (int -> bool) |- compose g :  ((bool -> int) -> (bool -> bool))  by T-App{
+                                   compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int),g : (int -> bool) |- compose : ((int -> bool) -> ((bool -> int) -> (bool -> bool))) by T-Var{};
+                                   compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int),g : (int -> bool) |- g : (int -> bool) by T-Var{};
+                              };
+                              compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int),g : (int -> bool) |- f : (bool -> int) by T-Var{};
+                         };
+                    };
+                    compose : 'x670 'x671 'x669.(('x670 -> 'x671) -> (('x669 -> 'x670) -> ('x669 -> 'x671))),f : (bool -> int),g : (int -> bool) |- true : bool by T-Bool{};
+               };
+          };
+     };
+};

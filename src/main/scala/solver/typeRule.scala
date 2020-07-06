@@ -112,7 +112,12 @@ object typeRule {
           typeVarToString(name, typeEnv)
         }
         case Schema(t, body) =>
-          s"${t.vars.map(t => t.string()).mkString(" ")}.${body.string()}"
+          if (t.vars.isEmpty) {
+            s"${body.string()}"
+          } else {
+            s"${t.vars.map(t => t.string()).mkString(" ")}.${body.string()}"
+          }
+
       }
     }
     def fillTypeVar(): MLType = {

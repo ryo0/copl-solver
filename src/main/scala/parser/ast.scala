@@ -291,10 +291,11 @@ object ast {
           TVar(typeEnv, Var(n), eqAnswer)
         case LetExp(variable, valueExp, inExp) =>
           val t = this.getType(typeEnv, Some(eqAnswer))
-          val tr1 =
-            valueExp.typeSolve(typeEnv, valueExp.getType(typeEnv, None))
+          val tr1 = valueExp.typeSolve(typeEnv, valueExp.getType(typeEnv, None))
+
+          val sigma = closure(tr1.mlType, typeEnv)
           val tr2 =
-            inExp.typeSolve((variable.name, tr1.mlType) :: typeEnv, t)
+            inExp.typeSolve((variable.name, sigma) :: typeEnv, t)
           TLet(typeEnv, variable, valueExp, inExp, tr1, tr2, t)
         case FunExp(param, body) =>
           val a = eqAnswer match {
@@ -332,7 +333,8 @@ object ast {
             (param.name, yType) :: (variable.name, xType) :: typeEnv,
             x.body
           )
-          val tr2 = inExp.typeSolve((variable.name, xType) :: typeEnv, eqAnswer)
+          val sigma = closure(xType, typeEnv)
+          val tr2 = inExp.typeSolve((variable.name, sigma) :: typeEnv, eqAnswer)
           TLetRec(typeEnv, variable, param, body, inExp, tr1, tr2, eqAnswer)
         case EList(left, right) =>
           val a = eqAnswer.asInstanceOf[MLListType]

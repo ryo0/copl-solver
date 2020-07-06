@@ -1,0 +1,13 @@
+ |- let x = [] in let y = (3 :: x) in (true :: x) : bool list by T-Let{
+      |- [] :  'x865 list  by T-Nil{};
+     x : 'x865.'x865 list |- let y = (3 :: x) in (true :: x) : bool list by T-Let{
+          x : 'x865.'x865 list |- 3 :: x :  int list  by T-Cons{
+               x : 'x865.'x865 list |- 3 : int by T-Int{};
+               x : 'x865.'x865 list |- x : int list by T-Var{};
+          };
+          x : 'x865.'x865 list,y : int list |- true :: x :  bool list  by T-Cons{
+               x : 'x865.'x865 list,y : int list |- true : bool by T-Bool{};
+               x : 'x865.'x865 list,y : int list |- x : bool list by T-Var{};
+          };
+     };
+};

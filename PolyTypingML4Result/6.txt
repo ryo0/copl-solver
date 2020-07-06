@@ -1,26 +1,26 @@
  |- let k = (fun x -> (fun y -> x)) in (((k 3) true) :: ((k (1 :: [])) 3)) : int list by T-Let{
-      |- fun x -> (fun y -> x) :  (int list -> (int -> int list))  by T-Abs{
-          x : int list |- fun y -> x :  (int -> int list)  by T-Abs{
-               x : int list,y : int |- x : int list by T-Var{};
+      |- fun x -> (fun y -> x) :  ('x617 -> ('x618 -> 'x617))  by T-Abs{
+          x : 'x617 |- fun y -> x :  ('x618 -> 'x617)  by T-Abs{
+               x : 'x617,y : 'x618 |- x : 'x617 by T-Var{};
           };
      };
-     k : (int list -> (int -> int list)) |- ((k 3) true) :: ((k (1 :: [])) 3) :  int list  by T-Cons{
-          k : (int -> (bool -> int)) |- (k 3) true :  int  by T-App{
-               k : (int -> (bool -> int)) |- k 3 :  (bool -> int)  by T-App{
-                    k : (int -> (bool -> int)) |- k : (int -> (bool -> int)) by T-Var{};
-                    k : (int -> (bool -> int)) |- 3 : int by T-Int{};
+     k : 'x617 'x618.('x617 -> ('x618 -> 'x617)) |- ((k 3) true) :: ((k (1 :: [])) 3) :  int list  by T-Cons{
+          k : 'x617 'x618.('x617 -> ('x618 -> 'x617)) |- (k 3) true :  int  by T-App{
+               k : 'x617 'x618.('x617 -> ('x618 -> 'x617)) |- k 3 :  (bool -> int)  by T-App{
+                    k : 'x617 'x618.('x617 -> ('x618 -> 'x617)) |- k : (int -> (bool -> int)) by T-Var{};
+                    k : 'x617 'x618.('x617 -> ('x618 -> 'x617)) |- 3 : int by T-Int{};
                };
-               k : (int -> (bool -> int)) |- true : bool by T-Bool{};
+               k : 'x617 'x618.('x617 -> ('x618 -> 'x617)) |- true : bool by T-Bool{};
           };
-          k : (int list -> (int -> int list)) |- (k (1 :: [])) 3 :  int list  by T-App{
-               k : (int list -> (int -> int list)) |- k (1 :: []) :  (int -> int list)  by T-App{
-                    k : (int list -> (int -> int list)) |- k : (int list -> (int -> int list)) by T-Var{};
-                    k : (int list -> (int -> int list)) |- 1 :: [] :  int list  by T-Cons{
-                         k : (int list -> (int -> int list)) |- 1 : int by T-Int{};
-                         k : (int list -> (int -> int list)) |- [] :  int list  by T-Nil{};
+          k : 'x617 'x618.('x617 -> ('x618 -> 'x617)) |- (k (1 :: [])) 3 :  int list  by T-App{
+               k : 'x617 'x618.('x617 -> ('x618 -> 'x617)) |- k (1 :: []) :  (int -> int list)  by T-App{
+                    k : 'x617 'x618.('x617 -> ('x618 -> 'x617)) |- k : (int list -> (int -> int list)) by T-Var{};
+                    k : 'x617 'x618.('x617 -> ('x618 -> 'x617)) |- 1 :: [] :  int list  by T-Cons{
+                         k : 'x617 'x618.('x617 -> ('x618 -> 'x617)) |- 1 : int by T-Int{};
+                         k : 'x617 'x618.('x617 -> ('x618 -> 'x617)) |- [] :  int list  by T-Nil{};
                     };
                };
-               k : (int list -> (int -> int list)) |- 3 : int by T-Int{};
+               k : 'x617 'x618.('x617 -> ('x618 -> 'x617)) |- 3 : int by T-Int{};
           };
      };
 };

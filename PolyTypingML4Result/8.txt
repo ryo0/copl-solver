@@ -1,0 +1,25 @@
+ |- let twice = (fun f -> (fun x -> (f (f x)))) in ((twice (fun x -> (x + 4))) 5) : int by T-Let{
+      |- fun f -> (fun x -> (f (f x))) :  (('x746 -> 'x746) -> ('x746 -> 'x746))  by T-Abs{
+          f : ('x746 -> 'x746) |- fun x -> (f (f x)) :  ('x746 -> 'x746)  by T-Abs{
+               f : ('x746 -> 'x746),x : 'x746 |- f (f x) :  'x746  by T-App{
+                    f : ('x746 -> 'x746),x : 'x746 |- f : ('x746 -> 'x746) by T-Var{};
+                    f : ('x746 -> 'x746),x : 'x746 |- f x :  'x746  by T-App{
+                         f : ('x746 -> 'x746),x : 'x746 |- f : ('x746 -> 'x746) by T-Var{};
+                         f : ('x746 -> 'x746),x : 'x746 |- x : 'x746 by T-Var{};
+                    };
+               };
+          };
+     };
+     twice : 'x746.(('x746 -> 'x746) -> ('x746 -> 'x746)) |- (twice (fun x -> (x + 4))) 5 :  int  by T-App{
+          twice : 'x746.(('x746 -> 'x746) -> ('x746 -> 'x746)) |- twice (fun x -> (x + 4)) :  (int -> int)  by T-App{
+               twice : 'x746.(('x746 -> 'x746) -> ('x746 -> 'x746)) |- twice : ((int -> int) -> (int -> int)) by T-Var{};
+               twice : 'x746.(('x746 -> 'x746) -> ('x746 -> 'x746)) |- fun x -> (x + 4) :  (int -> int)  by T-Abs{
+                    twice : 'x746.(('x746 -> 'x746) -> ('x746 -> 'x746)),x : int |- x + 4 : int by T-Plus{
+                         twice : 'x746.(('x746 -> 'x746) -> ('x746 -> 'x746)),x : int |- x : int by T-Var{};
+                         twice : 'x746.(('x746 -> 'x746) -> ('x746 -> 'x746)),x : int |- 4 : int by T-Int{};
+                    };
+               };
+          };
+          twice : 'x746.(('x746 -> 'x746) -> ('x746 -> 'x746)) |- 5 : int by T-Int{};
+     };
+};
