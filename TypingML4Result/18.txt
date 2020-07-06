@@ -1,38 +1,38 @@
  |- let s = (fun f -> (fun g -> (fun x -> ((f x) (g x))))) in let k1 = (fun x -> (fun y -> x)) in let k2 = (fun x -> (fun y -> x)) in ((s k1) k2) : (int -> int) by T-Let{
-      |- fun f -> (fun g -> (fun x -> ((f x) (g x)))) :  ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int)))  by T-Abs{
-          f : (int -> (('x191 -> int) -> int)) |- fun g -> (fun x -> ((f x) (g x))) :  ((int -> ('x191 -> int)) -> (int -> int))  by T-Abs{
-               f : (int -> (('x191 -> int) -> int)),g : (int -> ('x191 -> int)) |- fun x -> ((f x) (g x)) :  (int -> int)  by T-Abs{
-                    f : (int -> (('x191 -> int) -> int)),g : (int -> ('x191 -> int)),x : int |- (f x) (g x) :  int  by T-App{
-                         f : (int -> (('x191 -> int) -> int)),g : (int -> ('x191 -> int)),x : int |- f x :  (('x191 -> int) -> int)  by T-App{
-                              f : (int -> (('x191 -> int) -> int)),g : (int -> ('x191 -> int)),x : int |- f : (int -> (('x191 -> int) -> int)) by T-Var{};
-                              f : (int -> (('x191 -> int) -> int)),g : (int -> ('x191 -> int)),x : int |- x : int by T-Var{};
+      |- fun f -> (fun g -> (fun x -> ((f x) (g x)))) :  ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int)))  by T-Abs{
+          f : (int -> (('x279 -> int) -> int)) |- fun g -> (fun x -> ((f x) (g x))) :  ((int -> ('x279 -> int)) -> (int -> int))  by T-Abs{
+               f : (int -> (('x279 -> int) -> int)),g : (int -> ('x279 -> int)) |- fun x -> ((f x) (g x)) :  (int -> int)  by T-Abs{
+                    f : (int -> (('x279 -> int) -> int)),g : (int -> ('x279 -> int)),x : int |- (f x) (g x) :  int  by T-App{
+                         f : (int -> (('x279 -> int) -> int)),g : (int -> ('x279 -> int)),x : int |- f x :  (('x279 -> int) -> int)  by T-App{
+                              f : (int -> (('x279 -> int) -> int)),g : (int -> ('x279 -> int)),x : int |- f : (int -> (('x279 -> int) -> int)) by T-Var{};
+                              f : (int -> (('x279 -> int) -> int)),g : (int -> ('x279 -> int)),x : int |- x : int by T-Var{};
                          };
-                         f : (int -> (('x191 -> int) -> int)),g : (int -> ('x191 -> int)),x : int |- g x :  ('x191 -> int)  by T-App{
-                              f : (int -> (('x191 -> int) -> int)),g : (int -> ('x191 -> int)),x : int |- g : (int -> ('x191 -> int)) by T-Var{};
-                              f : (int -> (('x191 -> int) -> int)),g : (int -> ('x191 -> int)),x : int |- x : int by T-Var{};
+                         f : (int -> (('x279 -> int) -> int)),g : (int -> ('x279 -> int)),x : int |- g x :  ('x279 -> int)  by T-App{
+                              f : (int -> (('x279 -> int) -> int)),g : (int -> ('x279 -> int)),x : int |- g : (int -> ('x279 -> int)) by T-Var{};
+                              f : (int -> (('x279 -> int) -> int)),g : (int -> ('x279 -> int)),x : int |- x : int by T-Var{};
                          };
                     };
                };
           };
      };
-     s : ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int))) |- let k1 = (fun x -> (fun y -> x)) in let k2 = (fun x -> (fun y -> x)) in ((s k1) k2) : (int -> int) by T-Let{
-          s : ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int))) |- fun x -> (fun y -> x) :  (int -> (('x191 -> int) -> int))  by T-Abs{
-               s : ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int))),x : int |- fun y -> x :  (('x191 -> int) -> int)  by T-Abs{
-                    s : ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int))),x : int,y : ('x191 -> int) |- x : int by T-Var{};
+     s : ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int))) |- let k1 = (fun x -> (fun y -> x)) in let k2 = (fun x -> (fun y -> x)) in ((s k1) k2) : (int -> int) by T-Let{
+          s : ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int))) |- fun x -> (fun y -> x) :  (int -> (('x279 -> int) -> int))  by T-Abs{
+               s : ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int))),x : int |- fun y -> x :  (('x279 -> int) -> int)  by T-Abs{
+                    s : ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int))),x : int,y : ('x279 -> int) |- x : int by T-Var{};
                };
           };
-          s : ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int))),k1 : (int -> (('x191 -> int) -> int)) |- let k2 = (fun x -> (fun y -> x)) in ((s k1) k2) : (int -> int) by T-Let{
-               s : ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int))),k1 : (int -> (('x191 -> int) -> int)) |- fun x -> (fun y -> x) :  (int -> ('x191 -> int))  by T-Abs{
-                    s : ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int))),k1 : (int -> (('x191 -> int) -> int)),x : int |- fun y -> x :  ('x191 -> int)  by T-Abs{
-                         s : ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int))),k1 : (int -> (('x191 -> int) -> int)),x : int,y : 'x191 |- x : int by T-Var{};
+          s : ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int))),k1 : (int -> (('x279 -> int) -> int)) |- let k2 = (fun x -> (fun y -> x)) in ((s k1) k2) : (int -> int) by T-Let{
+               s : ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int))),k1 : (int -> (('x279 -> int) -> int)) |- fun x -> (fun y -> x) :  (int -> ('x279 -> int))  by T-Abs{
+                    s : ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int))),k1 : (int -> (('x279 -> int) -> int)),x : int |- fun y -> x :  ('x279 -> int)  by T-Abs{
+                         s : ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int))),k1 : (int -> (('x279 -> int) -> int)),x : int,y : 'x279 |- x : int by T-Var{};
                     };
                };
-               s : ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int))),k1 : (int -> (('x191 -> int) -> int)),k2 : (int -> ('x191 -> int)) |- (s k1) k2 :  (int -> int)  by T-App{
-                    s : ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int))),k1 : (int -> (('x191 -> int) -> int)),k2 : (int -> ('x191 -> int)) |- s k1 :  ((int -> ('x191 -> int)) -> (int -> int))  by T-App{
-                         s : ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int))),k1 : (int -> (('x191 -> int) -> int)),k2 : (int -> ('x191 -> int)) |- s : ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int))) by T-Var{};
-                         s : ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int))),k1 : (int -> (('x191 -> int) -> int)),k2 : (int -> ('x191 -> int)) |- k1 : (int -> (('x191 -> int) -> int)) by T-Var{};
+               s : ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int))),k1 : (int -> (('x279 -> int) -> int)),k2 : (int -> ('x279 -> int)) |- (s k1) k2 :  (int -> int)  by T-App{
+                    s : ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int))),k1 : (int -> (('x279 -> int) -> int)),k2 : (int -> ('x279 -> int)) |- s k1 :  ((int -> ('x279 -> int)) -> (int -> int))  by T-App{
+                         s : ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int))),k1 : (int -> (('x279 -> int) -> int)),k2 : (int -> ('x279 -> int)) |- s : ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int))) by T-Var{};
+                         s : ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int))),k1 : (int -> (('x279 -> int) -> int)),k2 : (int -> ('x279 -> int)) |- k1 : (int -> (('x279 -> int) -> int)) by T-Var{};
                     };
-                    s : ((int -> (('x191 -> int) -> int)) -> ((int -> ('x191 -> int)) -> (int -> int))),k1 : (int -> (('x191 -> int) -> int)),k2 : (int -> ('x191 -> int)) |- k2 : (int -> ('x191 -> int)) by T-Var{};
+                    s : ((int -> (('x279 -> int) -> int)) -> ((int -> ('x279 -> int)) -> (int -> int))),k1 : (int -> (('x279 -> int) -> int)),k2 : (int -> ('x279 -> int)) |- k2 : (int -> ('x279 -> int)) by T-Var{};
                };
           };
      };

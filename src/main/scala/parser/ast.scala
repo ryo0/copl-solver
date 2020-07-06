@@ -33,6 +33,9 @@ object ast {
   object LessThan extends Op
 
   object Cons extends Op
+  def closure(t: MLType, e: TypeEnv): Schema = {
+    Schema(TypeVars(diff(t.ftv, e.ftv)), t)
+  }
   sealed class Exp {
     def getType(
         typeEnv: TypeEnv = List(),
@@ -51,6 +54,13 @@ object ast {
           (List(), MLBoolType)
         case Var(n) =>
           getTypeFromTypeEnv(n, typeEnv) match {
+            case Some(Schema(tVars, t)) =>
+              println("t: ", t)
+              println(
+                " t.substitute(tVars.vars.map(v => (v, newTypeVar())))",
+                t.substitute(tVars.vars.map(v => (v, newTypeVar())))
+              )
+              (List(), t.substitute(tVars.vars.map(v => (v, newTypeVar()))))
             case Some(r) => (List(), r)
             case _ =>
               println(n, typeEnv)
@@ -76,13 +86,15 @@ object ast {
           (s4, t2.substitute(s4))
         case LetExp(variable, valueExp, inExp) =>
           val (s1, t1) = valueExp.typeInfer(typeEnv, None)
-          val (s2, t2) = inExp.typeInfer((variable.name, t1) :: typeEnv, ans)
+          val sigma = closure(t1, typeEnv.substitute(s1))
+          println("sigma", t1, typeEnv, s1, sigma)
+          val (s2, t2) = inExp.typeInfer((variable.name, sigma) :: typeEnv, ans)
           val s3 = {
             ans match {
               case Some(answer) =>
-                ((t2, answer) :: s1 ::: s2).unify()
+                ((t2, answer) :: s1 ::: s2).distinct.unify()
               case None =>
-                (s1 ::: s2).unify()
+                (s1 ::: s2).distinct.unify()
             }
           }
           (s3, t2.substitute(s3))
@@ -113,14 +125,18 @@ object ast {
         case LetRecExp(variable, RecFunExp(_, param, body), inExp) =>
           val a1 = newTypeVar()
           val a2 = newTypeVar()
-          val (s1, t1) =
+          val (s1, t1) = {
             body.typeInfer(
               (variable.name, a1) :: (param.name, a2) :: typeEnv,
               None
             )
-          val (s2, t2) = inExp.typeInfer((variable.name, a1) :: typeEnv, ans)
-          val s3 = ((a1, MLFunType(a2, t1)) :: s1 ::: s2).unify()
-          (s3, t2.substitute(s3))
+          }
+          val s2 = (s1 :+ (a1, MLFunType(a2, t1))).distinct
+          val sigma = closure(a1.substitute(s2), typeEnv.substitute(s2))
+          val (s3, t3) =
+            inExp.typeInfer((variable.name, sigma) :: typeEnv, None)
+          val s4 = (s2 ::: s3).distinct
+          (s4, t3.substitute(s4))
         case RecFunExp(variable, param, body) =>
           val a1 = newTypeVar()
           val a2 = newTypeVar()
@@ -136,7 +152,18 @@ object ast {
           (List(), MLListType(a))
         case EList(left, right) =>
           val (s1, t1) = left.typeInfer(typeEnv, None)
+//            ans match {
+//              case Some(MLListType(lst)) =>
+//                left.typeInfer(typeEnv, Some(lst))
+//              case _ =>
+
+//            }
+//          }
           val (s2, t2) = right.typeInfer(typeEnv, ans)
+          println("s1", s1)
+          println("s2", s2)
+          println("s1 ::: s2", s1 ::: s2)
+          println("typeEnv", typeEnv)
           val s3 = ((t2, MLListType(t1)) :: (s1 ::: s2)).unify()
           (s3, t2.substitute(s3))
         case Match(

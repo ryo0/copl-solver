@@ -1,6 +1,9 @@
 import solver.typeSolver.typeSolveWithEnvAndType
 import java.io.PrintWriter
 
+import parser.parser._
+import solver.typeRule
+import tokenizer.tokenizer.tokenize
 object Main {
   def main(args: Array[String]): Unit = {
     val file81 = new PrintWriter("TypingML4Result/1.txt")
@@ -221,17 +224,25 @@ object Main {
     )
     file93.close()
 
-//    val file94 = new PrintWriter("PolyTypingML4Result/4.txt")
-//    file94.write(
-//      typeSolveWithEnvAndType("|- let id = fun x -> x in id id : bool -> bool")
-//    )
-//    file94.close()
-//
+    val file94 = new PrintWriter("PolyTypingML4Result/4.txt")
+    file94.write(
+      typeSolveWithEnvAndType("|- let id = fun x -> x in id id : bool -> bool")
+    )
+    file94.close()
+
     val file96 = new PrintWriter("PolyTypingML4Result/5.txt")
     file96.write(
       typeSolveWithEnvAndType("f: 'a 'b.'a->'b->'a |- f 3 true + f 2 4 : int")
     )
     file96.close()
+
+    val file97 = new PrintWriter("PolyTypingML4Result/6.txt")
+    file97.write(
+      typeSolveWithEnvAndType(
+        "|- let k = fun x -> fun y -> x in (k 3 true) :: (k (1::[]) 3) : int list"
+      )
+    )
+    file97.close()
 
     //    val file87 = new PrintWriter("PolyTypingML4Result/7.txt")
     //    file87.write(

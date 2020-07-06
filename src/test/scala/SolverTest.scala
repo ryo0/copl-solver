@@ -246,6 +246,20 @@ class SolverTest extends FunSuite {
         )
       ) === Some(MLBoolType)
     )
+
+    assert(
+      getAnswerRec(
+        "a",
+        List(
+          (TypeVar("x"), TypeVar("y")),
+          (TypeVar("x"), MLBoolType),
+          (TypeVar("x"), TypeVar("z")),
+          (TypeVar("a"), TypeVar("xyz")),
+          (MLBoolType, MLBoolType),
+          (TypeVar("c"), TypeVar("x"))
+        )
+      ) === Some(TypeVar("xyz"))
+    )
   }
 
   test("ftv") {
@@ -287,6 +301,20 @@ class SolverTest extends FunSuite {
         TypeVar("'x"),
         TypeVar("'y")
       ).sortBy(a => a.name)
+    )
+
+    assert(
+      diff(
+        List(TypeVar("a"), TypeVar("b"), TypeVar("c")),
+        List(TypeVar("b"))
+      ) === List(TypeVar("a"), TypeVar("c"))
+    )
+
+    assert(
+      diff(
+        List(TypeVar("a"), TypeVar("b"), TypeVar("c")),
+        List(TypeVar("a"), TypeVar("v"), TypeVar("c"), TypeVar("d"))
+      ) === List(TypeVar("b"))
     )
   }
 }
