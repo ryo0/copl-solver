@@ -132,12 +132,14 @@ object typeRule {
     }
 
     def substitute(typeAnswer: TypeAnswer): MLType = {
+//      (typeVar("x1"), MLFunType("x1", "x1"))
+      //がある、ということだと思われる
       this match {
         case TypeVar(n) => {
           val result = getAnswerRec(n, typeAnswer)
           result match {
             case Some(r) =>
-              r.substitute(typeAnswer)
+              r.substitute(removeNFromAnswer(n, typeAnswer))
             case None =>
               getTypeFromTypeAnswer(n, typeAnswer) match {
                 case Some(TypeVar(m)) =>
@@ -250,7 +252,12 @@ object typeRule {
     answer.filter(a => !(a._1 == TypeVar(n) && a._2 == TypeVar(m)))
   }
 
+  def removeNFromAnswer(n: String, answer: TypeAnswer): TypeAnswer = {
+    answer.filter(a => !(a._1 == TypeVar(n)))
+  }
+
   def getAnswerRec(n: String, answer: TypeAnswer): Option[MLType] = {
+    println(n, answer)
 //    input例
 //    n = 158
 //    answer = List(
