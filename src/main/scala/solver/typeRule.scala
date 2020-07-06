@@ -64,12 +64,9 @@ object typeRule {
                 val s = eqs.substitute(ta).unify()
                 s :+ (TypeVar(n), left.substitute(s))
               case (Schema(vars, t), right) =>
-                println("Schema", Schema(vars, t))
                 val s = (Equation(t, right) :: eqs).unify()
-                println(s)
                 s :+ (t, right.substitute(s))
               case (left, Schema(vars, t)) =>
-                println("Schema", Schema(vars, t))
                 val s = (Equation(t, left) :: eqs).unify()
                 s :+ (t, left.substitute(s))
             }
@@ -257,7 +254,6 @@ object typeRule {
   }
 
   def getAnswerRec(n: String, answer: TypeAnswer): Option[MLType] = {
-    println(n, answer)
 //    input例
 //    n = 158
 //    answer = List(

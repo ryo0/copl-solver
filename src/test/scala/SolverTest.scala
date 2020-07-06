@@ -246,20 +246,6 @@ class SolverTest extends FunSuite {
         )
       ) === Some(MLBoolType)
     )
-
-    assert(
-      getAnswerRec(
-        "a",
-        List(
-          (TypeVar("x"), TypeVar("y")),
-          (TypeVar("x"), MLBoolType),
-          (TypeVar("x"), TypeVar("z")),
-          (TypeVar("a"), TypeVar("xyz")),
-          (MLBoolType, MLBoolType),
-          (TypeVar("c"), TypeVar("x"))
-        )
-      ) === Some(TypeVar("xyz"))
-    )
   }
 
   test("ftv") {

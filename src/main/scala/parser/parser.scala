@@ -148,6 +148,16 @@ object parser {
         val v = Var(n)
         val (ps, rest2) = parsePatterns(rest)
         (Match(v, ps), rest2)
+      case MatchToken :: VarToken(n) :: rest =>
+        val (funCall, rest2) = parseFunCall(Var(n), rest)
+        rest2 match {
+          case WithToken :: rest3 =>
+            val (ps, rest4) = parsePatterns(rest3)
+            (Match(funCall, ps), rest4)
+          case _ =>
+            throw new Exception("match error")
+
+        }
       case _ =>
         throw new Exception("match error")
     }

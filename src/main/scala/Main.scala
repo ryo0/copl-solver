@@ -244,84 +244,100 @@ object Main {
     )
     file97.close()
 
-    //    val file87 = new PrintWriter("PolyTypingML4Result/7.txt")
-    //    file87.write(
-    //      typeSolveWithEnvAndType("|- fun f -> f 0 + f 1 : (int -> int) -> int")
-    //    )
-    //    file87.close()
-    //
-    //    val file88 = new PrintWriter("PolyTypingML4Result/8.txt")
-    //    file88.write(
-    //      typeSolveWithEnvAndType(
-    //        "|- let max = fun x -> fun y -> if x < y then y else x in max 3 5 : int"
-    //      )
-    //    )
-    //    file88.close()
-    //
-    //    val file89 = new PrintWriter("PolyTypingML4Result/9.txt")
-    //    file89.write(typeSolveWithEnvAndType("|- 4 :: [] : int list"))
-    //    file89.close()
-    //
-    //    val file810 = new PrintWriter("PolyTypingML4Result/10.txt")
-    //    file810.write(typeSolveWithEnvAndType("|- true :: false :: [] : bool list"))
-    //    file810.close()
-    //
-    //    val file811 = new PrintWriter("PolyTypingML4Result/11.txt")
-    //    file811.write(
-    //      typeSolveWithEnvAndType("|- fun x -> fun y -> x : int -> int -> int")
-    //    )
-    //    file811.close()
-    //
-    //    val file812 = new PrintWriter("PolyTypingML4Result/12.txt")
-    //    file812.write(
-    //      typeSolveWithEnvAndType("|- fun x -> fun y -> x : bool -> int -> bool")
-    //    )
-    //    file812.close()
-    //
-    //    val file813 = new PrintWriter("PolyTypingML4Result/13.txt")
-    //    file813.write(
-    //      typeSolveWithEnvAndType(
-    //        "|- let k = fun x -> fun y -> x in k 3 true : int"
-    //      )
-    //    )
-    //    file813.close()
-    //
-    //    val file814 = new PrintWriter("PolyTypingML4Result/14.txt")
-    //    file814.write(
-    //      typeSolveWithEnvAndType(
-    //        "|- let k = fun x -> fun y -> x in k (1::[]) 3 : int list"
-    //      )
-    //    )
-    //    file814.close()
-    //
-    //    val file815 = new PrintWriter("PolyTypingML4Result/15.txt")
-    //    file815.write(
-    //      typeSolveWithEnvAndType(
-    //        "|- let k = fun x -> fun y -> x in k true (fun x -> x + 1) : bool"
-    //      )
-    //    )
-    //    file815.close()
-    //
-    //    val file = new PrintWriter("PolyTypingML4Result/demo.txt")
-    //    file.write(
-    //      typeSolveWithEnvAndType("|- (fun x -> fun y -> x) 1 (fun x -> x) : int")
-    //    )
-    //    file.close()
-    //
-    //    val file816 = new PrintWriter("PolyTypingML4Result/16.txt")
-    //    file816.write(
-    //      typeSolveWithEnvAndType(
-    //        "|- let compose = fun f -> fun g -> fun x -> f (g x) in\n   let p = fun x -> x * x in\n   let q = fun x -> x + 4 in\n   compose p q : int -> int"
-    //      )
-    //    )
-    //    file816.close()
-    //
-    //    val file817 = new PrintWriter("PolyTypingML4Result/17.txt")
-    //    file817.write(
-    //      typeSolveWithEnvAndType(
-    //        "|- let compose = fun f -> fun g -> fun x -> f (g x) in\n   let p = fun x -> if x then 3 else 4 in\n   let q = fun x -> x < 4 in\n   compose p q : int -> int"
-    //      )
-    //    )
-    //    file817.close()
+    val file98 = new PrintWriter("PolyTypingML4Result/7.txt")
+    file98.write(
+      typeSolveWithEnvAndType(
+        "|- let compose = fun f -> fun g -> fun x -> f (g x) in\n   let f = fun x -> if x then 3 else 4 in\n   let g = fun x -> x < 4 in\n   compose f (compose g f) true : int"
+      )
+    )
+    file98.close()
+
+    val file99 = new PrintWriter("PolyTypingML4Result/8.txt")
+    file99.write(
+      typeSolveWithEnvAndType(
+        "|- let twice = fun f -> fun x -> f (f x) in\n   twice (fun x -> x + 4) 5 : int"
+      )
+    )
+    file99.close()
+
+    val file910 = new PrintWriter("PolyTypingML4Result/9.txt")
+    file910.write(
+      typeSolveWithEnvAndType(
+        "|- let twice = fun f -> fun x -> f (f x) in\n   twice twice (fun x -> x + 4) 5 : int"
+      )
+    )
+    file910.close()
+
+    val file911 = new PrintWriter("PolyTypingML4Result/10.txt")
+    file911.write(
+      typeSolveWithEnvAndType(
+        "|- let s = fun f -> fun g -> fun x -> f x (g x) in\n   let k = fun x -> fun y -> x in\n   s k k : 'a -> 'a"
+      )
+    )
+    file911.close()
+
+    val file912 = new PrintWriter("PolyTypingML4Result/11.txt")
+    file912.write(
+      typeSolveWithEnvAndType(
+        "|- let x = [] in let y = 3 :: x in true :: x : bool list"
+      )
+    )
+    file912.close()
+
+    val file913 = new PrintWriter("PolyTypingML4Result/12.txt")
+    file913.write(
+      typeSolveWithEnvAndType(
+        "|- let l = (fun x -> x) :: [] in\n   let l1 = (fun y -> y + 1) :: l in\n   (fun z -> if z then false else true) :: l : (bool -> bool) list"
+      )
+    )
+    file913.close()
+
+    val file914 = new PrintWriter("PolyTypingML4Result/13.txt")
+    file914.write(
+      typeSolveWithEnvAndType(
+        "|- let rec length = fun l -> match l with [] -> 0 | x :: y -> 1 + length y in\n   length (3 :: 2 :: []) + length ((1 :: []) :: []) : int"
+      )
+    )
+    file914.close()
+
+    val file915 = new PrintWriter("PolyTypingML4Result/14.txt")
+    file915.write(
+      typeSolveWithEnvAndType(
+        "|- let k = fun x -> fun y -> x in k (1::[]) 3 : int list"
+      )
+    )
+    file915.close()
+
+    val file916 = new PrintWriter("PolyTypingML4Result/15.txt")
+    file916.write(
+      typeSolveWithEnvAndType(
+        "|- let rec map = fun f -> fun l ->\n     match l with [] -> [] | x :: y -> f x :: map f y in\n   map (fun x -> x < 3) (map (fun x -> x * 2) (4 :: 5 :: 1 :: [])) : bool list"
+      )
+    )
+    file916.close()
+
+    val file917 = new PrintWriter("PolyTypingML4Result/16.txt")
+    file917.write(
+      typeSolveWithEnvAndType(
+        "|- let rec map = fun f -> fun l ->\n     match l with [] -> [] | x :: y -> f x :: map f y in\n   let f = map (fun x -> x) in\n   let a = f (3 :: []) in f (true :: []) : bool list"
+      )
+    )
+    file917.close()
+
+    val file918 = new PrintWriter("PolyTypingML4Result/17.txt")
+    file918.write(
+      typeSolveWithEnvAndType(
+        "|- let f = fun x ->  let g = fun y -> x :: [] in if true then g 3 else g false in match f 2 with [] -> f true | x :: y -> [] : bool list"
+      )
+    )
+    file918.close()
+
+    val file919 = new PrintWriter("PolyTypingML4Result/18.txt")
+    file919.write(
+      typeSolveWithEnvAndType(
+        "|- let f = fun x -> let g = fun y -> y x :: [] in g (fun z -> 4) in  match f true with [] -> 3 :: [] | x :: y -> f x : int list"
+      )
+    )
+    file919.close()
   }
 }
